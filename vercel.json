@@ -1,9 +1,4 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": ".",
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://zaai-production.up.railway.app/api/$1" },
-    { "source": "/uploads/(.*)", "destination": "https://zaai-production.up.railway.app/uploads/$1" },
-    { "source": "/admin/(.*)", "destination": "https://zaai-production.up.railway.app/admin/$1" }
-  ]
+  "cleanUrls": true,
+  "trailingSlash": false
 }
