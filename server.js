@@ -152,10 +152,16 @@ function randomSecret() {
 
 function ensureOwner() {
   const existing = db.prepare("SELECT * FROM owner LIMIT 1").get();
-  if (existing) return existing;
   const email = process.env.ZAAI_OWNER_EMAIL || "owner@zaai.store";
   let password = process.env.ZAAI_OWNER_PASSWORD;
   if (!password) password = crypto.randomBytes(12).toString("base64url");
+  if (existing) {
+    if (process.env.ZAAI_OWNER_EMAIL || process.env.ZAAI_OWNER_PASSWORD) {
+      db.prepare("UPDATE owner SET email=?,password_hash=?,updated_at=CURRENT_TIMESTAMP WHERE id=?")
+        .run(email.toLowerCase(), hashPassword(password), existing.id);
+    }
+    return db.prepare("SELECT * FROM owner WHERE id=?").get(existing.id);
+  }
   db.prepare("INSERT INTO owner (email,password_hash,role) VALUES (?,?,?)")
     .run(email.toLowerCase(), hashPassword(password), "owner");
   if (!process.env.ZAAI_OWNER_PASSWORD) {
