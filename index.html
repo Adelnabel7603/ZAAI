@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="theme-color" content="#f5f3ef">
+        <meta name="description" content="أزياء طبية عصرية من ZAAI تجمع بين الراحة والأناقة لترافقك طوال يوم العمل.">
+        <meta name="robots" content="index, follow">
+        <link rel="canonical" href="https://zaai-store.vercel.app/">
+        <meta property="og:title" content="ZAAI | أزياء طبية عصرية">
+        <meta property="og:description" content="أزياء طبية عصرية تجمع بين الراحة والأناقة، لترافقك بثقة طوال يوم العمل.">
+        <meta property="og:image" content="https://zaai-store.vercel.app/image/og-preview.jpg">
+        <meta property="og:image:secure_url" content="https://zaai-store.vercel.app/image/og-preview.jpg">
+        <meta property="og:image:type" content="image/jpeg">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
+        <meta property="og:image:alt" content="ZAAI — أزياء طبية عصرية">
+        <meta property="og:url" content="https://zaai-store.vercel.app/">
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="ZAAI STORE">
+        <meta property="og:locale" content="ar_EG">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="ZAAI | أزياء طبية عصرية">
+        <meta name="twitter:description" content="أزياء طبية عصرية تجمع بين الراحة والأناقة، لترافقك بثقة طوال يوم العمل.">
+        <meta name="twitter:image" content="https://zaai-store.vercel.app/image/og-preview.jpg">
+        <!-- ! Link CSS -->  
+        <link rel="stylesheet" href="CSS/normalize.css">
+        <link rel="stylesheet" href="CSS/all.min.css">
+        <link rel="stylesheet" href="CSS/style.css?v=20261121-promotions">
+        <link rel="stylesheet" href="CSS/responsive.css">
+        <!-- ! Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+        <!-- !ظهور لوجو الموقع فوق -->
+        <link rel="icon" href="image/logo.jpg" type="image/png">
+        <!-- ! Name of the website -->
+        <title>ZAAI STORE</title>
+        <script src="Js/product-3d-viewer.js?v=20261119-9" defer></script>
+        <script src="Js/script.js?v=20261121-promotions" defer></script>
+    </head>
+    <body data-theme="light">
+        <!-- Site Header -->
+        <header class="site-header">
+            <div class="container">
+                <div class="logo">
+                    <a href="index.html"><img src="image/logo.jpg" alt="ZAAI STORE"></a>
+                    <h2>ZAAI STORE</h2>
+                </div>
+                <nav class="nav" id="main-navigation" aria-label="التنقل الرئيسي">
+                    <ul>
+                        <li><a href="#home"><i class="fas fa-home nav-icon" aria-hidden="true"></i><span data-ar="الرئيسية" data-en="Home">الرئيسية</span></a></li>
+                        <li><a href="#about"><i class="fas fa-info-circle nav-icon" aria-hidden="true"></i><span data-ar="من نحن" data-en="About">من نحن</span></a></li>
+                        <li><a href="#services"><i class="fas fa-cogs nav-icon" aria-hidden="true"></i><span data-ar="الخدمات" data-en="Services">الخدمات</span></a></li>
+                        <li><a href="#products"><i class="fas fa-box nav-icon" aria-hidden="true"></i><span data-ar="المنتجات" data-en="Products">المنتجات</span></a></li>
+                        <li><a href="#contact"><i class="fas fa-envelope nav-icon" aria-hidden="true"></i><span data-ar="تواصل معنا" data-en="Contact">تواصل معنا</span></a></li>
+                        <li class="mobile-owner-link"><a href="/admin/login"><i class="fas fa-shield-halved nav-icon" aria-hidden="true"></i><span data-ar="لوحة المالك" data-en="OWNER PANEL">لوحة المالك</span></a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <button class="header-cart" id="header-cart" type="button" aria-label="فتح السلة" aria-controls="zaai-cart-drawer">
+                        <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+                        <span class="header-cart-label" data-ar="السلة" data-en="Bag">السلة</span>
+                        <strong class="header-cart-count" id="header-cart-count">0</strong>
+                    </button>
+                    <a class="header-admin" href="/admin/login">
+                        <i class="fas fa-shield-halved header-action-icon" aria-hidden="true"></i>
+                        <span data-ar="لوحة المالك" data-en="OWNER PANEL">لوحة المالك</span>
+                    </a>
+                    <button class="header-control language-toggle" id="language-toggle" type="button" aria-label="Switch language to English">
+                        <i class="fas fa-globe header-action-icon" aria-hidden="true"></i>
+                        <span id="language-label">EN</span>
+                    </button>
+                    <button class="header-control theme-toggle" id="theme-toggle" type="button" aria-label="تفعيل الوضع الليلي">
+                        <i class="theme-icon fas fa-moon" aria-hidden="true"></i>
+                        <span id="theme-label">ليلي</span>
+                    </button>
+                    <button class="header-control menu-toggle" id="menu-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" aria-controls="main-navigation">
+                        <i class="menu-icon fas fa-bars" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <!-- Home Section -->
+        <section class="home" id="home">
+            <div class="mobile-home-topbar" aria-label="إعدادات الصفحة">
+                <a class="mobile-home-brand" href="#home" aria-label="ZAAI STORE">
+                    <img src="image/logo.jpg" alt="" aria-hidden="true">
+                    <strong>ZAAI STORE</strong>
+                </a>
+                <div class="mobile-home-controls">
+                    <button type="button" id="mobile-language-toggle" aria-label="Switch language">
+                        <i class="fas fa-globe" aria-hidden="true"></i>
+                        <span id="mobile-language-label">EN</span>
+                    </button>
+                    <button type="button" id="mobile-theme-toggle" aria-label="تفعيل الوضع الليلي">
+                        <i class="theme-icon fas fa-moon" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="home-inner">
+                <div class="home-copy">
+                    <span class="home-eyebrow" data-ar="ZAAI — أزياء طبية عصرية" data-en="ZAAI — Modern Medical Wear">ZAAI — أزياء طبية عصرية</span>
+                    <h1>
+                        <span data-ar="إطلالة احترافية" data-en="A polished look">إطلالة احترافية</span>
+                        <span class="home-title-accent" data-ar="براحة تليق بك" data-en="with comfort made for you">براحة تليق بك</span>
+                    </h1>
+                    <p class="home-description" data-ar="اكتشف ملابس طبية تجمع بين التصميم العصري والراحة، لترافقك بثقة وراحة طوال يوم العمل." data-en="Discover medical wear that brings together modern design and everyday comfort, so you can feel confident throughout your workday.">اكتشف ملابس طبية تجمع بين التصميم العصري والراحة، لترافقك بثقة وراحة طوال يوم العمل.</p>
+                    <div class="home-actions">
+                        <a class="home-button home-button-primary" href="#products" data-ar="استكشف المنتج" data-en="Explore the product">استكشف المنتج</a>
+                        <a class="home-button home-button-secondary" href="#about" data-ar="اكتشف ZAAI" data-en="Discover ZAAI">اكتشف ZAAI</a>
+                    </div>
+                    <div class="home-highlights">
+                        <div class="home-highlight">
+                            <span class="highlight-icon" aria-hidden="true">✦</span>
+                            <span data-ar="تصاميم عملية" data-en="Practical designs">تصاميم عملية</span>
+                        </div>
+                        <div class="home-highlight">
+                            <span class="highlight-icon" aria-hidden="true">✦</span>
+                            <span data-ar="أناقة كل يوم" data-en="Style every day">أناقة كل يوم</span>
+                        </div>
+                    </div>
+                    <a class="scroll-cue" href="#about" aria-label="اكتشف المزيد"><span></span></a>
+                </div>
+                <div class="home-visual">
+                    <div class="home-image-frame">
+                        <img src="image/man/product1.jpg" alt="زي طبي من مجموعة ZAAI" data-alt-ar="زي طبي من مجموعة ZAAI" data-alt-en="Medical wear from the ZAAI collection">
+                    </div>
+                    <div class="home-image-note">
+                        <span class="home-note-mark"><img src="image/logo.jpg" alt="شعار ZAAI" data-alt-ar="شعار ZAAI" data-alt-en="ZAAI logo"></span>
+                        <span>
+                            <strong data-ar="مجموعة ZAAI" data-en="The ZAAI collection">مجموعة ZAAI</strong>
+                            <small data-ar="راحة بتفاصيل أنيقة" data-en="Comfort in every detail">راحة بتفاصيل أنيقة</small>
+                        </span>
+                    </div>
+                    <span class="home-visual-caption" data-ar="أناقة تليق بيومك" data-en="Style for your day">أناقة تليق بيومك</span>
+                </div>
+            </div>
+        </section>
+        <!-- ! product lab -->
+        <section class="product-lab" id="product-lab" aria-labelledby="product-lab-title">
+            <div class="lab-container">
+                <div class="lab-heading">
+                    <span class="lab-overline">ZAAI PRODUCT LAB</span>
+                    <h2 id="product-lab-title" data-ar="كل تفصيلة لها هدف." data-en="Every Detail Has a Purpose.">كل تفصيلة لها هدف.</h2>
+                    <p data-ar="اكتشف تفاصيل منتجات ZAAI عن قرب، واستكشف التصميم والخامات والتشطيبات والمميزات من خلال تجربة تفاعلية." data-en="Discover the details behind every ZAAI design. Explore the materials, construction, comfort, and features that make every piece unique.">اكتشف تفاصيل منتجات ZAAI عن قرب، واستكشف التصميم والخامات والتشطيبات والمميزات من خلال تجربة تفاعلية.</p>
+                </div>
+                <div class="lab-layout">
+                    <div class="lab-visual-column">
+                        <div class="lab-product-bar">
+                            <span data-ar="التصميم رقم 01" data-en="DESIGN NO. 01">التصميم رقم 01</span>
+                            <span class="lab-explore-hint" data-ar="اضغط على النقاط للاستكشاف" data-en="SELECT A POINT TO EXPLORE">اضغط على النقاط للاستكشاف</span>
+                        </div>
+                        <div class="lab-stage" id="lab-stage">
+                            <div class="lab-image-layer" id="lab-image-layer">
+                                <img class="lab-product-image" src="image/man/product1.jpg" alt="زي طبي من مجموعة ZAAI" data-alt-ar="زي طبي من مجموعة ZAAI" data-alt-en="Medical wear from the ZAAI collection">
+                                <button class="lab-hotspot" type="button" style="left:50%;top:42%" data-panel-position="bottom-right" data-zoom-scale="1.55" data-label-ar="تصميم الياقة" data-label-en="Collar design" data-title-ar="ياقة بتصميم V" data-title-en="V neckline" data-headline-ar="تفصيل الياقة" data-headline-en="A closer look at the neckline" data-description-ar="تظهر في الصورة ياقة متقاطعة على شكل V في مقدمة الزي." data-description-en="The image shows a crossed V-shaped neckline at the front of the garment." data-zoom-x="50" data-zoom-y="42" aria-label="استكشاف تصميم الياقة" aria-pressed="false">01</button>
+                                <button class="lab-hotspot" type="button" style="left:66%;top:55%" data-panel-position="top-left" data-zoom-scale="1.55" data-label-ar="جيب الصدر" data-label-en="Chest pocket" data-title-ar="تفصيل جيب الصدر" data-title-en="Chest pocket detail" data-headline-ar="تفصيل ظاهر في الواجهة الأمامية" data-headline-en="A visible front detail" data-description-ar="يظهر جيب مستطيل على الجزء العلوي من الزي. هذه ملاحظة بصرية فقط، ولا تتضمن وصفاً وظيفياً للجيب." data-description-en="A rectangular pocket is visible on the upper part of the garment. This is a visual observation only, not a claim about its function." data-zoom-x="66" data-zoom-y="55" aria-label="استكشاف جيب الصدر" aria-pressed="false">02</button>
+                                <button class="lab-hotspot" type="button" style="left:84%;top:58%" data-side="left" data-panel-position="top-left" data-zoom-scale="1.5" data-label-ar="تفصيل الكم" data-label-en="Sleeve detail" data-title-ar="الكم وحافته" data-title-en="Sleeve and hem" data-headline-ar="شكل الكم كما يظهر في الصورة" data-headline-en="The sleeve as shown" data-description-ar="استكشف شكل الكم القصير وحافته الظاهرة في هذه الإطلالة." data-description-en="Explore the short sleeve and its visible hem in this look." data-zoom-x="84" data-zoom-y="58" aria-label="استكشاف تفصيل الكم" aria-pressed="false">03</button>
+                                <button class="lab-hotspot" type="button" style="left:40%;top:89%" data-panel-position="top-right" data-zoom-scale="1.45" data-label-ar="تفصيل الخصر" data-label-en="Waist detail" data-title-ar="رباط الخصر" data-title-en="Waist tie" data-headline-ar="تفصيل ظاهر عند الخصر" data-headline-en="A visible waist detail" data-description-ar="يظهر رباط بلون متباين عند منطقة الخصر في الصورة." data-description-en="A contrasting tie is visible around the waist in the image." data-zoom-x="40" data-zoom-y="89" aria-label="استكشاف تفصيل الخصر" aria-pressed="false">04</button>
+                                <button class="lab-hotspot" type="button" style="left:92%;top:67%" data-side="left" data-panel-position="top-left" data-zoom-scale="1.55" data-label-ar="جودة ZAAI" data-label-en="ZAAI quality" data-title-ar="حافة الكم" data-title-en="Sleeve hem" data-headline-ar="ZAAI — ملابس طبية بأعلى جودة" data-headline-en="ZAAI — medical wear of the highest quality" data-description-ar="تفصيل ظاهر عند حافة الكم يعبّر عن اهتمام ZAAI بجودة التشطيب." data-description-en="A visible sleeve-hem detail reflects ZAAI's attention to finishing quality." data-zoom-x="92" data-zoom-y="67" aria-label="استكشاف جودة ZAAI عند حافة الكم" aria-pressed="false">05</button>
+                            </div>
+                            <svg class="lab-callout-arrow" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                                <defs>
+                                    <marker id="lab-arrowhead" markerWidth="2" markerHeight="2" markerUnits="userSpaceOnUse" viewBox="0 0 8 8" refX="7" refY="4" orient="auto">
+                                        <path d="M 0 0 L 8 4 L 0 8 z"></path>
+                                    </marker>
+                                </defs>
+                                <line id="lab-callout-line" x1="50" y1="50" x2="50" y2="50" marker-end="url(#lab-arrowhead)"></line>
+                            </svg>
+                            <aside class="lab-panel" id="lab-panel" aria-live="polite" aria-hidden="true" inert>
+                                <button class="lab-close" id="lab-close" type="button" aria-label="إغلاق التفاصيل">×</button>
+                                <div class="lab-detail" id="lab-detail" hidden>
+                                    <div class="lab-detail-meta">
+                                        <span id="lab-part-label"></span>
+                                        <span id="lab-part-number"></span>
+                                    </div>
+                                    <h3 id="lab-detail-title"></h3>
+                                    <h4 id="lab-detail-headline"></h4>
+                                    <p class="lab-detail-description" id="lab-detail-description"></p>
+                                    <div class="lab-panel-footer">
+                                        <span class="lab-visual-note" data-ar="تم تكبير الجزء المحدد في الصورة" data-en="The selected detail is zoomed in">تم تكبير الجزء المحدد في الصورة</span>
+                                        <div class="lab-step-controls">
+                                            <button class="lab-step-button lab-previous" id="lab-previous" type="button" aria-label="التفصيل السابق" title="التفصيل السابق"></button>
+                                            <button class="lab-step-button lab-next" id="lab-next" type="button" aria-label="التفصيل التالي" title="التفصيل التالي"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </aside>
+                        </div>
+                        <div class="lab-stage-footer">
+                            <span data-ar="استكشف التصميم من زوايا مختلفة" data-en="Explore the design, one detail at a time">استكشف التصميم من زوايا مختلفة</span>
+                            <span class="lab-progress" aria-label="التفصيل 1 من 4">
+                                <span id="lab-current-index">01</span>
+                                <span class="lab-progress-track" aria-hidden="true"><span id="lab-progress-fill"></span></span>
+                                <span id="lab-total-count">05</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ! About section -->
+        <section class="about-section" id="about" aria-labelledby="about-title">
+            <div class="about-inner">
+                <div class="about-copy">
+                    <span class="about-kicker" data-ar="قِصتنا" data-en="Our story">قِصتنا</span>
+                    <h2 id="about-title" data-ar="عن ZAAI" data-en="About ZAAI">عن ZAAI</h2>
+                    <p class="about-lead" data-ar="ZAAI علامة تجارية متخصصة في تصميم أزياء طبية عصرية تجمع بين الراحة والأناقة، لتستحق الثقة طوال يوم العمل." data-en="ZAAI is a brand dedicated to modern medical wear that combines comfort and style, so you can feel confident throughout the workday.">ZAAI علامة تجارية متخصصة في تصميم أزياء طبية عصرية تجمع بين الراحة والأناقة، لتستحق الثقة طوال يوم العمل.</p>
+                    <p class="about-text" data-ar="نؤمن بأن الملابس الطبية يجب أن تكون أكثر من ملابس عمل؛ إنها تعبير عن الثقة والراحة والأناقة الشخصية. لذلك نبتكر تفاصيل مدروسة وخامات مناسبة وتصاميم تتحرك معك." data-en="We believe medical wear should be more than workwear. It should express confidence, comfort, and personal style. That is why we create thoughtful details and designs that move with you.">نؤمن بأن الملابس الطبية يجب أن تكون أكثر من ملابس عمل؛ إنها تعبير عن الثقة والراحة والأناقة الشخصية. لذلك نبتكر تفاصيل مدروسة وخامات مناسبة وتصاميم تتحرك معك.</p>
+                    <h3 data-ar="مصمم لراحتك. مصنوع بثقة." data-en="Designed for your comfort. Made for your confidence.">مصمم لراحتك. مصنوع بثقة.</h3>
+                    <div class="about-values" aria-label="قيم ZAAI">
+                        <div class="about-value">
+                            <strong>01</strong>
+                            <span data-ar="تصميم عصري" data-en="Modern design">تصميم عصري</span>
+                        </div>
+                        <div class="about-value">
+                            <strong>02</strong>
+                            <span data-ar="راحة يومية" data-en="Daily comfort">راحة يومية</span>
+                        </div>
+                        <div class="about-value">
+                            <strong>03</strong>
+                            <span data-ar="تفاصيل مدروسة" data-en="Thoughtful details">تفاصيل مدروسة</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-video">
+                    <div class="about-video-frame">
+                        <video autoplay muted loop playsinline>
+                            <source src="image/about video.mp4" type="video/mp4">
+                        </video>
+                        <span class="about-video-shine" aria-hidden="true"></span>
+                    </div>
+                    <span class="about-video-label" data-ar="حضور أنيق. كل يوم." data-en="Elegant presence. Every day.">حضور أنيق. كل يوم.</span>
+                </div>
+            </div>
+        </section>
+        <!-- ! Order Now Section -->
+        <section class="order-now-section" id="order-now" aria-labelledby="order-now-title">
+            <div class="order-now-inner">
+                <div class="order-now-copy">
+                    <span class="order-now-kicker" data-ar="الخطوة التالية تبدأ هنا" data-en="THE NEXT STEP STARTS HERE">THE NEXT STEP STARTS HERE</span>
+                    <h2 id="order-now-title"><span data-ar="هل وجدت الزي المثالي لك؟" data-en="READY TO FIND YOUR PERFECT FIT?">READY TO FIND YOUR PERFECT FIT?</span></h2>
+                    <p class="order-now-description" data-ar="اكتشف أزياء طبية صُممت لراحتك وثقتك وأدائك كل يوم." data-en="Discover medical wear designed for your comfort, confidence, and everyday performance.">Discover medical wear designed for your comfort, confidence, and everyday performance.</p>
+                    <p class="order-now-signature" data-ar="أسلوبك. راحتك. ZAAI." data-en="YOUR STYLE. YOUR COMFORT. YOUR ZAAI.">YOUR STYLE. YOUR COMFORT. YOUR ZAAI.</p>
+                    <a class="order-now-button" href="#products">
+                        <span data-ar="اطلب الآن" data-en="ORDER NOW">ORDER NOW</span>
+                        <span class="order-now-arrow" aria-hidden="true">↗</span>
+                    </a>
+                </div>
+                <div class="order-now-media">
+                    <div class="order-now-frame">
+                        <video class="order-now-video" autoplay loop playsinline preload="none" poster="image/product1.jpg" controls aria-label="ZAAI medical wear collection video">
+                            <source data-src="image/order-now.mp4" type="video/mp4">
+                        </video>
+                        <button class="order-now-audio" type="button" aria-label="تشغيل الصوت">
+                            <span class="order-now-audio-icon" aria-hidden="true">♫</span>
+                            <span id="order-now-audio-label">الصوت مغلق</span>
+                        </button>
+                    </div>
+                    <span class="order-now-media-note" aria-hidden="true">ZAAI — WEAR COMFORT. WORK BETTER.</span>
+                </div>
+            </div>
+        </section>
+        <!-- ! Services Section -->
+        <section class="services-section" id="services" aria-labelledby="services-title">
+            <div class="services-shell">
+                <div class="services-intro services-reveal">
+                    <span class="services-kicker" data-ar="خدمات ZAAI" data-en="THE ZAAI SERVICES">THE ZAAI SERVICES</span>
+                    <h2 id="services-title" data-ar="أكثر من مجرد أزياء طبية." data-en="MORE THAN JUST MEDICAL WEAR.">MORE THAN JUST MEDICAL WEAR.</h2>
+                    <p data-ar="نقدم أكثر من الأزياء الطبية. نعمل على جعل تجربة التسوق أسهل وأكثر راحة وخصوصية." data-en="We go beyond providing medical wear. We're here to make your shopping experience easier, more comfortable, and more personalized.">We go beyond providing medical wear. We're here to make your shopping experience easier, more comfortable, and more personalized.</p>
+                </div>
+                <div class="size-guide-layout" id="size-guide">
+                    <div class="size-guide-copy services-reveal">
+                        <span class="size-guide-index">01 / SIZE GUIDE</span>
+                        <h3 id="size-guide-title" data-ar="اعثر على المقاس المثالي لك." data-en="FIND YOUR PERFECT FIT.">FIND YOUR PERFECT FIT.</h3>
+                        <p data-ar="المقاس المثالي يصنع فرقاً كبيراً. استكشف دليل المقاسات واختر ما يناسب أسلوبك وراحتك." data-en="The perfect fit makes all the difference. Explore our size guides and find the right fit for your style and comfort.">The perfect fit makes all the difference. Explore our size guides and find the right fit for your style and comfort.</p>
+                        <div class="size-guide-tabs" role="group" aria-labelledby="size-guide-title">
+                            <button class="size-guide-tab is-active" type="button" data-size-guide="men" aria-pressed="true">
+                                <i class="fa-solid fa-mars" aria-hidden="true"></i>
+                                <span data-ar="دليل مقاسات الرجال" data-en="MEN'S SIZE GUIDE">MEN'S SIZE GUIDE</span>
+                            </button>
+                            <button class="size-guide-tab" type="button" data-size-guide="women" aria-pressed="false">
+                                <i class="fa-solid fa-venus" aria-hidden="true"></i>
+                                <span data-ar="دليل مقاسات النساء" data-en="WOMEN'S SIZE GUIDE">WOMEN'S SIZE GUIDE</span>
+                            </button>
+                        </div>
+                        <p class="size-guide-note" data-ar="جميع القياسات بالسنتيمتر (CM)، والقياسات مأخوذة والقطعة مفرودة." data-en="All measurements are in centimeters (CM). Measurements are taken with the garment laid flat.">All measurements are in centimeters (CM). Measurements are taken with the garment laid flat.</p>
+                    </div>
+                    <div class="size-guide-panel services-reveal">
+                        <div class="size-guide-frame">
+                            <img
+                                class="size-guide-image"
+                                id="size-guide-image"
+                                src="image/size-man.jpeg"
+                                data-men-src="image/size-man.jpeg"
+                                data-women-src="image/size-waman.jpeg"
+                                data-alt-ar="دليل مقاسات الملابس الطبية من ZAAI للرجال"
+                                data-alt-en="ZAAI men's medical wear size guide"
+                                alt="ZAAI men's medical wear size guide"
+                                width="1066"
+                                height="1008"
+                                loading="lazy"
+                                decoding="async">
+                        </div>
+                        <p class="size-guide-status" id="size-guide-status" role="status" aria-live="polite"></p>
+                        <div class="size-guide-actions">
+                            <button class="size-guide-action" id="size-guide-zoom" type="button" aria-labelledby="size-guide-zoom-label">
+                                <i class="fa-solid fa-expand" aria-hidden="true"></i>
+                                <span id="size-guide-zoom-label" data-ar="تكبير الدليل" data-en="ZOOM GUIDE">ZOOM GUIDE</span>
+                            </button>
+                            <a class="size-guide-action" id="size-guide-download" href="image/size-man.jpeg" download="zaai-mens-size-guide.jpeg">
+                                <i class="fa-solid fa-download" aria-hidden="true"></i>
+                                <span data-ar="تنزيل دليل المقاسات" data-en="DOWNLOAD SIZE GUIDE">DOWNLOAD SIZE GUIDE</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="services-editorial">
+                    <div class="services-editorial-heading services-reveal">
+                        <span class="services-kicker" data-ar="مصممة حول تجربتك" data-en="DESIGNED AROUND YOUR EXPERIENCE.">DESIGNED AROUND YOUR EXPERIENCE.</span>
+                        <p data-ar="تفاصيل صغيرة، وتجربة أسهل من البداية حتى الطلب." data-en="Thoughtful details make every step, from finding your fit to placing an order, feel easier.">Thoughtful details make every step, from finding your fit to placing an order, feel easier.</p>
+                    </div>
+                    <ol class="services-list">
+                        <li class="service-item services-reveal">
+                            <a class="service-link" href="#size-guide">
+                                <span class="service-number">01</span>
+                                <span class="service-icon" aria-hidden="true"><i class="fa-solid fa-ruler-combined"></i></span>
+                                <span class="service-content">
+                                    <span class="service-title" data-ar="مساعدة في اختيار المقاس" data-en="SIZE ASSISTANCE">SIZE ASSISTANCE</span>
+                                    <span class="service-description" data-ar="نساعدك في الوصول للمقاس المناسب عبر دليل المقاسات والمساعدة الشخصية." data-en="Helping you find the right fit with our size guide and personal assistance.">Helping you find the right fit with our size guide and personal assistance.</span>
+                                    <span class="service-action">
+                                        <span data-ar="استكشف دليل المقاسات" data-en="EXPLORE SIZE GUIDE">EXPLORE SIZE GUIDE</span>
+                                        <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                                    </span>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="service-item services-reveal">
+                            <a class="service-link" href="#product-lab">
+                                <span class="service-number">02</span>
+                                <span class="service-icon" aria-hidden="true"><i class="fa-solid fa-shirt"></i></span>
+                                <span class="service-content">
+                                    <span class="service-title" data-ar="تفاصيل المنتجات" data-en="PRODUCT DETAILS">PRODUCT DETAILS</span>
+                                    <span class="service-description" data-ar="اكتشف تفاصيل كل منتج، من جودة القماش والخياطة إلى الجيوب والتصميم." data-en="Explore every detail, from fabric quality and stitching to pockets and design.">Explore every detail, from fabric quality and stitching to pockets and design.</span>
+                                    <span class="service-action">
+                                        <span data-ar="استكشف تفاصيل المنتجات" data-en="EXPLORE PRODUCT DETAILS">EXPLORE PRODUCT DETAILS</span>
+                                        <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                                    </span>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="service-item services-reveal">
+                            <a class="service-link" href="https://wa.me/201022591767" target="_blank" rel="noopener noreferrer">
+                                <span class="service-number">03</span>
+                                <span class="service-icon" aria-hidden="true"><i class="fa-regular fa-comment-dots"></i></span>
+                                <span class="service-content">
+                                    <span class="service-title" data-ar="مساعدة شخصية" data-en="PERSONAL ASSISTANCE">PERSONAL ASSISTANCE</span>
+                                    <span class="service-description" data-ar="لديك سؤال؟ تواصل مباشرة مع فريق ZAAI عبر واتساب." data-en="Have a question? Chat directly with the ZAAI team on WhatsApp.">Have a question? Chat directly with the ZAAI team on WhatsApp.</span>
+                                    <span class="service-action">
+                                        <span data-ar="تواصل عبر واتساب" data-en="CHAT ON WHATSAPP">CHAT ON WHATSAPP</span>
+                                        <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                                    </span>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="service-item services-reveal">
+                            <a class="service-link" href="#products">
+                                <span class="service-number">04</span>
+                                <span class="service-icon" aria-hidden="true"><i class="fa-solid fa-bag-shopping"></i></span>
+                                <span class="service-content">
+                                    <span class="service-title" data-ar="طلب سهل" data-en="EASY ORDERING">EASY ORDERING</span>
+                                    <span class="service-description" data-ar="أزياؤك الطبية المفضلة على بُعد خطوات قليلة، مع تجربة طلب بسيطة ومريحة." data-en="Your favorite medical wear is just a few steps away. Enjoy a simple and convenient ordering experience.">Your favorite medical wear is just a few steps away. Enjoy a simple and convenient ordering experience.</span>
+                                    <span class="service-action">
+                                        <span data-ar="تصفح المنتجات" data-en="EXPLORE PRODUCTS">EXPLORE PRODUCTS</span>
+                                        <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                                    </span>
+                                </span>
+                            </a>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+        <dialog class="size-guide-lightbox" id="size-guide-lightbox" aria-labelledby="size-guide-lightbox-title">
+            <button class="size-guide-lightbox-close" id="size-guide-lightbox-close" type="button" aria-labelledby="size-guide-close-label">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                <span class="size-guide-visually-hidden" id="size-guide-close-label" data-ar="إغلاق دليل المقاسات" data-en="Close size guide">Close size guide</span>
+            </button>
+            <h2 class="size-guide-visually-hidden" id="size-guide-lightbox-title" data-ar="دليل المقاسات" data-en="Size guide">Size guide</h2>
+            <div class="size-guide-lightbox-stage">
+                <img class="size-guide-lightbox-image" id="size-guide-lightbox-image" alt="" width="1066" height="1008">
+            </div>
+            <p class="size-guide-lightbox-hint" data-ar="استخدم إصبعين للتكبير والتصغير." data-en="Pinch with two fingers to zoom in or out.">Pinch with two fingers to zoom in or out.</p>
+        </dialog>
+        <!-- ! Products section -->
+        <section class="style-discovery" id="products" aria-labelledby="style-discovery-title">
+            <div class="style-discovery-shell">
+                <div class="style-discovery-heading">
+                    <span class="style-discovery-overline">ZAAI COLLECTION</span>
+                    <h2 id="style-discovery-title">
+                        <span data-ar="اكتشف أسلوبك" data-en="DISCOVER YOUR STYLE">اكتشف أسلوبك</span>
+                        <b aria-hidden="true">|</b>
+                        <em>DISCOVER YOUR STYLE</em>
+                    </h2>
+                    <p data-ar="اكتشف مجموعتنا واستمتع بتجربة مشاهدة كل التفاصيل." data-en="Discover our collection and enjoy a closer look at every detail.">اكتشف مجموعتنا واستمتع بتجربة مشاهدة كل التفاصيل.</p>
+                </div>
+                <div class="style-discovery-tabs" role="tablist" aria-label="فئات المجموعة">
+                    <button class="style-discovery-tab is-active" id="men-tab" type="button" role="tab" aria-selected="true" aria-controls="men-panel" data-discovery-tab="men">
+                        <span data-ar="رجالي" data-en="MEN">رجالي</span>
+                        <small>MEN</small>
+                    </button>
+                    <button class="style-discovery-tab" id="women-tab" type="button" role="tab" aria-selected="false" aria-controls="women-panel" data-discovery-tab="women">
+                        <span data-ar="نسائي" data-en="WOMEN">نسائي</span>
+                        <small>WOMEN</small>
+                    </button>
+                </div>
+                <div class="style-discovery-panel is-active" id="men-panel" role="tabpanel" aria-labelledby="men-tab" data-discovery-panel="men">
+                    <div class="zaai-products-grid" id="men-products" aria-live="polite"></div>
+                    <article class="zaai-product-experience" aria-live="polite" hidden>
+                        <div class="zaai-viewer-column">
+                            <div class="zaai-viewer" id="zaai-viewer">
+                                <div class="zaai-viewer-topline">
+                                    <span class="zaai-rotation-badge"><i aria-hidden="true"></i><span data-ar="دوران 360 درجة" data-en="360° VIEW">دوران 360 درجة</span></span>
+                                    <span class="zaai-viewer-index">360° / ZAAI</span>
+                                </div>
+                                <div class="zaai-viewer-stage" id="zaai-viewer-stage" aria-label="اسحب لتدوير المنتج بزاوية 360 درجة">
+                                    <div class="zaai-loading" id="zaai-loading" role="status">
+                                        <span></span>
+                                        <small data-ar="جارٍ تحميل العرض" data-en="Loading view">جارٍ تحميل العرض</small>
+                                    </div>
+                                    <canvas class="zaai-product-model" id="zaai-360-image" width="720" height="900" tabindex="0" role="img" aria-label="مجسم ثلاثي الأبعاد لزي ZAAI الطبي"></canvas>
+                                    <span class="zaai-drag-hint" data-ar="اسحب لتدوير المنتج 360°" data-en="Drag to spin 360°" aria-hidden="true">اسحب لتدوير المنتج 360°</span>
+                                    <span class="zaai-surface-glow" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                            <div class="zaai-color-picker" id="zaai-color-picker" aria-label="اختر لون المنتج"></div>
+                        </div>
+                        <div class="zaai-product-details">
+                            <span class="zaai-product-kicker" data-ar="مجموعة ZAAI للرجال" data-en="ZAAI MEN'S COLLECTION">مجموعة ZAAI للرجال</span>
+                            <h3 id="zaai-product-name">ZAAI Scrub Set</h3>
+                            <p id="zaai-product-description" data-ar="طقم طبي بتصميم معاصر، مقطّع لراحة الحركة وأناقة الحضور طوال اليوم." data-en="A contemporary medical set designed for ease of movement and an elegant presence throughout the day.">طقم طبي بتصميم معاصر، مقطّع لراحة الحركة وأناقة الحضور طوال اليوم.</p>
+                            <div class="zaai-price-row">
+                                <strong id="zaai-product-price">800 ج.م</strong>
+                                <del>1,000 ج.م</del>
+                                <span data-ar="خصم 20%" data-en="20% OFF">خصم 20%</span>
+                            </div>
+                            <div class="zaai-option-block">
+                                <div class="zaai-option-heading">
+                                    <span data-ar="اللون" data-en="COLOR">اللون</span>
+                                    <strong id="zaai-selected-color">أزرق ملكي</strong>
+                                </div>
+                            </div>
+                            <div class="zaai-option-block">
+                                <div class="zaai-option-heading">
+                                    <span data-ar="المقاس" data-en="SIZE">المقاس</span>
+                                    <button type="button" class="zaai-size-guide-link" data-ar="دليل المقاسات" data-en="SIZE GUIDE">دليل المقاسات</button>
+                                </div>
+                                <div class="zaai-size-list" id="zaai-size-list" role="radiogroup" aria-label="اختر المقاس"></div>
+                            </div>
+                            <div class="zaai-product-actions">
+                                <button class="zaai-add-button" type="button">
+                                    <span data-ar="أضف إلى السلة" data-en="ADD TO BAG">أضف إلى السلة</span>
+                                    <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+                                </button>
+                                <button class="zaai-details-button" type="button" data-ar="عرض التفاصيل" data-en="VIEW DETAILS">عرض التفاصيل</button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                <div class="style-discovery-panel" id="women-panel" role="tabpanel" aria-labelledby="women-tab" data-discovery-panel="women" hidden>
+                    <div class="zaai-products-grid" id="women-products" aria-live="polite"></div>
+                    <div hidden>
+                    <div class="women-coming-mark" aria-hidden="true">Z</div>
+                    <span class="style-discovery-overline">ZAAI WOMEN</span>
+                    <h3 data-ar="شيء جميل قادم قريبًا." data-en="Something beautiful is coming soon.">شيء جميل قادم قريبًا.</h3>
+                    <p data-ar="ترقبي مجموعة ZAAI النسائية القادمة." data-en="Stay tuned for the upcoming ZAAI women's collection.">ترقبي مجموعة ZAAI النسائية القادمة.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <nav class="zaai-mobile-bottom-nav" aria-label="التنقل السريع">
+            <a class="zaai-mobile-nav-item is-active" href="#home" aria-label="الرئيسية">
+                <i class="fa-solid fa-house" aria-hidden="true"></i>
+                <span data-ar="الرئيسية" data-en="Home">الرئيسية</span>
+            </a>
+            <a class="zaai-mobile-nav-item" href="#products" aria-label="المنتجات">
+                <i class="fa-solid fa-shirt" aria-hidden="true"></i>
+                <span data-ar="المنتجات" data-en="Products">المنتجات</span>
+            </a>
+            <button class="zaai-mobile-nav-bag" id="zaai-mobile-nav-bag" type="button" aria-label="فتح السلة">
+                <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+                <strong id="zaai-mobile-bag-count">0</strong>
+            </button>
+            <a class="zaai-mobile-nav-item" href="#size-guide" aria-label="دليل المقاسات">
+                <i class="fa-solid fa-ruler-combined" aria-hidden="true"></i>
+                <span data-ar="المقاسات" data-en="Sizes">المقاسات</span>
+            </a>
+            <a class="zaai-mobile-nav-item" href="/admin/login" aria-label="الحساب">
+                <i class="fa-solid fa-user" aria-hidden="true"></i>
+                <span data-ar="حسابي" data-en="Account">حسابي</span>
+            </a>
+        </nav>
+        <div class="zaai-cart-overlay" id="zaai-cart-overlay" hidden></div>
+        <aside class="zaai-cart-drawer" id="zaai-cart-drawer" aria-labelledby="zaai-cart-title" aria-hidden="true">
+            <header class="zaai-cart-header">
+                <div>
+                    <span class="zaai-cart-kicker" data-ar="طلبك الخاص" data-en="YOUR ORDER">طلبك الخاص</span>
+                    <h2 id="zaai-cart-title" data-ar="سلة التسوق" data-en="Shopping bag">سلة التسوق</h2>
+                </div>
+                <button class="zaai-cart-close" id="zaai-cart-close" type="button" aria-label="إغلاق السلة">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+            </header>
+            <div class="zaai-cart-offers">
+                <strong data-ar="عروض ZAAI" data-en="ZAAI OFFERS">عروض ZAAI</strong>
+                <span data-ar="منتجان بـ 1,500 ج.م، أو اشترِ 5 واختر هدية مجانية." data-en="2 products for EGP 1,500, or buy 5 and choose a free gift.">منتجان بـ 1,500 ج.م، أو اشترِ 5 واختر هدية مجانية.</span>
+            </div>
+            <div class="zaai-cart-items" id="zaai-cart-items"></div>
+            <div class="zaai-cart-empty" id="zaai-cart-empty">
+                <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+                <h3 data-ar="السلة فارغة" data-en="Your bag is empty">السلة فارغة</h3>
+                <p data-ar="اختر مقاسك ولونك المفضل وأضفه إلى السلة." data-en="Choose your size and favorite color, then add it to your bag.">اختر مقاسك ولونك المفضل وأضفه إلى السلة.</p>
+            </div>
+            <footer class="zaai-cart-footer">
+                <div class="zaai-cart-total">
+                    <span data-ar="الإجمالي" data-en="Total">الإجمالي</span>
+                    <strong id="zaai-cart-total">0 ج.م</strong>
+                </div>
+                <button class="zaai-checkout-button" id="zaai-checkout-button" type="button" data-ar="إتمام الطلب" data-en="CHECKOUT">إتمام الطلب</button>
+            </footer>
+        </aside>
+        <div class="zaai-checkout-overlay" id="zaai-checkout-overlay" hidden>
+            <section class="zaai-checkout-modal" role="dialog" aria-modal="true" aria-labelledby="zaai-checkout-title">
+                <button class="zaai-checkout-close" id="zaai-checkout-close" type="button" aria-label="إغلاق">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+                <span class="zaai-cart-kicker" data-ar="الخطوة الأخيرة" data-en="FINAL STEP">الخطوة الأخيرة</span>
+                <h2 id="zaai-checkout-title" data-ar="أرسل طلبك" data-en="Place your order">أرسل طلبك</h2>
+                <form id="zaai-checkout-form">
+                    <label>
+                        <span data-ar="الاسم" data-en="Name">الاسم</span>
+                        <input id="zaai-customer-name" name="name" type="text" autocomplete="name" required>
+                    </label>
+                    <label>
+                        <span data-ar="رقم الهاتف" data-en="Phone number">رقم الهاتف</span>
+                        <input id="zaai-customer-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required>
+                    </label>
+                    <label>
+                        <span data-ar="المحافظة" data-en="Governorate">المحافظة</span>
+                        <select id="zaai-delivery-governorate" name="governorate" required>
+                            <option value="" data-ar="اختر المحافظة" data-en="Select governorate">اختر المحافظة</option>
+                            <option value="Dakahlia" data-ar="الدقهلية" data-en="Dakahlia">الدقهلية</option>
+                            <option value="Gharbia" data-ar="الغربية" data-en="Gharbia">الغربية</option>
+                            <option value="Sharqia" data-ar="الشرقية" data-en="Sharqia">الشرقية</option>
+                            <option value="Cairo" data-ar="القاهرة" data-en="Cairo">القاهرة</option>
+                            <option value="Giza" data-ar="الجيزة" data-en="Giza">الجيزة</option>
+                            <option value="Alexandria" data-ar="الإسكندرية" data-en="Alexandria">الإسكندرية</option>
+                            <option value="Beheira" data-ar="البحيرة" data-en="Beheira">البحيرة</option>
+                            <option value="Damietta" data-ar="دمياط" data-en="Damietta">دمياط</option>
+                            <option value="Kafr El Sheikh" data-ar="كفر الشيخ" data-en="Kafr El Sheikh">كفر الشيخ</option>
+                            <option value="Monufia" data-ar="المنوفية" data-en="Monufia">المنوفية</option>
+                            <option value="Qalyubia" data-ar="القليوبية" data-en="Qalyubia">القليوبية</option>
+                            <option value="Port Said" data-ar="بورسعيد" data-en="Port Said">بورسعيد</option>
+                            <option value="Ismailia" data-ar="الإسماعيلية" data-en="Ismailia">الإسماعيلية</option>
+                            <option value="Suez" data-ar="السويس" data-en="Suez">السويس</option>
+                            <option value="Faiyum" data-ar="الفيوم" data-en="Faiyum">الفيوم</option>
+                            <option value="Beni Suef" data-ar="بني سويف" data-en="Beni Suef">بني سويف</option>
+                            <option value="Minya" data-ar="المنيا" data-en="Minya">المنيا</option>
+                            <option value="Asyut" data-ar="أسيوط" data-en="Asyut">أسيوط</option>
+                            <option value="Sohag" data-ar="سوهاج" data-en="Sohag">سوهاج</option>
+                            <option value="Qena" data-ar="قنا" data-en="Qena">قنا</option>
+                            <option value="Luxor" data-ar="الأقصر" data-en="Luxor">الأقصر</option>
+                            <option value="Aswan" data-ar="أسوان" data-en="Aswan">أسوان</option>
+                            <option value="Red Sea" data-ar="البحر الأحمر" data-en="Red Sea">البحر الأحمر</option>
+                            <option value="New Valley" data-ar="الوادي الجديد" data-en="New Valley">الوادي الجديد</option>
+                            <option value="Matrouh" data-ar="مطروح" data-en="Matrouh">مطروح</option>
+                            <option value="North Sinai" data-ar="شمال سيناء" data-en="North Sinai">شمال سيناء</option>
+                            <option value="South Sinai" data-ar="جنوب سيناء" data-en="South Sinai">جنوب سيناء</option>
+                        </select>
+                    </label>
+                    <label>
+                        <span data-ar="العنوان بالتفصيل" data-en="Full address">العنوان بالتفصيل</span>
+                        <input id="zaai-customer-address" name="address" type="text" autocomplete="street-address" required>
+                    </label>
+                    <div class="zaai-checkout-summary" id="zaai-checkout-summary"></div>
+                    <button class="zaai-submit-order" type="submit" data-ar="تأكيد وإرسال الطلب" data-en="CONFIRM & SEND ORDER">تأكيد وإرسال الطلب</button>
+                </form>
+            </section>
+        </div>
+        <div class="zaai-order-toast" id="zaai-order-toast" role="status" aria-live="polite">
+            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+            <div>
+                <strong data-ar="تم إرسال طلبك بنجاح" data-en="Your order was sent successfully">تم إرسال طلبك بنجاح</strong>
+                <span data-ar="هنرد عليك خلال 24 ساعة" data-en="We will contact you within 24 hours">هنرد عليك خلال 24 ساعة</span>
+            </div>
+        </div>
+        <!-- ! content section -->
+        <section class="zaai-contact" id="contact" aria-labelledby="zaai-contact-title">
+            <div class="zaai-contact-shell">
+                <div class="zaai-contact-layout">
+                    <div class="zaai-contact-heading">
+                        <span class="zaai-contact-kicker" data-ar="تواصل معنا" data-en="GET IN TOUCH">GET IN TOUCH</span>
+                        <h2 id="zaai-contact-title" data-ar="نحن هنا لمساعدتك." data-en="We are here to help.">نحن هنا لمساعدتك.</h2>
+                        <p data-ar="اسأل عن المقاس أو اللون أو تفاصيل الطلب، وتواصل مع فريق ZAAI مباشرة." data-en="Ask about sizing, colors, or order details and connect with the ZAAI team directly.">اسأل عن المقاس أو اللون أو تفاصيل الطلب، وتواصل مع فريق ZAAI مباشرة.</p>
+                        <a class="zaai-contact-cta" href="https://wa.me/201022591767" target="_blank" rel="noopener noreferrer">
+                            <span data-ar="ابدأ المحادثة" data-en="START A CHAT">ابدأ المحادثة</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                    <div class="zaai-contact-gallery" aria-label="صور ZAAI">
+                        <figure class="zaai-contact-photo zaai-contact-photo-main">
+                            <img src="image/contact/contact 2.jpeg" alt="فريق ZAAI يرتدي الزي الطبي" data-alt-ar="فريق ZAAI يرتدي الزي الطبي" data-alt-en="The ZAAI team wearing medical scrubs">
+                        </figure>
+                        <figure class="zaai-contact-photo zaai-contact-photo-top">
+                            <img src="image/contact/contact 3.jpeg" alt="فرد من فريق ZAAI" data-alt-ar="فرد من فريق ZAAI" data-alt-en="A member of the ZAAI team">
+                        </figure>
+                        <figure class="zaai-contact-photo zaai-contact-photo-bottom">
+                            <img src="image/contact/contact.jpeg" alt="فرد من فريق ZAAI في مكان العمل" data-alt-ar="فرد من فريق ZAAI في مكان العمل" data-alt-en="A ZAAI team member at work">
+                        </figure>
+                        <span class="zaai-contact-gallery-mark" aria-hidden="true">ZAAI</span>
+                    </div>
+                </div>
+                <div class="zaai-contact-links">
+                    <a class="zaai-contact-link zaai-contact-whatsapp" href="https://wa.me/201022591767" target="_blank" rel="noopener noreferrer">
+                        <span class="zaai-contact-icon"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></span>
+                        <span class="zaai-contact-content">
+                            <small data-ar="واتساب" data-en="WHATSAPP">واتساب</small>
+                            <strong dir="ltr">+20 102 259 1767</strong>
+                            <span data-ar="تواصل مباشر مع فريق ZAAI" data-en="Chat directly with ZAAI">تواصل مباشر مع فريق ZAAI</span>
+                        </span>
+                        <i class="fa-solid fa-arrow-up-right-from-square zaai-contact-arrow" aria-hidden="true"></i>
+                    </a>
+                    <a class="zaai-contact-link" href="https://www.facebook.com/search/top?q=ZAAI%20STORE" target="_blank" rel="noopener noreferrer">
+                        <span class="zaai-contact-icon"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></span>
+                        <span class="zaai-contact-content">
+                            <small data-ar="فيسبوك" data-en="FACEBOOK">فيسبوك</small>
+                            <strong>ZAAI STORE</strong>
+                            <span data-ar="تابعنا وتعرّف على الجديد" data-en="Follow ZAAI and discover what is new">تابعنا وتعرّف على الجديد</span>
+                        </span>
+                        <i class="fa-solid fa-arrow-up-right-from-square zaai-contact-arrow" aria-hidden="true"></i>
+                    </a>
+                    <a class="zaai-contact-link" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">
+                        <span class="zaai-contact-icon"><i class="fa-brands fa-instagram" aria-hidden="true"></i></span>
+                        <span class="zaai-contact-content">
+                            <small data-ar="إنستجرام" data-en="INSTAGRAM">إنستجرام</small>
+                            <strong>ZAAI STORE</strong>
+                            <span data-ar="شاهد مجموعتنا اليومية" data-en="Discover our latest collection">شاهد مجموعتنا اليومية</span>
+                        </span>
+                        <i class="fa-solid fa-arrow-up-right-from-square zaai-contact-arrow" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+        <footer class="zaai-footer">
+            <div class="zaai-footer-main">
+                <div class="zaai-footer-brand">
+                    <a class="zaai-footer-logo" href="#home" aria-label="ZAAI STORE">
+                        <img src="image/logo.jpg" alt="" aria-hidden="true">
+                        <span>ZAAI STORE</span>
+                    </a>
+                    <p data-ar="ملابس طبية عصرية صُممت لتجمع بين الراحة والأناقة طوال يوم العمل." data-en="Modern medical wear designed to balance comfort and style throughout your workday.">ملابس طبية عصرية صُممت لتجمع بين الراحة والأناقة طوال يوم العمل.</p>
+                    <div class="zaai-footer-social" aria-label="روابط التواصل الاجتماعي">
+                        <a href="https://www.facebook.com/zaaimedicalwear" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
+                        <a href="https://www.instagram.com/zaaimedicalwear" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+                        <a href="https://wa.me/201022591767" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+                <nav class="zaai-footer-column" aria-label="التصفح">
+                    <h3 data-ar="استكشف" data-en="EXPLORE">استكشف</h3>
+                    <a href="#home" data-ar="الرئيسية" data-en="Home">الرئيسية</a>
+                    <a href="#about" data-ar="من نحن" data-en="About">من نحن</a>
+                    <a href="#product-lab" data-ar="تفاصيل المنتج" data-en="Product details">تفاصيل المنتج</a>
+                    <a href="#products" data-ar="المنتجات" data-en="Products">المنتجات</a>
+                </nav>
+                <nav class="zaai-footer-column" aria-label="خدمة العملاء">
+                    <h3 data-ar="المساعدة" data-en="HELP">المساعدة</h3>
+                    <a href="#size-guide" data-ar="دليل المقاسات" data-en="Size guide">دليل المقاسات</a>
+                    <a href="#contact" data-ar="تواصل معنا" data-en="Contact us">تواصل معنا</a>
+                    <a href="https://wa.me/201022591767" target="_blank" rel="noopener noreferrer" data-ar="طلب عبر واتساب" data-en="Order on WhatsApp">طلب عبر واتساب</a>
+                </nav>
+                <div class="zaai-footer-column zaai-footer-contact">
+                    <h3 data-ar="تواصل" data-en="CONTACT">تواصل</h3>
+                    <a href="tel:+201022591767" dir="ltr">+20 102 259 1767</a>
+                    <a href="https://wa.me/201022591767" target="_blank" rel="noopener noreferrer" data-ar="واتساب ZAAI" data-en="ZAAI on WhatsApp">واتساب ZAAI</a>
+                    <span data-ar="المنصورة، مصر" data-en="Mansoura, Egypt">المنصورة، مصر</span>
+                </div>
+            </div>
+            <div class="zaai-footer-bottom">
+                <p>&copy; <span id="zaai-footer-year">2026</span> ZAAI STORE. <span data-ar="جميع الحقوق محفوظة." data-en="All rights reserved.">جميع الحقوق محفوظة.</span></p>
+                <div>
+                    <a href="#home" data-ar="الخصوصية" data-en="Privacy">الخصوصية</a>
+                    <a href="#home" data-ar="الشروط" data-en="Terms">الشروط</a>
+                </div>
+            </div>
+        </footer>
+        
+    </body>
+</html>

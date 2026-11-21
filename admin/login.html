@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ZAAI — Owner Access</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin/admin.css">
+  <link rel="icon" href="/image/logo.jpg" type="image/png">
+</head>
+<body class="login-page">
+  <main class="login-shell">
+    <section class="login-brand" aria-label="ZAAI">
+      <a href="/" class="login-logo"><img src="/image/logo.jpg" alt="ZAAI STORE"><span>ZAAI STORE</span></a>
+      <div>
+        <span>OWNER CONTROL CENTER</span>
+        <h1>نظام إدارة ZAAI</h1>
+        <p>وصول محمي للمالك فقط لإدارة المتجر والمحتوى والطلبات.</p>
+      </div>
+      <small>WEAR COMFORT. WORK BETTER.</small>
+    </section>
+    <section class="login-panel">
+      <div class="login-panel-head">
+        <span>OWNER ACCESS</span>
+        <a href="/" aria-label="العودة إلى المتجر">← المتجر</a>
+      </div>
+      <form id="owner-login-form" class="login-form">
+        <h2>تسجيل دخول المالك</h2>
+        <p>أدخل بيانات حساب المالك لإدارة ZAAI.</p>
+        <div id="login-error" class="admin-alert error" hidden></div>
+        <label>
+          <span>البريد الإلكتروني</span>
+          <input id="login-email" name="email" type="email" autocomplete="username" required placeholder="owner@zaai.store">
+        </label>
+        <label>
+          <span>كلمة المرور</span>
+          <div class="password-field">
+            <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+            <button id="toggle-password" type="button" aria-label="إظهار كلمة المرور">إظهار</button>
+          </div>
+        </label>
+        <button class="login-submit" id="login-submit" type="submit">
+          <span>تسجيل الدخول إلى لوحة التحكم</span>
+          <b aria-hidden="true">→</b>
+        </button>
+      </form>
+    </section>
+  </main>
+  <script src="/admin/login.js"></script>
+</body>
+</html>

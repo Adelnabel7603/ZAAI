@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ZAAI — Owner Control Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/CSS/all.min.css">
+  <link rel="stylesheet" href="/admin/admin.css?v=20261121-product-image">
+  <link rel="icon" href="/image/logo.jpg" type="image/png">
+</head>
+<body class="admin-app">
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <img src="/image/logo.jpg" alt="">
+        <div><strong>ZAAI STORE</strong><small>OWNER CONTROL</small></div>
+      </div>
+      <nav class="admin-nav" aria-label="إدارة ZAAI">
+        <button class="active" type="button" data-section="overview"><i class="fa-solid fa-chart-pie"></i><span>الرئيسية</span></button>
+        <button type="button" data-section="products"><i class="fa-solid fa-shirt"></i><span>المنتجات</span></button>
+        <button type="button" data-section="orders"><i class="fa-solid fa-bag-shopping"></i><span>الطلبات</span></button>
+        <button type="button" data-section="customers"><i class="fa-solid fa-users"></i><span>العملاء</span></button>
+        <button type="button" data-section="media"><i class="fa-solid fa-photo-film"></i><span>الميديا</span></button>
+        <button type="button" data-section="sections"><i class="fa-solid fa-layer-group"></i><span>السكشنات</span></button>
+        <button type="button" data-section="content"><i class="fa-solid fa-sitemap"></i><span>المحتوى</span></button>
+        <button type="button" data-section="settings"><i class="fa-solid fa-gears"></i><span>الإعدادات</span></button>
+      </nav>
+      <div class="admin-sidebar-bottom">
+        <a href="/" target="_blank" rel="noopener"><i class="fa-solid fa-up-right-from-square"></i><span>فتح المتجر</span></a>
+        <button id="admin-theme" type="button"><i class="fa-solid fa-circle-half-stroke"></i><span>تغيير المظهر</span></button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div class="admin-mobile-title">
+          <a class="admin-store-back" href="/" aria-label="الرجوع للمتجر"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i><span>الرجوع للمتجر</span></a>
+          <h1 id="admin-page-title">لوحة التحكم</h1>
+        </div>
+        <div class="admin-topbar-actions">
+          <button class="admin-button admin-logout-button" id="admin-logout" type="button" aria-label="تسجيل الخروج" title="تسجيل الخروج"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><span>خروج</span></button>
+          <button class="admin-icon-button" id="top-theme" type="button" aria-label="تبديل المظهر"><i class="fa-solid fa-moon"></i></button>
+          <button class="admin-icon-button" type="button" aria-label="اللغة"><i class="fa-solid fa-globe"></i></button>
+        </div>
+      </header>
+
+      <div class="admin-content">
+        <section class="admin-section active" id="section-overview">
+          <div class="admin-stats" id="admin-stats"></div>
+          <div class="admin-grid">
+            <div class="admin-card">
+              <div class="admin-card-head"><h2>آخر التعديلات</h2><button class="admin-button" type="button" data-jump="products">عرض الكل</button></div>
+              <div class="admin-list" id="admin-recent"></div>
+            </div>
+            <div class="admin-card">
+              <div class="admin-card-head"><h2>اختصارات سريعة</h2></div>
+              <div class="admin-list">
+                <button class="admin-button primary" type="button" id="quick-add-product"><i class="fa-solid fa-plus"></i> إضافة منتج</button>
+                <button class="admin-button" type="button" data-jump="orders"><i class="fa-solid fa-bag-shopping"></i> مراجعة الطلبات</button>
+                <button class="admin-button" type="button" data-jump="sections"><i class="fa-solid fa-layer-group"></i> تعديل السكشنات</button>
+                <button class="admin-button" type="button" data-jump="settings"><i class="fa-solid fa-gears"></i> إعدادات الموقع</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-section" id="section-products">
+          <div class="admin-toolbar">
+            <input class="admin-search" id="product-search" type="search" placeholder="البحث عن منتج">
+            <div class="admin-toolbar-actions">
+              <select class="admin-search" id="product-status" style="max-width:150px" aria-label="حالة المنتج">
+                <option value="">كل الحالات</option><option value="published">منشور</option><option value="draft">مسودة</option>
+              </select>
+              <button class="admin-button primary" id="add-product" type="button"><i class="fa-solid fa-plus"></i> منتج جديد</button>
+            </div>
+          </div>
+          <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>المنتج</th><th>القسم</th><th>السعر</th><th>المخزون</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody id="products-table"></tbody></table></div>
+        </section>
+
+        <section class="admin-section" id="section-orders">
+          <div class="admin-toolbar"><input class="admin-search" id="order-search" type="search" placeholder="البحث برقم الطلب أو اسم العميل أو الهاتف"></div>
+          <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>رقم الطلب</th><th>العميل</th><th>الهاتف</th><th>الإجمالي</th><th>التاريخ</th><th>الحالة</th><th></th></tr></thead><tbody id="orders-table"></tbody></table></div>
+        </section>
+
+        <section class="admin-section" id="section-customers">
+          <div class="admin-toolbar"><input class="admin-search" id="customer-search" type="search" placeholder="البحث عن عميل"></div>
+          <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>العميل</th><th>الهاتف</th><th>المحافظة</th><th>الطلبات</th><th>آخر تحديث</th></tr></thead><tbody id="customers-table"></tbody></table></div>
+        </section>
+
+        <section class="admin-section" id="section-media">
+          <div class="admin-toolbar">
+            <input class="admin-search" id="media-search" type="search" placeholder="البحث في المكتبة">
+            <label class="admin-button primary" for="media-upload"><i class="fa-solid fa-upload"></i> رفع ملف</label>
+            <input id="media-upload" type="file" accept="image/*,video/*" hidden>
+          </div>
+          <div class="media-grid" id="media-grid"></div>
+        </section>
+
+        <section class="admin-section" id="section-sections">
+          <div class="admin-toolbar">
+            <div><strong>ترتيب السكشنات المنشورة</strong></div>
+            <button class="admin-button primary" id="add-section" type="button"><i class="fa-solid fa-plus"></i> سكشن جديد</button>
+          </div>
+          <div id="sections-list"></div>
+        </section>
+
+        <section class="admin-section" id="section-content">
+          <div class="admin-grid">
+            <div class="admin-card">
+              <div class="admin-card-head"><h2>إدارة محتوى الموقع</h2></div>
+              <p style="color:var(--admin-muted);line-height:1.9;font-size:.82rem">استخدم قسم السكشنات لتعديل النصوص والصور والفيديوهات وترتيب الظهور. تم ربط السكشنات بقاعدة البيانات وواجهة المتجر.</p>
+            </div>
+            <div class="admin-card">
+              <div class="admin-card-head"><h2>روابط مباشرة</h2></div>
+              <div class="admin-list">
+                <button class="admin-button" type="button" data-jump="sections">الـ Header والـ Hero</button>
+                <button class="admin-button" type="button" data-jump="sections">About وServices</button>
+                <button class="admin-button" type="button" data-jump="sections">Collections وFooter</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-section" id="section-settings">
+          <form id="settings-form" class="admin-card">
+            <div class="admin-card-head"><h2>إعدادات الموقع العامة</h2></div>
+            <div class="admin-form-grid" id="settings-fields"></div>
+            <div class="admin-modal-footer" style="margin:18px -18px -18px">
+              <button class="admin-button" id="change-owner-password" type="button">تغيير كلمة المرور</button>
+              <button class="admin-button primary" type="submit">حفظ الإعدادات</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <dialog class="admin-modal" id="product-modal">
+    <form id="product-form">
+      <div class="admin-modal-header"><h2 id="product-modal-title">منتج جديد</h2><button class="admin-icon-button" type="button" data-close="product-modal">×</button></div>
+      <div class="admin-modal-body">
+        <input type="hidden" id="product-id">
+        <div class="admin-form-grid">
+          <label class="admin-field"><span>اسم المنتج</span><input id="product-name" required></label>
+          <label class="admin-field"><span>القسم</span><select id="product-category"><option value="men">رجالي</option><option value="women">نسائي</option></select></label>
+          <label class="admin-field full"><span>الوصف</span><textarea id="product-description"></textarea></label>
+          <label class="admin-field"><span>السعر الأصلي</span><input id="product-original" type="number" min="0"></label>
+          <label class="admin-field"><span>السعر بعد الخصم</span><input id="product-sale" type="number" min="0"></label>
+          <label class="admin-field"><span>المخزون</span><input id="product-stock" type="number" min="0"></label>
+          <label class="admin-field"><span>ترتيب الظهور</span><input id="product-sort" type="number" min="0"></label>
+          <label class="admin-field"><span>المقاسات (مفصولة بفواصل)</span><input id="product-sizes" placeholder="XS, S, M, L, XL"></label>
+          <label class="admin-field full"><span>صور المنتج (روابط مفصولة بفواصل)</span><input id="product-images" placeholder="/uploads/file.jpg"></label>
+          <div class="admin-field full">
+            <span>الصورة العادية للمنتج</span>
+            <div class="product-360-upload">
+              <input id="product-image-upload" type="file" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
+              <button class="admin-button product-360-button" id="product-image-upload-button" type="button">
+                <i class="fa-regular fa-image" aria-hidden="true"></i>
+                <span>رفع صورة عادية</span>
+              </button>
+              <div class="product-360-preview product-image-preview" id="product-image-preview">
+                <i class="fa-regular fa-images" aria-hidden="true"></i>
+                <span>اختياري — ارفع صورة المنتج الرئيسية</span>
+              </div>
+              <small>الصورة العادية تظهر على بطاقة المنتج في المتجر؛ ويمكن إضافة روابط صور أخرى في الحقل أعلاه.</small>
+            </div>
+          </div>
+          <div class="admin-field full">
+            <span>عرض المنتج 360°</span>
+            <div class="product-360-upload">
+              <input id="product-360-upload" type="file" accept="image/webp,image/jpeg,image/png" hidden>
+              <button class="admin-button product-360-button" id="product-360-upload-button" type="button">
+                <i class="fa-solid fa-cube" aria-hidden="true"></i>
+                <span>رفع صورة دوران 360°</span>
+              </button>
+              <div class="product-360-preview" id="product-360-preview">
+                <i class="fa-regular fa-images" aria-hidden="true"></i>
+                <span>اختياري — ارفع صورة WebP أو JPG تحتوي إطارات الدوران</span>
+              </div>
+              <div class="product-360-settings">
+                <label class="admin-field"><span>الأعمدة</span><input id="product-360-columns" type="number" min="1" max="50" value="6"></label>
+                <label class="admin-field"><span>الصفوف</span><input id="product-360-rows" type="number" min="1" max="50" value="2"></label>
+                <label class="admin-field"><span>عدد الزوايا</span><input id="product-360-views" type="number" min="1" max="50" value="6"></label>
+              </div>
+              <small>الصورة تكون Sprite Sheet بإطارات متتابعة؛ ستُحفظ مع لون المنتج وتُعرض في العارض.</small>
+              <input id="product-360-url" type="hidden">
+              <input id="product-360-color-id" type="hidden">
+            </div>
+          </div>
+          <label class="admin-field"><span>الحالة</span><select id="product-status-form"><option value="draft">مسودة</option><option value="published">منشور</option></select></label>
+          <label class="admin-field"><span>Featured</span><select id="product-featured"><option value="0">لا</option><option value="1">نعم</option></select></label>
+        </div>
+      </div>
+      <div class="admin-modal-footer"><button class="admin-button" type="button" data-close="product-modal">إلغاء</button><button class="admin-button primary" type="submit">حفظ المنتج</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="admin-modal" id="section-modal">
+    <form id="section-form">
+      <div class="admin-modal-header"><h2 id="section-modal-title">سكشن جديد</h2><button class="admin-icon-button" type="button" data-close="section-modal">×</button></div>
+      <div class="admin-modal-body">
+        <input type="hidden" id="section-id">
+        <div class="admin-form-grid">
+          <label class="admin-field"><span>نوع / مفتاح السكشن</span><input id="section-key" placeholder="hero"></label>
+          <label class="admin-field"><span>ترتيب الظهور</span><input id="section-sort" type="number"></label>
+          <label class="admin-field"><span>العنوان عربي</span><input id="section-title-ar"></label>
+          <label class="admin-field"><span>العنوان English</span><input id="section-title-en"></label>
+          <label class="admin-field full"><span>المحتوى عربي</span><textarea id="section-content-ar"></textarea></label>
+          <label class="admin-field full"><span>المحتوى English</span><textarea id="section-content-en"></textarea></label>
+          <label class="admin-field"><span>الصورة / poster</span><input id="section-image"></label>
+          <label class="admin-field"><span>الفيديو</span><input id="section-video"></label>
+          <label class="admin-field"><span>نص الزر عربي</span><input id="section-button-ar"></label>
+          <label class="admin-field"><span>نص الزر English</span><input id="section-button-en"></label>
+          <label class="admin-field full"><span>وجهة الزر</span><input id="section-link"></label>
+          <label class="admin-field"><span>الحالة</span><select id="section-visible"><option value="1">ظاهر</option><option value="0">مخفي</option></select></label>
+        </div>
+      </div>
+      <div class="admin-modal-footer"><button class="admin-button" type="button" data-close="section-modal">إلغاء</button><button class="admin-button primary" type="submit">حفظ السكشن</button></div>
+    </form>
+  </dialog>
+
+  <div class="admin-toast" id="admin-toast" role="status"></div>
+  <script src="/admin/dashboard.js?v=20261121-product-image"></script>
+</body>
+</html>
