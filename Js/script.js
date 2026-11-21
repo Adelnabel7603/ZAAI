@@ -1055,7 +1055,9 @@ if ("IntersectionObserver" in window && window.matchMedia("(max-width: 760px)").
 
 document.querySelectorAll('a[href="/admin/login"]').forEach((link) => {
   const localHost = ["127.0.0.1", "localhost"].includes(window.location.hostname);
-  const adminUrl = localHost ? "http://127.0.0.1:5510/admin/login" : "/admin/login";
+  const adminUrl = localHost
+    ? "http://127.0.0.1:5510/admin/login"
+    : "https://zaai-production.up.railway.app/admin/login";
 
   link.setAttribute("href", adminUrl);
 });
