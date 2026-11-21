@@ -1062,6 +1062,18 @@ document.querySelectorAll('a[href="/admin/login"]').forEach((link) => {
   link.setAttribute("href", adminUrl);
 });
 
+document.querySelectorAll('a[href^="#"]').forEach((link) => {
+  link.addEventListener("click", (event) => {
+    const href = link.getAttribute("href");
+    if (!href || href === "#") return;
+    const target = document.querySelector(href);
+    if (!target) return;
+    event.preventDefault();
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    history.replaceState(null, "", href);
+  });
+});
+
 const labPoints = [...document.querySelectorAll(".lab-hotspot")];
 const labStage = document.getElementById("lab-stage");
 const labImageLayer = document.getElementById("lab-image-layer");
