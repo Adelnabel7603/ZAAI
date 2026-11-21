@@ -16,7 +16,7 @@ function storeApiUrl(path) {
   const isLocalHost = hostname === "127.0.0.1" || hostname === "localhost";
   const apiBase = isLocalHost && window.location.port !== "5510"
     ? "http://127.0.0.1:5510"
-    : "";
+    : "https://zaai-production.up.railway.app";
   return `${apiBase}${path}`;
 }
 
