@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: zaai-store
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/store/products
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ZAAI_DATA_DIR
+        value: /var/data
+      - key: ZAAI_UPLOAD_DIR
+        value: /var/uploads
+      - key: ZAAI_OWNER_EMAIL
+        value: owner@zaai.store
+      - key: ZAAI_OWNER_PASSWORD
+        sync: false
+      - key: ZAAI_SESSION_SECRET
+        generateValue: true
+    disk:
+      name: zaai-data
+      mountPath: /var
+      sizeGB: 1

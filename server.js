@@ -11,8 +11,12 @@ const Database = require("better-sqlite3");
 
 const app = express();
 const root = __dirname;
-const dataDir = path.join(root, ".data");
-const uploadDir = path.join(root, "uploads");
+const dataDir = process.env.ZAAI_DATA_DIR
+  ? path.resolve(process.env.ZAAI_DATA_DIR)
+  : path.join(root, ".data");
+const uploadDir = process.env.ZAAI_UPLOAD_DIR
+  ? path.resolve(process.env.ZAAI_UPLOAD_DIR)
+  : path.join(root, "uploads");
 fs.mkdirSync(dataDir, { recursive: true });
 fs.mkdirSync(uploadDir, { recursive: true });
 
