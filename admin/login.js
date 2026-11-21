@@ -25,7 +25,13 @@
     toggle.setAttribute("aria-label", visible ? "إظهار كلمة المرور" : "إخفاء كلمة المرور");
   });
 
-  loadCsrf().catch((error) => showError(error.message));
+  submit.disabled = true;
+  loadCsrf()
+    .then(() => { submit.disabled = false; })
+    .catch((error) => {
+      submit.disabled = false;
+      showError(error.message);
+    });
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();

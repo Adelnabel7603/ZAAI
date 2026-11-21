@@ -11,6 +11,7 @@ const Database = require("better-sqlite3");
 
 const app = express();
 const root = __dirname;
+app.set("trust proxy", 1);
 const dataDir = process.env.ZAAI_DATA_DIR
   ? path.resolve(process.env.ZAAI_DATA_DIR)
   : path.join(root, ".data");
@@ -275,7 +276,7 @@ app.use(session({
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "lax",
     maxAge: 8 * 60 * 60 * 1000
   }
 }));
