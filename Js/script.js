@@ -225,12 +225,15 @@ function openProductExperience(productId, sourceElement) {
           <div><button type="button" data-quantity-minus aria-label="${english ? "Decrease quantity" : "تقليل الكمية"}">−</button><strong data-experience-quantity>1</strong><button type="button" data-quantity-plus aria-label="${english ? "Increase quantity" : "زيادة الكمية"}">+</button></div>
         </div>
         <p class="zaai-product-experience-validation" data-experience-validation aria-live="polite"></p>
-        <div class="zaai-product-experience-buy">
-          <button type="button" class="zaai-product-experience-add" data-experience-add>
-            <span>${english ? "ADD TO BAG" : "أضف إلى السلة"}</span><i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
-          </button>
-        </div>
       </section>
+      <div class="zaai-product-experience-buy">
+        <button type="button" class="zaai-product-experience-favorite" aria-label="${english ? "Add to favorites" : "إضافة إلى المفضلة"}">
+          <i class="fa-regular fa-heart" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="zaai-product-experience-add" data-experience-add>
+          <span>ADD TO BAG</span><i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+        </button>
+      </div>
     </div>`;
 
   overlay.classList.add("is-open");
@@ -304,6 +307,14 @@ function openProductExperience(productId, sourceElement) {
   overlay.querySelector("[data-open-existing-cart]")?.addEventListener("click", () => {
     closeProductExperience();
     document.getElementById("header-cart")?.click();
+  });
+
+  overlay.querySelector(".zaai-product-experience-favorite")?.addEventListener("click", (event) => {
+    const button = event.currentTarget;
+    button.classList.toggle("is-active");
+    const icon = button.querySelector("i");
+    icon?.classList.toggle("fa-regular");
+    icon?.classList.toggle("fa-solid");
   });
 
   overlay.querySelector("[data-experience-add]")?.addEventListener("click", (event) => {

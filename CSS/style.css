@@ -3520,8 +3520,8 @@ html[dir="rtl"] .lab-next::before {
 
 .zaai-products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
-    gap: 22px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
 }
 
 .zaai-product-experience[hidden],
@@ -3540,7 +3540,7 @@ html[dir="rtl"] .lab-next::before {
 .zaai-product-card-image {
     position: relative;
     display: block;
-    aspect-ratio: 4 / 4.5;
+    aspect-ratio: 3 / 4;
     overflow: hidden;
     background: linear-gradient(145deg, rgba(152, 134, 106, 0.12), var(--page-bg));
 }
@@ -3764,14 +3764,16 @@ html[dir="rtl"] .lab-next::before {
 }
 
 .zaai-product-experience-shell {
-    width: min(1180px, calc(100vw - 48px));
-    height: min(820px, calc(100dvh - 48px));
+    position: relative;
+    width: min(1080px, calc(100vw - 64px));
+    height: min(720px, calc(100dvh - 64px));
     display: grid;
-    grid-template-columns: minmax(0, 1.42fr) minmax(360px, .58fr);
+    grid-template-columns: minmax(0, 1.35fr) minmax(390px, .65fr);
     overflow: hidden;
     border: 1px solid rgba(255,255,255,.12);
     background: var(--page-bg);
     box-shadow: 0 28px 100px rgba(5,5,5,.42);
+    direction: ltr;
 }
 
 .zaai-product-experience-mobile-header {
@@ -3852,8 +3854,12 @@ html[dir="rtl"] .lab-next::before {
 
 .zaai-product-experience-info {
     position: relative;
+    direction: ltr;
+    display: flex;
+    flex-direction: column;
     overflow-y: auto;
-    padding: 64px 44px 34px;
+    height: 100%;
+    padding: 28px 36px 96px;
 }
 
 .zaai-product-experience-kicker {
@@ -3864,10 +3870,10 @@ html[dir="rtl"] .lab-next::before {
 }
 
 .zaai-product-experience-info h2 {
-    margin: 12px 0 10px;
+    margin: 8px 0 6px;
     color: var(--page-text);
     font-family: "Playfair Display", Georgia, serif;
-    font-size: clamp(2rem, 3vw, 3.1rem);
+    font-size: clamp(1.75rem, 2.35vw, 2.5rem);
     line-height: 1.06;
 }
 
@@ -3887,14 +3893,14 @@ html[dir="rtl"] .lab-next::before {
 }
 
 .zaai-product-experience-description {
-    margin: 22px 0;
+    margin: 10px 0;
     color: var(--header-muted);
     font-size: .82rem;
-    line-height: 1.8;
+    line-height: 1.65;
 }
 
 .zaai-product-experience-option {
-    margin-top: 20px;
+    margin-top: 8px;
 }
 
 .zaai-product-experience-option-heading,
@@ -3954,8 +3960,8 @@ html[dir="rtl"] .lab-next::before {
 }
 
 .zaai-product-experience-size {
-    min-width: 52px;
-    height: 44px;
+    min-width: 44px;
+    height: 40px;
     border: 1px solid var(--header-border);
     background: var(--page-bg);
     color: var(--page-text);
@@ -4009,17 +4015,23 @@ html[dir="rtl"] .lab-next::before {
 }
 
 .zaai-product-experience-buy {
-    position: sticky;
+    position: absolute;
+    right: 28px;
+    bottom: 18px;
+    left: 28px;
     z-index: 3;
-    bottom: -34px;
-    margin-top: 12px;
-    padding: 12px 0 34px;
-    background: linear-gradient(to bottom, transparent, var(--page-bg) 18%);
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 10px;
+    width: auto;
+    margin: 0;
+    padding: 8px 0 0;
+    background: var(--page-bg);
 }
 
 .zaai-product-experience-add {
     width: 100%;
-    min-height: 56px;
+    min-height: 52px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4032,6 +4044,24 @@ html[dir="rtl"] .lab-next::before {
     letter-spacing: .12em;
     cursor: pointer;
     transition: transform .18s ease, background .25s ease;
+}
+
+.zaai-product-experience-favorite {
+    display: grid;
+    width: 52px;
+    height: 52px;
+    place-items: center;
+    border: 1px solid var(--header-border);
+    border-radius: 50%;
+    background: var(--page-bg);
+    color: #050505;
+    cursor: pointer;
+}
+
+.zaai-product-experience-favorite.is-active {
+    border-color: #050505;
+    background: #050505;
+    color: #fff;
 }
 
 .zaai-product-experience-add:active {
@@ -4055,6 +4085,15 @@ html[dir="rtl"] .lab-next::before {
 }
 
 @media (max-width: 760px) {
+    .zaai-products-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .zaai-product-card-image {
+        aspect-ratio: 3 / 4;
+    }
+
     .zaai-order-toast {
         bottom: calc(92px + env(safe-area-inset-bottom));
         inset-inline: 12px;
@@ -4063,18 +4102,20 @@ html[dir="rtl"] .lab-next::before {
     }
 
     .zaai-product-experience-overlay {
-        align-items: end;
+        align-items: start;
         padding: 0;
-        background: #050505;
+        background: var(--page-bg);
     }
 
     .zaai-product-experience-shell {
+        position: relative;
         width: 100%;
         height: 100dvh;
         display: block;
-        overflow-y: auto;
+        overflow: hidden;
         border: 0;
         background: var(--page-bg);
+        direction: rtl;
     }
 
     .zaai-product-experience-mobile-header {
@@ -4084,7 +4125,7 @@ html[dir="rtl"] .lab-next::before {
         display: grid;
         grid-template-columns: 44px 1fr 44px;
         align-items: center;
-        height: calc(58px + env(safe-area-inset-top));
+        height: calc(52px + env(safe-area-inset-top));
         padding: calc(8px + env(safe-area-inset-top)) 12px 8px;
         background: linear-gradient(to bottom, rgba(245,245,245,.96), rgba(245,245,245,.82));
         backdrop-filter: blur(14px);
@@ -4109,8 +4150,9 @@ html[dir="rtl"] .lab-next::before {
     }
 
     .zaai-product-experience-gallery {
-        height: min(58dvh, 620px);
-        background: #f2f0eb;
+        height: calc(52dvh - 52px);
+        min-height: 300px;
+        background: #f7f7f7;
     }
 
     .zaai-product-experience-main-image {
@@ -4118,20 +4160,11 @@ html[dir="rtl"] .lab-next::before {
     }
 
     .zaai-product-experience-main-image img {
-        object-fit: cover;
+        object-fit: contain;
     }
 
     .zaai-product-experience-thumbs {
-        position: absolute;
-        bottom: 12px;
-        left: 50%;
-        height: 58px;
-        max-width: calc(100% - 24px);
-        padding: 5px;
-        border-radius: 8px;
-        transform: translateX(-50%);
-        background: rgba(255,255,255,.86);
-        backdrop-filter: blur(8px);
+        display: none;
     }
 
     .zaai-product-experience-thumbs button {
@@ -4140,29 +4173,138 @@ html[dir="rtl"] .lab-next::before {
     }
 
     .zaai-product-experience-info {
-        overflow: visible;
-        padding: 26px 18px calc(94px + env(safe-area-inset-bottom));
+        position: absolute;
+        z-index: 8;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: calc(48dvh - env(safe-area-inset-bottom));
+        min-height: 330px;
+        overflow-y: auto;
+        direction: ltr;
+        display: block;
+        padding: 20px 18px calc(96px + env(safe-area-inset-bottom));
+        border-radius: 28px 28px 0 0;
+        background: #050505;
+        color: #fff;
     }
 
     .zaai-product-experience-info h2 {
-        font-size: clamp(2rem, 10vw, 3rem);
+        width: 68%;
+        margin: 0;
+        font-family: "Plus Jakarta Sans", "Cairo", sans-serif;
+        font-size: clamp(1.35rem, 6vw, 1.8rem);
+        line-height: 1.15;
+    }
+
+    .zaai-product-experience-kicker {
+        color: rgba(255,255,255,.52);
+    }
+
+    .zaai-product-experience-price {
+        position: absolute;
+        top: 20px;
+        right: 18px;
+        display: grid;
+        justify-items: end;
+        gap: 2px;
+        text-align: right;
+    }
+
+    .zaai-product-experience-price strong {
+        font-size: 1.05rem;
+        color: #fff;
+    }
+
+    .zaai-product-experience-price del {
+        color: rgba(255,255,255,.48);
+    }
+
+    .zaai-product-experience-description {
+        margin: 12px 0 8px;
+        line-height: 1.55;
+        color: rgba(255,255,255,.58);
+    }
+
+    .zaai-product-experience-option-heading {
+        color: rgba(255,255,255,.58);
+    }
+
+    .zaai-product-experience-option-heading strong {
+        color: #fff;
+    }
+
+    .zaai-product-experience-size-guide {
+        color: rgba(255,255,255,.72);
+    }
+
+    .zaai-product-experience-sizes {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 6px;
+    }
+
+    .zaai-product-experience-size {
+        min-width: 0;
+        width: 100%;
+        height: 42px;
+        border-color: rgba(255,255,255,.12);
+        background: rgba(255,255,255,.10);
+        color: #fff;
+    }
+
+    .zaai-product-experience-size.is-active {
+        border-color: #fff;
+        background: #fff;
+        color: #050505;
+    }
+
+    .zaai-product-experience-colors {
+        margin-top: 8px;
+    }
+
+    .zaai-product-experience-swatch {
+        border-color: rgba(255,255,255,.12);
+    }
+
+    .zaai-product-experience-swatch.is-active {
+        border-color: #fff;
+    }
+
+    .zaai-product-experience-quantity {
+        display: none;
     }
 
     .zaai-product-experience-buy {
         position: fixed;
+        z-index: 20;
         right: 0;
         bottom: 0;
         left: 0;
+        width: auto;
+        display: grid;
+        grid-template-columns: 52px minmax(0, 1fr);
+        gap: 8px;
         margin: 0;
         padding: 10px 18px calc(10px + env(safe-area-inset-bottom));
-        border-top: 1px solid var(--header-border);
-        background: rgba(245,245,245,.96);
-        backdrop-filter: blur(14px);
+        border-top: 0;
+        background: #050505;
+        backdrop-filter: none;
     }
 
     .zaai-product-experience-add {
         min-height: 54px;
         border-radius: 2px;
+        background: #fff;
+        color: #050505;
+    }
+
+    .zaai-product-experience-favorite {
+        width: 52px;
+        height: 52px;
+        border-color: rgba(255,255,255,.18);
+        background: rgba(255,255,255,.08);
+        color: #fff;
     }
 
     .zaai-card-add {
