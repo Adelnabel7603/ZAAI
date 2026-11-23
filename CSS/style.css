@@ -3913,6 +3913,10 @@ html[dir="rtl"] .lab-next::before {
     font-weight: 800;
 }
 
+[dir="rtl"] .zaai-card-footer-add i {
+    transform: rotate(180deg);
+}
+
 .zaai-card-footer-add.is-success {
     background: #050505;
     color: #fff;
@@ -4051,6 +4055,74 @@ html[dir="rtl"] .lab-next::before {
     opacity: 0;
     visibility: hidden;
     transition: opacity .26s ease, visibility 0s linear .26s;
+}
+
+@media (hover: hover) and (pointer: fine) and (min-width: 761px) {
+    .zaai-product-experience-shell {
+        width: min(980px, calc(100vw - 96px));
+        height: min(620px, calc(100dvh - 72px));
+        grid-template-columns: minmax(390px, 1.12fr) minmax(350px, .88fr);
+        border-radius: 22px;
+    }
+
+    .zaai-product-experience-gallery {
+        background: #f2efe9;
+    }
+
+    .zaai-product-experience-main-image {
+        height: 100%;
+    }
+
+    .zaai-product-experience-main-image img {
+        object-fit: contain;
+    }
+
+    .zaai-product-experience-thumbs {
+        position: absolute;
+        bottom: 12px;
+        left: 50%;
+        width: auto;
+        height: 66px;
+        padding: 6px;
+        border-radius: 12px;
+        transform: translateX(-50%);
+        background: rgba(255,255,255,.92);
+    }
+
+    .zaai-product-experience-thumbs button {
+        flex-basis: 54px;
+        height: 54px;
+        border-radius: 8px;
+    }
+
+    .zaai-product-experience-info {
+        direction: rtl;
+        padding: 30px 32px 92px;
+        background: #f7f6f2;
+    }
+
+    .zaai-product-experience-price {
+        direction: rtl;
+        justify-content: flex-start;
+    }
+
+    .zaai-product-experience-price strong {
+        font-family: "Plus Jakarta Sans", "Cairo", sans-serif;
+        font-size: 1.35rem;
+    }
+
+    .zaai-product-experience-quantity {
+        display: flex;
+    }
+
+    .zaai-product-experience-buy {
+        direction: rtl;
+    }
+
+    .zaai-product-experience-description {
+        max-width: 320px;
+        margin-inline: 0;
+    }
 }
 
 .zaai-product-experience-overlay.is-open {
@@ -4377,6 +4449,19 @@ html[dir="rtl"] .lab-next::before {
     .zaai-card-add {
         opacity: 1;
         transform: scale(1);
+    }
+
+    .zaai-product-experience-gallery {
+        height: 52dvh;
+        min-height: 300px;
+    }
+
+    .zaai-product-experience-main-image img {
+        object-fit: cover;
+    }
+
+    .zaai-product-experience-quantity {
+        display: flex;
     }
 }
 

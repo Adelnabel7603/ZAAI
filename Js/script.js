@@ -202,7 +202,7 @@ function renderStoreProducts() {
               <strong data-card-quantity-value>1</strong>
               <button type="button" data-card-quantity="1" aria-label="${english ? "Increase quantity" : "زيادة الكمية"}">+</button>
             </div>
-            <button class="zaai-card-footer-add" type="button" data-card-add="${Number(product.id)}" aria-label="${english ? `Add ${escapeCatalogText(product.name)} to bag` : `إضافة ${escapeCatalogText(product.name)} إلى السلة`}">
+            <button class="zaai-card-footer-add" type="button" data-open-product="${Number(product.id)}" aria-label="${english ? `View ${escapeCatalogText(product.name)} details` : `عرض تفاصيل ${escapeCatalogText(product.name)}`}">
               <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </button>
           </div>
@@ -597,26 +597,6 @@ document.addEventListener("click", (event) => {
     return;
   }
   const cardAdd = event.target.closest("[data-card-add]");
-  if (cardAdd) {
-    const card = cardAdd.closest(".zaai-product-card");
-    const productId = Number(cardAdd.dataset.cardAdd);
-    const quantity = Number(card?.querySelector("[data-card-quantity-value]")?.textContent || 1);
-    const product = storeCatalog.find((item) => item.id === productId);
-    if (product) {
-      cardAdd.classList.add("is-success");
-      document.dispatchEvent(new CustomEvent("zaai:cart-add", {
-        detail: {
-          productId,
-          colorIndex: 0,
-          size: document.documentElement.lang === "en" ? "One size" : "مقاس موحد",
-          quantity
-        }
-      }));
-      animateCardProductToCart(cardAdd, card);
-      window.setTimeout(() => cardAdd.classList.remove("is-success"), 900);
-    }
-    return;
-  }
   const openButton = event.target.closest("[data-open-product]");
   if (openButton) {
     event.preventDefault();
