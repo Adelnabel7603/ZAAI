@@ -190,17 +190,11 @@ function renderStoreProducts() {
         <div class="zaai-card-footer">
           <div class="zaai-card-copy">
             <h3>${escapeCatalogText(product.name)}</h3>
-            ${product.description ? `<p class="zaai-product-card-description">${escapeCatalogText(product.description)}</p>` : ""}
           </div>
           <div class="zaai-card-footer-row">
             <div class="zaai-card-price-block">
               <strong class="zaai-product-card-price">${salePrice.toLocaleString(english ? "en-US" : "ar-EG")} ${english ? "EGP" : "ج.م"}</strong>
               ${originalPrice > salePrice ? `<del class="zaai-product-card-original-price">${originalPrice.toLocaleString(english ? "en-US" : "ar-EG")} ${english ? "EGP" : "ج.م"}</del>` : ""}
-            </div>
-            <div class="zaai-card-quantity" aria-label="${english ? "Quantity" : "الكمية"}">
-              <button type="button" data-card-quantity="-1" aria-label="${english ? "Decrease quantity" : "تقليل الكمية"}">−</button>
-              <strong data-card-quantity-value>1</strong>
-              <button type="button" data-card-quantity="1" aria-label="${english ? "Increase quantity" : "زيادة الكمية"}">+</button>
             </div>
             <button class="zaai-card-footer-add" type="button" data-open-product="${Number(product.id)}" aria-label="${english ? `View ${escapeCatalogText(product.name)} details` : `عرض تفاصيل ${escapeCatalogText(product.name)}`}">
               <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
@@ -585,15 +579,6 @@ document.addEventListener("click", (event) => {
     const icon = favorite.querySelector("i");
     icon?.classList.toggle("fa-regular");
     icon?.classList.toggle("fa-solid");
-    return;
-  }
-  const quantityButton = event.target.closest("[data-card-quantity]");
-  if (quantityButton) {
-    const quantityWrap = quantityButton.closest(".zaai-card-quantity");
-    const value = quantityWrap?.querySelector("[data-card-quantity-value]");
-    if (value) {
-      value.textContent = String(Math.max(1, Math.min(99, Number(value.textContent) + Number(quantityButton.dataset.cardQuantity))));
-    }
     return;
   }
   const cardAdd = event.target.closest("[data-card-add]");
