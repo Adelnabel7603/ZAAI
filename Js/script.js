@@ -502,9 +502,16 @@ function animateCardProductToCart(button, card) {
 function setProductExperienceMessage(message, status) {
   const messageElement = document.querySelector("#zaai-product-experience-overlay.is-open [data-experience-validation]");
   if (!messageElement) return false;
-  messageElement.textContent = message;
   messageElement.classList.toggle("is-success", status === "success");
   messageElement.classList.toggle("is-error", status === "error");
+  if (status === "success") {
+    messageElement.innerHTML = `
+      <span class="zaai-product-experience-success-icon" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+      <span class="zaai-product-experience-success-text">${escapeCatalogText(message.replace(/^✓\s*/, ""))}</span>
+    `;
+  } else {
+    messageElement.textContent = message;
+  }
   if (status) {
     window.requestAnimationFrame(() => {
       const scrollContainer = messageElement.closest(".zaai-product-experience-content")
