@@ -29,7 +29,7 @@
         <button type="button" data-section="settings"><i class="fa-solid fa-gears"></i><span>الإعدادات</span></button>
       </nav>
       <div class="admin-sidebar-bottom">
-        <a href="/" target="_blank" rel="noopener"><i class="fa-solid fa-up-right-from-square"></i><span>فتح المتجر</span></a>
+        <a href="/?fresh=20261123" rel="noopener"><i class="fa-solid fa-up-right-from-square"></i><span>فتح المتجر</span></a>
         <button id="admin-theme" type="button"><i class="fa-solid fa-circle-half-stroke"></i><span>تغيير المظهر</span></button>
       </div>
     </aside>
@@ -41,9 +41,13 @@
           <h1 id="admin-page-title">لوحة التحكم</h1>
         </div>
         <div class="admin-topbar-actions">
+          <div class="builder-status" id="builder-status"><span class="builder-status-dot"></span><span>جاهز</span></div>
+          <button class="admin-button" id="builder-undo" type="button" title="تراجع"><i class="fa-solid fa-arrow-rotate-left"></i></button>
+          <button class="admin-button" id="builder-redo" type="button" title="إعادة"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+          <button class="admin-button primary" id="builder-save" type="button"><i class="fa-solid fa-check"></i><span>حفظ ونشر</span></button>
           <button class="admin-button admin-logout-button" id="admin-logout" type="button" aria-label="تسجيل الخروج" title="تسجيل الخروج"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><span>خروج</span></button>
           <button class="admin-icon-button" id="top-theme" type="button" aria-label="تبديل المظهر"><i class="fa-solid fa-moon"></i></button>
-          <button class="admin-icon-button" type="button" aria-label="اللغة"><i class="fa-solid fa-globe"></i></button>
+          <button class="admin-icon-button" id="admin-language" type="button" aria-label="تبديل لغة الإدارة"><i class="fa-solid fa-globe"></i><span id="admin-language-label" style="display:none">EN</span></button>
         </div>
       </header>
 
@@ -101,10 +105,42 @@
 
         <section class="admin-section" id="section-sections">
           <div class="admin-toolbar">
-            <div><strong>ترتيب السكشنات المنشورة</strong></div>
+            <div><strong>Visual Website Builder</strong><small class="builder-subtitle">عدّل المحتوى واسحب السكشنات ثم احفظ ونشر</small></div>
             <button class="admin-button primary" id="add-section" type="button"><i class="fa-solid fa-plus"></i> سكشن جديد</button>
           </div>
-          <div id="sections-list"></div>
+          <div class="builder-toolbar">
+            <div class="builder-preview-devices" aria-label="Responsive preview">
+              <button class="admin-button active" type="button" data-preview-device="desktop" title="Desktop"><i class="fa-solid fa-desktop"></i></button>
+              <button class="admin-button" type="button" data-preview-device="tablet" title="Tablet"><i class="fa-solid fa-tablet-screen-button"></i></button>
+              <button class="admin-button" type="button" data-preview-device="mobile" title="Mobile"><i class="fa-solid fa-mobile-screen"></i></button>
+            </div>
+            <select class="admin-search builder-breakpoint-select" id="builder-breakpoint" aria-label="نطاق إعدادات التصميم">
+              <option value="global">Global</option>
+              <option value="desktop">Desktop</option>
+              <option value="tablet">Tablet</option>
+              <option value="mobile">Mobile</option>
+            </select>
+            <button class="admin-button" id="builder-open-live" type="button"><i class="fa-solid fa-up-right-from-square"></i><span>الموقع الحقيقي</span></button>
+          </div>
+          <div class="visual-builder">
+            <aside class="builder-section-sidebar"><div id="sections-list"></div></aside>
+            <div class="builder-preview-stage"><iframe id="builder-preview-frame" title="معاينة ZAAI الحية" src="/?preview=1&fresh=1"></iframe></div>
+            <aside class="builder-properties-panel" id="builder-properties-panel">
+              <div class="builder-properties-head"><strong id="builder-selected-label">اختر عنصرًا للتحرير</strong><button class="admin-icon-button" type="button" id="builder-reset-element" title="إعادة الافتراضي"><i class="fa-solid fa-arrow-rotate-left"></i></button></div>
+              <div class="builder-properties-body">
+                <label class="admin-field"><span>العرض</span><input id="builder-width" type="text" placeholder="مثال: 100% أو 600px"></label>
+                <label class="admin-field"><span>الارتفاع</span><input id="builder-height" type="text" placeholder="مثال: auto أو 500px"></label>
+                <label class="admin-field"><span>محاذاة النص</span><select id="builder-align"><option value="">افتراضي</option><option value="start">Start</option><option value="center">Center</option><option value="end">End</option></select></label>
+                <label class="admin-field"><span>لون الخلفية</span><input id="builder-bg" type="color" value="#ffffff"></label>
+                <label class="admin-field"><span>لون النص</span><input id="builder-color" type="color" value="#050505"></label>
+                <label class="admin-field"><span>حجم الخط</span><input id="builder-font-size" type="number" min="8" max="160" step="1" placeholder="px"></label>
+                <label class="admin-field"><span>الهامش الداخلي</span><input id="builder-padding" type="text" placeholder="مثال: 24px"></label>
+                <label class="admin-field"><span>الهامش الخارجي</span><input id="builder-margin" type="text" placeholder="مثال: 12px"></label>
+                <label class="admin-field"><span>الصفوف / الأعمدة</span><input id="builder-columns" type="number" min="1" max="12" placeholder="عدد الأعمدة"></label>
+                <label class="admin-field"><span>العرض</span><select id="builder-display"><option value="">افتراضي</option><option value="block">Block</option><option value="flex">Flex</option><option value="grid">Grid</option><option value="none">إخفاء</option></select></label>
+              </div>
+            </aside>
+          </div>
         </section>
 
         <section class="admin-section" id="section-content">
@@ -203,19 +239,33 @@
       <div class="admin-modal-header"><h2 id="section-modal-title">سكشن جديد</h2><button class="admin-icon-button" type="button" data-close="section-modal">×</button></div>
       <div class="admin-modal-body">
         <input type="hidden" id="section-id">
-        <div class="admin-form-grid">
-          <label class="admin-field"><span>نوع / مفتاح السكشن</span><input id="section-key" placeholder="hero"></label>
-          <label class="admin-field"><span>ترتيب الظهور</span><input id="section-sort" type="number"></label>
-          <label class="admin-field"><span>العنوان عربي</span><input id="section-title-ar"></label>
-          <label class="admin-field"><span>العنوان English</span><input id="section-title-en"></label>
-          <label class="admin-field full"><span>المحتوى عربي</span><textarea id="section-content-ar"></textarea></label>
-          <label class="admin-field full"><span>المحتوى English</span><textarea id="section-content-en"></textarea></label>
-          <label class="admin-field"><span>الصورة / poster</span><input id="section-image"></label>
-          <label class="admin-field"><span>الفيديو</span><input id="section-video"></label>
-          <label class="admin-field"><span>نص الزر عربي</span><input id="section-button-ar"></label>
-          <label class="admin-field"><span>نص الزر English</span><input id="section-button-en"></label>
-          <label class="admin-field full"><span>وجهة الزر</span><input id="section-link"></label>
-          <label class="admin-field"><span>الحالة</span><select id="section-visible"><option value="1">ظاهر</option><option value="0">مخفي</option></select></label>
+        <div class="section-editor-layout">
+          <div class="admin-form-grid section-editor-fields">
+            <label class="admin-field"><span>نوع / مفتاح السكشن</span><input id="section-key" placeholder="hero"></label>
+            <label class="admin-field"><span>ترتيب الظهور</span><input id="section-sort" type="number" min="1"></label>
+            <label class="admin-field"><span>العنوان عربي</span><input id="section-title-ar"></label>
+            <label class="admin-field"><span>العنوان English</span><input id="section-title-en"></label>
+            <label class="admin-field full"><span>المحتوى عربي</span><textarea id="section-content-ar"></textarea></label>
+            <label class="admin-field full"><span>المحتوى English</span><textarea id="section-content-en"></textarea></label>
+            <label class="admin-field full"><span>الصورة / poster</span>
+              <div class="section-media-input"><input id="section-image"><button class="admin-button" id="section-image-upload-button" type="button"><i class="fa-solid fa-upload"></i> رفع صورة</button></div>
+              <input id="section-image-upload" type="file" accept="image/*" hidden>
+              <div id="section-image-preview" class="section-media-preview"></div>
+            </label>
+            <label class="admin-field full"><span>الفيديو</span>
+              <div class="section-media-input"><input id="section-video"><button class="admin-button" id="section-video-upload-button" type="button"><i class="fa-solid fa-upload"></i> رفع فيديو</button></div>
+              <input id="section-video-upload" type="file" accept="video/*" hidden>
+              <div id="section-video-preview" class="section-media-preview"></div>
+            </label>
+            <label class="admin-field"><span>نص الزر عربي</span><input id="section-button-ar"></label>
+            <label class="admin-field"><span>نص الزر English</span><input id="section-button-en"></label>
+            <label class="admin-field full"><span>وجهة الزر</span><input id="section-link"></label>
+            <label class="admin-field"><span>الحالة</span><select id="section-visible"><option value="1">ظاهر</option><option value="0">مخفي</option></select></label>
+          </div>
+          <aside class="section-preview-panel">
+            <div class="section-preview-head"><strong>معاينة الموقع</strong><div><button class="admin-button" id="section-preview-refresh" type="button"><i class="fa-solid fa-arrows-rotate"></i> تحديث</button><button class="admin-button" id="section-preview-open" type="button"><i class="fa-solid fa-up-right-from-square"></i> فتح</button></div></div>
+            <iframe id="section-preview-frame" title="معاينة السكشن في الموقع" src="/?preview=1"></iframe>
+          </aside>
         </div>
       </div>
       <div class="admin-modal-footer"><button class="admin-button" type="button" data-close="section-modal">إلغاء</button><button class="admin-button primary" type="submit">حفظ السكشن</button></div>
@@ -223,6 +273,6 @@
   </dialog>
 
   <div class="admin-toast" id="admin-toast" role="status"></div>
-  <script src="/admin/dashboard.js?v=20261121-product-image"></script>
+  <script src="/admin/dashboard.js?v=20261123-section-editor-safe2"></script>
 </body>
 </html>

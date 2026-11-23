@@ -3,12 +3,32 @@
   let sections = [];
   let products = [];
   let orders = [];
+  let selectedPreviewElement = null;
+  let selectedPreviewSelector = "";
+  const previewHistory = [];
+  const previewRedo = [];
 
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+  const on = (selector, eventName, handler, options) => {
+    const element = $(selector);
+    if (element) element.addEventListener(eventName, handler, options);
+  };
+  const setText = (selector, value) => {
+    const element = $(selector);
+    if (element) element.textContent = String(value ?? "");
+  };
+  const setHtml = (selector, value) => {
+    const element = $(selector);
+    if (element) element.innerHTML = value;
+  };
+  const setValue = (selector, value) => {
+    const element = $(selector);
+    if (element) element.value = value;
+  };
   const toast = (message) => {
     const element = $("#admin-toast");
-    element.textContent = message;
+    if (element) element.textContent = message;
     element.classList.add("visible");
     clearTimeout(toast.timer);
     toast.timer = setTimeout(() => element.classList.remove("visible"), 3200);
@@ -52,7 +72,7 @@
         $$(".admin-section").forEach((section) => section.classList.remove("active"));
         $(`#section-${button.dataset.section}`).classList.add("active");
         const titles = { overview:"لوحة التحكم",products:"إدارة المنتجات",orders:"إدارة الطلبات",customers:"إدارة العملاء",media:"مكتبة الملفات",sections:"إدارة السكشنات",content:"محرر المحتوى",settings:"إعدادات الموقع" };
-        $("#admin-page-title").textContent = titles[button.dataset.section];
+        setText("#admin-page-title", titles[button.dataset.section]);
       });
     });
     $$("[data-jump]").forEach((button) => button.addEventListener("click", () => {
@@ -61,42 +81,93 @@
   }
 
   function bindActions() {
-    $("#admin-logout").addEventListener("click", async () => {
+    on("#admin-logout", "click", async () => {
       await api("/api/admin/logout", { method:"POST", body:{} }).catch(() => {});
-      window.location.assign("/admin/login");
+      window.location.replace(`/?fresh=${Date.now()}`);
     });
     const toggleTheme = () => {
       document.body.classList.toggle("light-admin");
       localStorage.setItem("zaai-admin-theme", document.body.classList.contains("light-admin") ? "light" : "dark");
     };
-    $("#admin-theme").addEventListener("click", toggleTheme);
-    $("#top-theme").addEventListener("click", toggleTheme);
+    on("#admin-theme", "click", toggleTheme);
+    on("#top-theme", "click", toggleTheme);
     if (localStorage.getItem("zaai-admin-theme") === "light") document.body.classList.add("light-admin");
+    const savedAdminLanguage = localStorage.getItem("zaai-admin-language") || "ar";
+    document.documentElement.lang = savedAdminLanguage;
+    document.documentElement.dir = savedAdminLanguage === "ar" ? "rtl" : "ltr";
+    on("#admin-language", "click", () => {
+      const next = document.documentElement.lang === "ar" ? "en" : "ar";
+      document.documentElement.lang = next;
+      document.documentElement.dir = next === "ar" ? "rtl" : "ltr";
+      localStorage.setItem("zaai-admin-language", next);
+      localStorage.setItem("zaai-language", next);
+      setText("#admin-language-label", next === "ar" ? "EN" : "عربي");
+      const preview = $("#section-preview-frame");
+      if (preview?.contentWindow) preview.contentWindow.postMessage({ type:"zaai-language", language:next }, "*");
+    });
+    setText("#admin-language-label", savedAdminLanguage === "ar" ? "EN" : "عربي");
 
     $$("[data-close]").forEach((button) => button.addEventListener("click", () => $(button.dataset.close === "product-modal" ? "#product-modal" : "#section-modal").close()));
-    $("#add-product").addEventListener("click", () => openProductModal());
-    $("#quick-add-product").addEventListener("click", () => openProductModal());
-    $("#product-form").addEventListener("submit", saveProduct);
-    $("#product-image-upload-button").addEventListener("click", () => $("#product-image-upload").click());
-    $("#product-image-upload").addEventListener("change", uploadProductImage);
-    $("#product-images").addEventListener("input", () => {
+    on("#add-product", "click", () => openProductModal());
+    on("#quick-add-product", "click", () => openProductModal());
+    on("#product-form", "submit", saveProduct);
+    on("#product-image-upload-button", "click", () => $("#product-image-upload")?.click());
+    on("#product-image-upload", "change", uploadProductImage);
+    on("#product-images", "input", () => {
       const firstImage = $("#product-images").value.split(",").map((item) => item.trim()).find(Boolean) || "";
       renderProductImagePreview(firstImage);
     });
-    $("#product-360-upload-button").addEventListener("click", () => $("#product-360-upload").click());
-    $("#product-360-upload").addEventListener("change", uploadProduct360);
-    $("#product-search").addEventListener("input", debounce(loadProducts, 250));
-    $("#product-status").addEventListener("change", loadProducts);
+    on("#product-360-upload-button", "click", () => $("#product-360-upload")?.click());
+    on("#product-360-upload", "change", uploadProduct360);
+    on("#product-search", "input", debounce(loadProducts, 250));
+    on("#product-status", "change", loadProducts);
 
-    $("#order-search").addEventListener("input", debounce(loadOrders, 250));
-    $("#customer-search").addEventListener("input", debounce(loadCustomers, 250));
-    $("#media-search").addEventListener("input", debounce(loadMedia, 250));
-    $("#media-upload").addEventListener("change", uploadMedia);
+    on("#order-search", "input", debounce(loadOrders, 250));
+    on("#customer-search", "input", debounce(loadCustomers, 250));
+    on("#media-search", "input", debounce(loadMedia, 250));
+    on("#media-upload", "change", uploadMedia);
 
-    $("#add-section").addEventListener("click", () => openSectionModal());
-    $("#section-form").addEventListener("submit", saveSection);
-    $("#settings-form").addEventListener("submit", saveSettings);
-    $("#change-owner-password").addEventListener("click", changeOwnerPassword);
+    on("#add-section", "click", () => openSectionModal());
+    on("#section-form", "submit", saveSection);
+    on("#section-image-upload-button", "click", () => $("#section-image-upload")?.click());
+    on("#section-video-upload-button", "click", () => $("#section-video-upload")?.click());
+    on("#section-image-upload", "change", (event) => uploadSectionMedia(event, "image"));
+    on("#section-video-upload", "change", (event) => uploadSectionMedia(event, "video"));
+    ["section-key","section-sort","section-title-ar","section-title-en","section-content-ar","section-content-en","section-image","section-video","section-button-ar","section-button-en","section-link","section-visible"].forEach((id) => {
+      const field = $(`#${id}`);
+      if (field) {
+        field.addEventListener("input", updateSectionPreview);
+        field.addEventListener("change", updateSectionPreview);
+      }
+    });
+    on("#section-preview-refresh", "click", refreshSectionPreview);
+    on("#section-preview-open", "click", () => window.open(`/?fresh=${Date.now()}`, "_blank", "noopener"));
+    on("#settings-form", "submit", saveSettings);
+    on("#change-owner-password", "click", changeOwnerPassword);
+    on("#builder-open-live", "click", () => window.open(`/?fresh=${Date.now()}`, "_blank", "noopener"));
+    on("#builder-save", "click", saveAndPublishSections);
+    on("#builder-undo", "click", undoBuilderChange);
+    on("#builder-redo", "click", redoBuilderChange);
+    ["builder-width","builder-height","builder-align","builder-bg","builder-color","builder-font-size","builder-padding","builder-margin","builder-columns","builder-display"].forEach((id) => {
+      const field = $(`#${id}`);
+      field?.addEventListener("input", applyElementStyles);
+      field?.addEventListener("change", applyElementStyles);
+    });
+    on("#builder-reset-element", "click", resetSelectedElement);
+    $$("[data-preview-device]").forEach((button) => button.addEventListener("click", () => {
+      $$("[data-preview-device]").forEach((item) => item.classList.remove("active"));
+      button.classList.add("active");
+      $(".builder-preview-stage")?.setAttribute("data-device", button.dataset.previewDevice);
+    }));
+    window.addEventListener("message", (event) => {
+      if (event.data?.type === "zaai-preview-select") selectBuilderSection(event.data.sectionKey);
+      if (event.data?.type === "zaai-preview-element") {
+        selectedPreviewElement = event.data.label || event.data.tag;
+        selectedPreviewSelector = event.data.selector || "";
+        setText("#builder-selected-label", selectedPreviewElement);
+        openElementProperties(event.data.styles || {});
+      }
+    });
   }
 
   function debounce(callback, wait) {
@@ -109,14 +180,14 @@
 
   async function loadOverview() {
     const data = await api("/api/admin/overview");
-    $("#admin-stats").innerHTML = `
+    setHtml("#admin-stats", `
       <article class="admin-stat"><div class="admin-stat-head"><span>المنتجات</span><i class="fa-solid fa-shirt"></i></div><strong>${data.products.count || 0}</strong><small>${data.products.published || 0} منشورًا</small></article>
       <article class="admin-stat"><div class="admin-stat-head"><span>الطلبات</span><i class="fa-solid fa-bag-shopping"></i></div><strong>${data.orders.count || 0}</strong><small>${data.orders.new_count || 0} طلب جديد</small></article>
       <article class="admin-stat"><div class="admin-stat-head"><span>العملاء</span><i class="fa-solid fa-users"></i></div><strong>${data.customers || 0}</strong><small>مرتبطون بالطلبات</small></article>
-      <article class="admin-stat"><div class="admin-stat-head"><span>الميديا</span><i class="fa-solid fa-photo-film"></i></div><strong>${data.media || 0}</strong><small>صورة وفيديو</small></article>`;
-    $("#admin-recent").innerHTML = data.recentAudit.length ? data.recentAudit.map((item) =>
+      <article class="admin-stat"><div class="admin-stat-head"><span>الميديا</span><i class="fa-solid fa-photo-film"></i></div><strong>${data.media || 0}</strong><small>صورة وفيديو</small></article>`);
+    setHtml("#admin-recent", data.recentAudit.length ? data.recentAudit.map((item) =>
       `<div class="admin-list-item"><span>${escapeHtml(item.action)} · ${escapeHtml(item.entity)}</span><small>${escapeHtml(item.created_at)}</small></div>`
-    ).join("") : `<div class="admin-list-item"><span>لا توجد تعديلات بعد</span></div>`;
+    ).join("") : `<div class="admin-list-item"><span>لا توجد تعديلات بعد</span></div>`);
   }
 
   async function loadProducts() {
@@ -333,9 +404,15 @@
     $("#sections-list").innerHTML = sections.length ? sections.map((section) =>
       `<div class="section-row" draggable="true" data-section-id="${section.id}">
         <i class="fa-solid fa-grip-vertical"></i>
-        <span>${escapeHtml(section.section_key)}</span>
         <div><strong>${escapeHtml(section.title_ar || section.section_key)}</strong><br><span>${section.visible ? "ظاهر" : "مخفي"} · ترتيب ${section.sort_order}</span></div>
-        <div class="section-actions"><button class="admin-button" type="button" data-edit-section="${section.id}">تعديل</button> <button class="admin-button danger" type="button" data-delete-section="${section.id}">حذف</button></div>
+        <div class="section-actions">
+          <button class="admin-icon-button" type="button" data-edit-section="${section.id}" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+          <button class="admin-icon-button" type="button" data-move-section="${section.id}" data-direction="-1" title="لأعلى"><i class="fa-solid fa-chevron-up"></i></button>
+          <button class="admin-icon-button" type="button" data-move-section="${section.id}" data-direction="1" title="لأسفل"><i class="fa-solid fa-chevron-down"></i></button>
+          <button class="admin-icon-button" type="button" data-toggle-section="${section.id}" title="${section.visible ? "إخفاء" : "إظهار"}"><i class="fa-solid ${section.visible ? "fa-eye-slash" : "fa-eye"}"></i></button>
+          <button class="admin-icon-button" type="button" data-duplicate-section="${section.id}" title="تكرار"><i class="fa-solid fa-copy"></i></button>
+          <button class="admin-icon-button" type="button" data-delete-section="${section.id}" title="حذف"><i class="fa-solid fa-trash"></i></button>
+        </div>
       </div>`
     ).join("") : `<div class="admin-card">لا توجد سكشنات بعد. أضف السكشن الأول.</div>`;
     $$("[data-edit-section]").forEach((button) => button.addEventListener("click", () => {
@@ -347,6 +424,12 @@
       await loadSections();
       toast("تم حذف السكشن.");
     }));
+    $$("[data-move-section]").forEach((button) => button.addEventListener("click", () => moveBuilderSection(Number(button.dataset.moveSection), Number(button.dataset.direction))));
+    $$("[data-toggle-section]").forEach((button) => button.addEventListener("click", () => toggleBuilderSection(Number(button.dataset.toggleSection))));
+    $$("[data-duplicate-section]").forEach((button) => button.addEventListener("click", () => duplicateBuilderSection(Number(button.dataset.duplicateSection))));
+    $$(".builder-section-sidebar .section-row").forEach((row) => row.addEventListener("click", (event) => {
+      if (!event.target.closest("button")) selectBuilderSection(sections.find((item) => item.id === Number(row.dataset.sectionId))?.section_key);
+    }));
     const rows = $$("#sections-list .section-row");
     rows.forEach((row) => {
       row.addEventListener("dragstart", () => row.classList.add("dragging"));
@@ -357,15 +440,232 @@
         if (dragging && dragging !== row) $("#sections-list").insertBefore(dragging, row);
       });
       row.addEventListener("drop", async () => {
-        const reordered = $$("#sections-list .section-row");
-        for (let index = 0; index < reordered.length; index += 1) {
-          const id = Number(reordered[index].dataset.sectionId);
-          await api(`/api/admin/sections/${id}`, { method:"PUT", body:{ sort_order:index + 1 } });
-        }
+        const ids = $$("#sections-list .section-row").map((item) => Number(item.dataset.sectionId));
+        await api("/api/admin/sections/reorder", { method:"PUT", body:{ ids } });
         await loadSections();
+        markBuilderSaved();
+        refreshBuilderPreview();
         toast("تم حفظ ترتيب السكشنات.");
       });
     });
+  }
+
+  async function moveBuilderSection(id, direction) {
+    const ordered = [...sections].sort((a, b) => a.sort_order - b.sort_order || a.id - b.id);
+    const index = ordered.findIndex((item) => item.id === id);
+    const target = index + direction;
+    if (index < 0 || target < 0 || target >= ordered.length) return;
+    [ordered[index], ordered[target]] = [ordered[target], ordered[index]];
+    const ids = ordered.map((item) => item.id);
+    try {
+      await api("/api/admin/sections/reorder", { method:"PUT", body:{ ids } });
+      await loadSections();
+      markBuilderSaved();
+      refreshBuilderPreview();
+      toast("تم حفظ ترتيب السكشنات.");
+    } catch (error) {
+      toast(error.message);
+    }
+  }
+
+  async function toggleBuilderSection(id) {
+    const section = sections.find((item) => item.id === id);
+    if (!section) return;
+    try {
+      await api(`/api/admin/sections/${id}`, {
+        method:"PUT",
+        body:{ ...section, visible: !section.visible }
+      });
+      await loadSections();
+      markBuilderSaved();
+      refreshBuilderPreview();
+      toast(section.visible ? "تم إخفاء السكشن." : "تم إظهار السكشن.");
+    } catch (error) {
+      toast(error.message);
+    }
+  }
+
+  async function duplicateBuilderSection(id) {
+    const section = sections.find((item) => item.id === id);
+    if (!section) return;
+    if (["home","product-lab","about","order-now","services","products","contact"].includes(section.section_key)) {
+      toast("لا يمكن تكرار السكشنات الأساسية؛ أنشئ سكشنًا مخصصًا جديدًا.");
+      return;
+    }
+    try {
+      await api("/api/admin/sections", {
+        method:"POST",
+        body:{
+          ...section,
+          section_key:`${section.section_key}-copy-${Date.now()}`,
+          sort_order:sections.length + 1
+        }
+      });
+      await loadSections();
+      markBuilderSaved();
+      toast("تم تكرار السكشن.");
+    } catch (error) {
+      toast(error.message);
+    }
+  }
+
+  function selectBuilderSection(sectionKey) {
+    if (!sectionKey) return;
+    $$(".builder-section-sidebar .section-row").forEach((row) => {
+      row.classList.toggle("selected", sections.find((item) => item.id === Number(row.dataset.sectionId))?.section_key === sectionKey);
+    });
+    const preview = $("#builder-preview-frame");
+    preview?.contentWindow?.postMessage({ type:"zaai-preview-select-local", sectionKey }, "*");
+    const section = sections.find((item) => item.section_key === sectionKey);
+    if (section) openSectionModal(section);
+  }
+
+  function openElementProperties(styles) {
+    setValue("#builder-width", styles.width || "");
+    setValue("#builder-height", styles.height || "");
+    setValue("#builder-align", styles["text-align"] || "");
+    setValue("#builder-bg", styles["background-color"] && /^#[0-9a-f]{6}$/i.test(styles["background-color"]) ? styles["background-color"] : "#ffffff");
+    setValue("#builder-color", styles.color && /^#[0-9a-f]{6}$/i.test(styles.color) ? styles.color : "#050505");
+    setValue("#builder-font-size", styles["font-size"] ? parseInt(styles["font-size"], 10) || "" : "");
+    setValue("#builder-padding", styles.padding || "");
+    setValue("#builder-margin", styles.margin || "");
+    setValue("#builder-columns", styles["grid-template-columns"] ? styles["grid-template-columns"].split(" ").length : "");
+    setValue("#builder-display", styles.display || "");
+  }
+
+  function collectElementStyles() {
+    const columns = $("#builder-columns")?.value;
+    return {
+      width: $("#builder-width")?.value.trim(),
+      height: $("#builder-height")?.value.trim(),
+      "text-align": $("#builder-align")?.value,
+      "background-color": $("#builder-bg")?.value,
+      color: $("#builder-color")?.value,
+      "font-size": $("#builder-font-size")?.value ? `${$("#builder-font-size").value}px` : "",
+      padding: $("#builder-padding")?.value.trim(),
+      margin: $("#builder-margin")?.value.trim(),
+      display: $("#builder-display")?.value,
+      "grid-template-columns": columns ? `repeat(${Number(columns)}, minmax(0, 1fr))` : ""
+    };
+  }
+
+  function applyElementStyles() {
+    if (!selectedPreviewSelector) return;
+    const styles = collectElementStyles();
+    const breakpoint = $("#builder-breakpoint")?.value || "global";
+    const sectionKey = $$(".builder-section-sidebar .section-row.selected").length
+      ? sections.find((item) => item.id === Number($(".builder-section-sidebar .section-row.selected")?.dataset.sectionId))?.section_key
+      : $("#section-key")?.value;
+    const section = sections.find((item) => item.section_key === sectionKey);
+    if (section) {
+      const draft = parseDraft(section.draft);
+      draft.elements = draft.elements || {};
+      draft.elements[selectedPreviewSelector] = draft.elements[selectedPreviewSelector] || {};
+      draft.elements[selectedPreviewSelector][breakpoint] = {
+        ...(draft.elements[selectedPreviewSelector][breakpoint] || {}),
+        ...styles
+      };
+      section.draft = draft;
+    }
+    previewHistory.push({ selector:selectedPreviewSelector, styles });
+    previewRedo.length = 0;
+    const preview = $("#builder-preview-frame");
+    preview?.contentWindow?.postMessage({
+      type:"zaai-element-preview",
+      selector:selectedPreviewSelector,
+      styles,
+      breakpoint
+    }, "*");
+    const status = $("#builder-status");
+    if (status) {
+      status.className = "builder-status dirty";
+      status.innerHTML = `<span class="builder-status-dot"></span><span>تغييرات غير محفوظة</span>`;
+    }
+  }
+
+  function parseDraft(value) {
+    if (value && typeof value === "object") return value;
+    try { return JSON.parse(value || "{}"); } catch { return {}; }
+  }
+
+  function undoBuilderChange() {
+    const change = previewHistory.pop();
+    if (!change) {
+      refreshBuilderData();
+      return;
+    }
+    previewRedo.push(change);
+    const empty = Object.fromEntries(Object.keys(change.styles).map((key) => [key, ""]));
+    $("#builder-preview-frame")?.contentWindow?.postMessage({
+      type:"zaai-element-preview",
+      selector:change.selector,
+      styles:empty
+    }, "*");
+  }
+
+  function redoBuilderChange() {
+    const change = previewRedo.pop();
+    if (!change) return;
+    previewHistory.push(change);
+    $("#builder-preview-frame")?.contentWindow?.postMessage({
+      type:"zaai-element-preview",
+      selector:change.selector,
+      styles:change.styles
+    }, "*");
+  }
+
+  function resetSelectedElement() {
+    if (!selectedPreviewSelector) return;
+    const empty = collectElementStyles();
+    Object.keys(empty).forEach((key) => { empty[key] = ""; });
+    openElementProperties(empty);
+    applyElementStyles();
+  }
+
+  function refreshBuilderPreview() {
+    const preview = $("#builder-preview-frame");
+    if (preview) preview.src = `/?preview=1&fresh=${Date.now()}`;
+  }
+
+  async function refreshBuilderData() {
+    await loadSections();
+    refreshBuilderPreview();
+  }
+
+  async function saveAndPublishSections() {
+    const button = $("#builder-save");
+    const status = $("#builder-status");
+    button.disabled = true;
+    status.className = "builder-status saving";
+    status.innerHTML = `<span class="builder-status-dot"></span><span>جارٍ الحفظ والنشر...</span>`;
+    try {
+      for (const section of sections) {
+        await api(`/api/admin/sections/${section.id}`, {
+          method:"PUT",
+          body:{ ...section, draft:parseDraft(section.draft) }
+        });
+      }
+      await api("/api/admin/sections/reorder", {
+        method:"PUT",
+        body:{ ids: sections.map((item) => item.id).sort((a, b) => sections.find((x) => x.id === a).sort_order - sections.find((x) => x.id === b).sort_order) }
+      });
+      markBuilderSaved();
+      refreshBuilderPreview();
+      toast("تم حفظ ونشر تعديلات السكشنات بنجاح.");
+    } catch (error) {
+      status.className = "builder-status dirty";
+      status.innerHTML = `<span class="builder-status-dot"></span><span>فشل الحفظ</span>`;
+      toast(error.message);
+    } finally {
+      button.disabled = false;
+    }
+  }
+
+  function markBuilderSaved() {
+    const status = $("#builder-status");
+    if (!status) return;
+    status.className = "builder-status";
+    status.innerHTML = `<span class="builder-status-dot"></span><span>محفوظ ومنشور</span>`;
   }
 
   function openSectionModal(section) {
@@ -384,7 +684,78 @@
     $("#section-button-en").value = section?.button_text_en || "";
     $("#section-link").value = section?.button_link || "";
     $("#section-visible").value = section?.visible ? "1" : "0";
+    renderSectionMediaPreview("image", section?.image || "");
+    renderSectionMediaPreview("video", section?.video || "");
+    refreshSectionPreview();
     $("#section-modal").showModal();
+  }
+
+  function resolveAdminAssetUrl(asset) {
+    const value = String(asset || "").trim();
+    if (!value) return "";
+    if (/^https?:\/\//i.test(value)) return value;
+    if (value.startsWith("/")) return value;
+    return value;
+  }
+
+  function renderSectionMediaPreview(type, asset) {
+    const preview = $(`#section-${type}-preview`);
+    if (!preview) return;
+    const url = resolveAdminAssetUrl(asset);
+    preview.innerHTML = type === "image"
+      ? (url ? `<img src="${escapeAttr(url)}" alt="معاينة الصورة">` : "")
+      : (url ? `<video src="${escapeAttr(url)}" controls muted></video>` : "");
+  }
+
+  async function uploadSectionMedia(event, type) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const form = new FormData();
+    form.append("file", file);
+    try {
+      const uploaded = await api("/api/admin/media", { method:"POST", headers:{ "x-csrf-token":csrfToken }, body:form });
+      $(`#section-${type}`).value = uploaded.url;
+      renderSectionMediaPreview(type, uploaded.url);
+      updateSectionPreview();
+      await Promise.all([loadMedia(), loadOverview()]);
+      toast("تم رفع الملف وإضافته للسكشن.");
+    } catch (error) {
+      toast(error.message);
+    } finally {
+      event.target.value = "";
+    }
+  }
+
+  function refreshSectionPreview() {
+    const preview = $("#section-preview-frame");
+    if (!preview) return;
+    preview.src = `/?preview=1&fresh=${Date.now()}`;
+  }
+
+  function updateSectionPreview() {
+    const preview = $("#section-preview-frame");
+    if (!preview?.contentWindow) return;
+    preview.contentWindow.postMessage({
+      type:"zaai-section-preview",
+      sectionKey: $("#section-key").value,
+      titleAr: $("#section-title-ar").value,
+      titleEn: $("#section-title-en").value,
+      contentAr: $("#section-content-ar").value,
+      contentEn: $("#section-content-en").value,
+      image: $("#section-image").value,
+      video: $("#section-video").value,
+      buttonAr: $("#section-button-ar").value,
+      buttonEn: $("#section-button-en").value,
+      link: $("#section-link").value,
+      visible: $("#section-visible").value === "1"
+    }, "*");
+    renderSectionMediaPreview("image", $("#section-image").value);
+    renderSectionMediaPreview("video", $("#section-video").value);
+    const status = $("#builder-status");
+    if (status) {
+      status.className = "builder-status dirty";
+      status.innerHTML = `<span class="builder-status-dot"></span><span>تغييرات غير محفوظة</span>`;
+    }
   }
 
   async function saveSection(event) {
@@ -409,6 +780,8 @@
       $("#section-modal").close();
       $("#section-key").disabled = false;
       await loadSections();
+      refreshBuilderPreview();
+      markBuilderSaved();
       toast("تم حفظ السكشن.");
     } catch (error) { toast(error.message); }
   }

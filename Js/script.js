@@ -11,13 +11,79 @@ let storeCatalog = [];
 let storeCatalogLoaded = false;
 let storeCatalogError = "";
 
+let installPromptEvent = null;
+const installAppButton = document.getElementById("install-app-button");
+const mobileInstallAppButton = document.getElementById("mobile-install-app-button");
+const installButtons = [installAppButton, mobileInstallAppButton].filter(Boolean);
+
+function setInstallButtonsVisible(visible) {
+  installButtons.forEach((button) => {
+    button.hidden = !visible;
+  });
+}
+
+function isRunningAsApp() {
+  return window.matchMedia("(display-mode: standalone)").matches
+    || window.navigator.standalone === true;
+}
+
+if (isRunningAsApp()) {
+  setInstallButtonsVisible(false);
+} else {
+  setInstallButtonsVisible(true);
+}
+
+window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+  installPromptEvent = event;
+  if (!isRunningAsApp()) setInstallButtonsVisible(true);
+});
+
+async function requestAppInstall() {
+  if (!installPromptEvent) {
+    const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    if (isIos) {
+      alert("من متصفح Safari اختر المشاركة ثم Add to Home Screen.");
+    } else {
+      alert("افتح قائمة المتصفح ثم اختر تثبيت ZAAI أو إضافة إلى الشاشة الرئيسية.");
+    }
+    return;
+  }
+  installPromptEvent.prompt();
+  await installPromptEvent.userChoice;
+  installPromptEvent = null;
+  setInstallButtonsVisible(false);
+}
+
+installButtons.forEach((button) => button.addEventListener("click", requestAppInstall));
+
+window.addEventListener("appinstalled", () => {
+  installPromptEvent = null;
+  setInstallButtonsVisible(false);
+});
+
 function storeApiUrl(path) {
   const hostname = window.location.hostname;
-  const isLocalHost = hostname === "127.0.0.1" || hostname === "localhost";
-  const apiBase = isLocalHost && window.location.port !== "5510"
-    ? "http://127.0.0.1:5510"
-    : "https://zaai-production.up.railway.app";
-  return `${apiBase}${path}`;
+  const port = window.location.port;
+  if ((hostname === "127.0.0.1" || hostname === "localhost") && port !== "5510") {
+    return `https://zaai-production.up.railway.app${path}`;
+  }
+  return path;
+}
+
+function resolveStoreAssetUrl(asset) {
+  const value = String(asset || "").trim();
+  if (!value) return "";
+  if (/^https?:\/\//i.test(value)) return value;
+  if (value.startsWith("/")) {
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    if ((hostname === "127.0.0.1" || hostname === "localhost") && port !== "5510") {
+      return `https://zaai-production.up.railway.app${value}`;
+    }
+    return value;
+  }
+  return value;
 }
 
 function escapeCatalogText(value) {
@@ -56,6 +122,8 @@ function normalizeCatalogColors(colors, productStock) {
     const stock = Number(color?.stock ?? color?.quantity);
     return {
       ...color,
+      image: resolveStoreAssetUrl(color?.image),
+      sprite: resolveStoreAssetUrl(color?.sprite),
       nameAr: color?.nameAr || color?.name || color?.label || color?.id || `لون ${index + 1}`,
       nameEn: color?.nameEn || color?.name || color?.label || color?.id || `Color ${index + 1}`,
       available: !productUnavailable && color?.available !== false && (!Number.isFinite(stock) || stock > 0),
@@ -101,27 +169,46 @@ function renderStoreProducts() {
 
     container.innerHTML = products.map((product) => {
       const colors = normalizeCatalogColors(product.colors, product.stock);
-      const image = (Array.isArray(product.images) && product.images[0])
+      const image = resolveStoreAssetUrl(
+        (Array.isArray(product.images) && product.images[0])
         || colors.find((color) => color && typeof color === "object" && color.image)?.image
-        || "";
+        || ""
+      );
       const salePrice = Number(product.sale_price) || 0;
       const originalPrice = Number(product.original_price) || 0;
-      return `<article class="zaai-product-card" data-product-id="${Number(product.id)}">
+      const availableSizes = normalizeCatalogSizes(product.sizes, product.stock)
+        .filter((size) => size.available)
+        .map((size) => size.name)
+        .slice(0, 5)
+        .join(" · ");
+      const availableColors = colors.length;
+      return `<article class="zaai-product-card" data-product-id="${Number(product.id)}" tabindex="0" aria-label="${english ? `View ${escapeCatalogText(product.name)}` : `عرض ${escapeCatalogText(product.name)}`}">
         <div class="zaai-product-card-image">
-          <button class="zaai-product-card-open" type="button" data-open-product="${Number(product.id)}" aria-label="${english ? `View ${escapeCatalogText(product.name)}` : `عرض ${escapeCatalogText(product.name)}`}">
+          <a class="zaai-product-card-open" href="/product/${encodeURIComponent(product.id)}" data-open-product="${Number(product.id)}" aria-label="${english ? `View ${escapeCatalogText(product.name)}` : `عرض ${escapeCatalogText(product.name)}`}">
             ${image
               ? `<img src="${escapeCatalogText(image)}" alt="${escapeCatalogText(product.name)}" loading="lazy" decoding="async">`
               : `<span class="zaai-product-card-placeholder">${english ? "Image coming soon" : "الصورة غير متوفرة"}</span>`}
-            <span class="zaai-card-gradient" aria-hidden="true"></span>
-            <span class="zaai-card-reveal">
-              <span class="zaai-card-name">${escapeCatalogText(product.name)}</span>
-              <span class="zaai-card-price">${salePrice.toLocaleString(english ? "en-US" : "ar-EG")} ${english ? "EGP" : "ج.م"}${originalPrice > salePrice ? `<del>${originalPrice.toLocaleString(english ? "en-US" : "ar-EG")} ${english ? "EGP" : "ج.م"}</del>` : ""}</span>
-            </span>
-          </button>
-          <button class="zaai-card-add zaai-add-button" type="button" data-product-id="${Number(product.id)}" aria-label="${english ? `Add ${escapeCatalogText(product.name)} to bag` : `إضافة ${escapeCatalogText(product.name)} إلى السلة`}">
-            <i class="fa-solid fa-plus zaai-card-add-plus" aria-hidden="true"></i>
-            <i class="fa-solid fa-check zaai-card-add-check" aria-hidden="true"></i>
-          </button>
+          </a>
+        </div>
+        <div class="zaai-card-footer">
+          <div class="zaai-card-copy">
+            <h3>${escapeCatalogText(product.name)}</h3>
+            ${product.description ? `<p class="zaai-product-card-description">${escapeCatalogText(product.description)}</p>` : ""}
+            <div class="zaai-card-options">
+              ${availableSizes ? `<span class="zaai-card-sizes">${english ? "Sizes" : "المقاسات"}: ${escapeCatalogText(availableSizes)}</span>` : ""}
+              ${availableColors ? `<span class="zaai-card-colors" aria-label="${english ? `${availableColors} available colors` : `${availableColors} ألوان متاحة`}"><span aria-hidden="true">${colors.slice(0,4).map((color) => `<i style="--zaai-swatch:${escapeCatalogText(color.hex || color.value || "#050505")}"></i>`).join("")}</span><em>${english ? `${availableColors} colors` : `${availableColors} ألوان`}</em></span>` : ""}
+            </div>
+          </div>
+          <div class="zaai-card-footer-row">
+            <div>
+              <strong class="zaai-product-card-price">${salePrice.toLocaleString(english ? "en-US" : "ar-EG")} ${english ? "EGP" : "ج.م"}</strong>
+              ${originalPrice > salePrice ? `<del class="zaai-product-card-original-price">${originalPrice.toLocaleString(english ? "en-US" : "ar-EG")} ${english ? "EGP" : "ج.م"}</del>` : ""}
+            </div>
+            <button class="zaai-card-footer-add" type="button" data-open-product="${Number(product.id)}" aria-label="${english ? `Choose options for ${escapeCatalogText(product.name)}` : `اختيار خيارات ${escapeCatalogText(product.name)}`}">
+              <span data-ar="أضف للسلة" data-en="Add to bag">أضف للسلة</span>
+              <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+            </button>
+          </div>
         </div>
       </article>`;
     }).join("");
@@ -133,7 +220,9 @@ function loadStoreProducts(attempt = 0) {
   storeCatalogError = "";
   renderStoreProducts();
 
-  fetch(storeApiUrl("/api/store/products"))
+  fetch(storeApiUrl("/api/store/products"), {
+    cache: "no-store"
+  })
     .then((response) => response.ok ? response.json() : Promise.reject(new Error(`Products unavailable (${response.status})`)))
     .then((products) => {
       if (!Array.isArray(products)) throw new Error("Invalid product catalog response");
@@ -142,6 +231,9 @@ function loadStoreProducts(attempt = 0) {
       storeCatalogError = "";
       renderStoreProducts();
       document.dispatchEvent(new CustomEvent("zaai:catalog-loaded", { detail: products }));
+      if (new URLSearchParams(window.location.search).get("openProduct") === "1" && products.length) {
+        window.setTimeout(() => openProductExperience(products[0].id), 250);
+      }
     })
     .catch((error) => {
       console.error("Could not load the ZAAI product catalog.", error);
@@ -162,6 +254,9 @@ document.addEventListener("click", (event) => {
 function openProductExperience(productId, sourceElement) {
   const product = storeCatalog.find((item) => item.id === Number(productId));
   if (!product) return;
+  if (window.location.pathname !== `/product/${product.id}`) {
+    window.history.pushState({ zaaiProduct: product.id, source: "catalog" }, "", `/product/${encodeURIComponent(product.id)}`);
+  }
 
   const english = document.documentElement.lang === "en";
   let overlay = document.getElementById("zaai-product-experience-overlay");
@@ -176,10 +271,13 @@ function openProductExperience(productId, sourceElement) {
 
   const colors = normalizeCatalogColors(product.colors, product.stock);
   const sizes = normalizeCatalogSizes(product.sizes, product.stock);
-  const primaryImage = (Array.isArray(product.images) && product.images[0])
+  const primaryImageValue = (Array.isArray(product.images) && product.images[0])
     || colors[0]?.image
     || "";
-  const images = Array.isArray(product.images) ? product.images.filter(Boolean) : [];
+  const primaryImage = resolveStoreAssetUrl(primaryImageValue);
+  const images = Array.isArray(product.images)
+    ? product.images.filter(Boolean).map(resolveStoreAssetUrl)
+    : [];
   const salePrice = Number(product.sale_price) || 0;
   const originalPrice = Number(product.original_price) || 0;
   let activeColor = colors[0] || null;
@@ -200,40 +298,42 @@ function openProductExperience(productId, sourceElement) {
         </div>
         ${images.length > 1 ? `<div class="zaai-product-experience-thumbs">${images.map((image, index) => `<button type="button" data-gallery-image="${escapeCatalogText(image)}" class="${index === 0 ? "is-active" : ""}" aria-label="${english ? `View image ${index + 1}` : `عرض الصورة ${index + 1}`}"><img src="${escapeCatalogText(image)}" alt="" loading="lazy" decoding="async"></button>`).join("")}</div>` : ""}
       </div>
-      <section class="zaai-product-experience-info">
-        <span class="zaai-product-experience-kicker">${english ? "ZAAI COLLECTION" : "مجموعة ZAAI"}</span>
-        <h2>${escapeCatalogText(product.name)}</h2>
-        <div class="zaai-product-experience-price">
-          <strong>${salePrice.toLocaleString(english ? "en-US" : "ar-EG")} ${english ? "EGP" : "ج.م"}</strong>
-          ${originalPrice > salePrice ? `<del>${originalPrice.toLocaleString(english ? "en-US" : "ar-EG")} ${english ? "EGP" : "ج.م"}</del>` : ""}
-        </div>
-        ${product.description ? `<p class="zaai-product-experience-description">${escapeCatalogText(product.description)}</p>` : ""}
-        ${colors.length ? `<div class="zaai-product-experience-option">
-          <div class="zaai-product-experience-option-heading"><span>${english ? "COLOR" : "اللون"}</span><strong data-selected-color>${english ? activeColor.nameEn : activeColor.nameAr}</strong></div>
-          <div class="zaai-product-experience-colors" role="radiogroup" aria-label="${english ? "Choose color" : "اختر اللون"}">
-            ${colors.map((color, index) => `<button type="button" class="zaai-product-experience-swatch ${index === 0 ? "is-active" : ""}" data-color-index="${index}" role="radio" aria-checked="${index === 0}" aria-label="${english ? escapeCatalogText(color.nameEn) : escapeCatalogText(color.nameAr)}" style="--zaai-swatch:${escapeCatalogText(color.hex || color.value || "#050505")}"><span></span></button>`).join("")}
+      <section class="zaai-product-experience-info" dir="${english ? "ltr" : "rtl"}">
+        <div class="zaai-product-experience-content">
+          <span class="zaai-product-experience-kicker">${english ? "ZAAI COLLECTION" : "مجموعة ZAAI"}</span>
+          <h2>${escapeCatalogText(product.name)}</h2>
+          <div class="zaai-product-experience-price">
+            <strong>${salePrice.toLocaleString(english ? "en-US" : "ar-EG")} ${english ? "EGP" : "ج.م"}</strong>
+            ${originalPrice > salePrice ? `<del>${originalPrice.toLocaleString(english ? "en-US" : "ar-EG")} ${english ? "EGP" : "ج.م"}</del>` : ""}
           </div>
-        </div>` : ""}
-        ${sizes.length ? `<div class="zaai-product-experience-option">
-          <div class="zaai-product-experience-option-heading"><span>${english ? "SIZE" : "المقاس"}</span><button type="button" class="zaai-product-experience-size-guide">${english ? "SIZE GUIDE" : "دليل المقاسات"}</button></div>
-          <div class="zaai-product-experience-sizes" role="radiogroup" aria-label="${english ? "Choose size" : "اختر المقاس"}">
-            ${sizes.map((size) => `<button type="button" class="zaai-product-experience-size" data-size="${escapeCatalogText(size.name)}" ${size.available ? "" : "disabled"} aria-checked="false" role="radio">${escapeCatalogText(size.name)}</button>`).join("")}
+          ${product.description ? `<p class="zaai-product-experience-description">${escapeCatalogText(product.description)}</p>` : ""}
+          ${colors.length ? `<div class="zaai-product-experience-option">
+            <div class="zaai-product-experience-option-heading"><span>${english ? "COLOR" : "اللون"}</span><strong data-selected-color>${english ? activeColor.nameEn : activeColor.nameAr}</strong></div>
+            <div class="zaai-product-experience-colors" role="radiogroup" aria-label="${english ? "Choose color" : "اختر اللون"}">
+              ${colors.map((color, index) => `<button type="button" class="zaai-product-experience-swatch ${index === 0 ? "is-active" : ""}" data-color-index="${index}" role="radio" aria-checked="${index === 0}" aria-label="${english ? escapeCatalogText(color.nameEn) : escapeCatalogText(color.nameAr)}" style="--zaai-swatch:${escapeCatalogText(color.hex || color.value || "#050505")}"><span></span></button>`).join("")}
+            </div>
+          </div>` : ""}
+          ${sizes.length ? `<div class="zaai-product-experience-option">
+            <div class="zaai-product-experience-option-heading"><span>${english ? "SIZE" : "المقاس"}</span><button type="button" class="zaai-product-experience-size-guide">${english ? "SIZE GUIDE" : "دليل المقاسات"}</button></div>
+            <div class="zaai-product-experience-sizes" role="radiogroup" aria-label="${english ? "Choose size" : "اختر المقاس"}">
+              ${sizes.map((size) => `<button type="button" class="zaai-product-experience-size" data-size="${escapeCatalogText(size.name)}" ${size.available ? "" : "disabled"} aria-checked="false" role="radio">${escapeCatalogText(size.name)}</button>`).join("")}
+            </div>
+          </div>` : ""}
+          <div class="zaai-product-experience-quantity">
+            <span>${english ? "QUANTITY" : "الكمية"}</span>
+            <div><button type="button" data-quantity-minus aria-label="${english ? "Decrease quantity" : "تقليل الكمية"}">−</button><strong data-experience-quantity>1</strong><button type="button" data-quantity-plus aria-label="${english ? "Increase quantity" : "زيادة الكمية"}">+</button></div>
           </div>
-        </div>` : ""}
-        <div class="zaai-product-experience-quantity">
-          <span>${english ? "QUANTITY" : "الكمية"}</span>
-          <div><button type="button" data-quantity-minus aria-label="${english ? "Decrease quantity" : "تقليل الكمية"}">−</button><strong data-experience-quantity>1</strong><button type="button" data-quantity-plus aria-label="${english ? "Increase quantity" : "زيادة الكمية"}">+</button></div>
+          <p class="zaai-product-experience-validation" data-experience-validation aria-live="polite"></p>
         </div>
-        <p class="zaai-product-experience-validation" data-experience-validation aria-live="polite"></p>
+        <div class="zaai-product-experience-buy">
+          <button type="button" class="zaai-product-experience-favorite" aria-label="${english ? "Add to favorites" : "إضافة إلى المفضلة"}">
+            <i class="fa-regular fa-heart" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="zaai-product-experience-add" data-experience-add dir="auto">
+            <span data-ar="أضف إلى السلة" data-en="ADD TO BAG">${english ? "ADD TO BAG" : "أضف إلى السلة"}</span><i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+          </button>
+        </div>
       </section>
-      <div class="zaai-product-experience-buy">
-        <button type="button" class="zaai-product-experience-favorite" aria-label="${english ? "Add to favorites" : "إضافة إلى المفضلة"}">
-          <i class="fa-regular fa-heart" aria-hidden="true"></i>
-        </button>
-        <button type="button" class="zaai-product-experience-add" data-experience-add>
-          <span>ADD TO BAG</span><i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
-        </button>
-      </div>
     </div>`;
 
   overlay.classList.add("is-open");
@@ -263,12 +363,13 @@ function openProductExperience(productId, sourceElement) {
         item.classList.toggle("is-active", active);
         item.setAttribute("aria-checked", String(active));
       });
+      setProductExperienceMessage("", "");
       const label = overlay.querySelector("[data-selected-color]");
       if (label) label.textContent = english ? activeColor.nameEn : activeColor.nameAr;
       if (activeColor.image && mainImage) {
         mainImage.classList.add("is-changing");
         window.setTimeout(() => {
-          mainImage.src = activeColor.image;
+          mainImage.src = resolveStoreAssetUrl(activeColor.image);
           mainImage.classList.remove("is-changing");
         }, 120);
       }
@@ -284,7 +385,7 @@ function openProductExperience(productId, sourceElement) {
         item.classList.toggle("is-active", active);
         item.setAttribute("aria-checked", String(active));
       });
-      overlay.querySelector("[data-experience-validation]").textContent = "";
+      setProductExperienceMessage("", "");
     });
   });
 
@@ -318,19 +419,16 @@ function openProductExperience(productId, sourceElement) {
   });
 
   overlay.querySelector("[data-experience-add]")?.addEventListener("click", (event) => {
-    const validation = overlay.querySelector("[data-experience-validation]");
     if (sizes.length && !selectedSize) {
-      validation.textContent = english ? "Please choose an available size." : "يرجى اختيار مقاس متاح.";
+      setProductExperienceMessage(english ? "Please choose an available size." : "يرجى اختيار مقاس متاح.", "error");
       return;
     }
     if (colors.length && !activeColor) {
-      validation.textContent = english ? "Please choose an available color." : "يرجى اختيار لون متاح.";
+      setProductExperienceMessage(english ? "Please choose an available color." : "يرجى اختيار لون متاح.", "error");
       return;
     }
     const addButton = event.currentTarget;
     addButton.classList.remove("is-success");
-    void addButton.offsetWidth;
-    addButton.classList.add("is-success");
     document.dispatchEvent(new CustomEvent("zaai:cart-add", {
       detail: {
         productId: product.id,
@@ -351,7 +449,7 @@ function openProductExperience(productId, sourceElement) {
   );
 }
 
-function closeProductExperience() {
+function closeProductExperience(skipHistory = false) {
   const overlay = document.getElementById("zaai-product-experience-overlay");
   if (!overlay) return;
   overlay.classList.remove("is-open");
@@ -360,6 +458,79 @@ function closeProductExperience() {
   window.setTimeout(() => {
     if (overlay.isConnected && !overlay.classList.contains("is-open")) overlay.remove();
   }, 260);
+  if (!skipHistory && window.history.state?.zaaiProduct) {
+    window.history.back();
+  }
+}
+
+function setProductExperienceMessage(message, status) {
+  const messageElement = document.querySelector("#zaai-product-experience-overlay.is-open [data-experience-validation]");
+  if (!messageElement) return false;
+  messageElement.textContent = message;
+  messageElement.classList.toggle("is-success", status === "success");
+  messageElement.classList.toggle("is-error", status === "error");
+  if (status) {
+    window.requestAnimationFrame(() => {
+      const scrollContainer = messageElement.closest(".zaai-product-experience-content")
+        || messageElement.closest(".zaai-product-experience-info");
+      const addButton = document.querySelector("#zaai-product-experience-overlay.is-open [data-experience-add]");
+      if (!scrollContainer || !addButton) return;
+      const overlap = messageElement.getBoundingClientRect().bottom + 12 - addButton.getBoundingClientRect().top;
+      if (overlap > 0) scrollContainer.scrollBy({ top: overlap, behavior: "smooth" });
+    });
+  }
+  return true;
+}
+
+function animateProductToCart() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const overlay = document.getElementById("zaai-product-experience-overlay");
+  const productImage = overlay?.querySelector(".zaai-product-experience-main-image img");
+  const cartTargets = [
+    overlay?.querySelector("[data-open-existing-cart]"),
+    document.getElementById("header-cart"),
+    document.getElementById("zaai-mobile-nav-bag")
+  ];
+  const cartTarget = cartTargets.find((target) => {
+    const rect = target?.getBoundingClientRect();
+    return rect && rect.width > 0 && rect.height > 0;
+  });
+
+  if (!productImage || !cartTarget || !productImage.src || typeof productImage.animate !== "function") return;
+
+  const imageRect = productImage.getBoundingClientRect();
+  const cartIcon = cartTarget.querySelector("i") || cartTarget;
+  const cartRect = cartIcon.getBoundingClientRect();
+  if (!imageRect.width || !imageRect.height || !cartRect.width || !cartRect.height) return;
+
+  const flight = document.createElement("img");
+  flight.className = "zaai-product-flight";
+  flight.src = productImage.currentSrc || productImage.src;
+  flight.alt = "";
+  flight.setAttribute("aria-hidden", "true");
+  Object.assign(flight.style, {
+    top: `${imageRect.top}px`,
+    left: `${imageRect.left}px`,
+    width: `${imageRect.width}px`,
+    height: `${imageRect.height}px`
+  });
+  document.body.appendChild(flight);
+
+  const deltaX = cartRect.left + cartRect.width / 2 - (imageRect.left + imageRect.width / 2);
+  const deltaY = cartRect.top + cartRect.height / 2 - (imageRect.top + imageRect.height / 2);
+  const animation = flight.animate([
+    { transform: "translate(0, 0) scale(1)", opacity: 1 },
+    { transform: `translate(${deltaX}px, ${deltaY}px) scale(.12)`, opacity: .35 }
+  ], { duration: 650, easing: "cubic-bezier(.22,.75,.2,1)" });
+
+  animation.addEventListener("finish", () => {
+    flight.remove();
+    cartTarget.classList.remove("is-receiving");
+    void cartTarget.offsetWidth;
+    cartTarget.classList.add("is-receiving");
+  }, { once: true });
+  animation.addEventListener("cancel", () => flight.remove(), { once: true });
 }
 
 document.addEventListener("keydown", (event) => {
@@ -370,8 +541,33 @@ document.addEventListener("keydown", (event) => {
 
 document.addEventListener("click", (event) => {
   const openButton = event.target.closest("[data-open-product]");
-  if (openButton) openProductExperience(openButton.dataset.openProduct, openButton);
+  if (openButton) {
+    event.preventDefault();
+    openProductExperience(openButton.dataset.openProduct, openButton);
+    return;
+  }
+  const card = event.target.closest(".zaai-product-card");
+  if (!card || event.target.closest("button, a, input, select, textarea")) return;
+  openProductExperience(card.dataset.productId, card);
 });
+
+document.addEventListener("keydown", (event) => {
+  if ((event.key !== "Enter" && event.key !== " ") || !event.target.matches(".zaai-product-card")) return;
+  event.preventDefault();
+  openProductExperience(event.target.dataset.productId, event.target);
+});
+
+const directProductMatch = window.location.pathname.match(/^\/product\/(\d+)\/?$/);
+if (directProductMatch) {
+  document.addEventListener("zaai:catalog-loaded", () => {
+    const productId = Number(directProductMatch[1]);
+    if (storeCatalogLoaded) openProductExperience(productId);
+  }, { once: true });
+  window.addEventListener("popstate", () => {
+    const overlay = document.getElementById("zaai-product-experience-overlay");
+    if (overlay && !window.location.pathname.startsWith("/product/")) closeProductExperience(true);
+  });
+}
 
 const labels = {
   ar: { dark: "ليلي", light: "نهاري", enableDark: "تفعيل الوضع الليلي", enableLight: "تفعيل الوضع النهاري", openMenu: "فتح القائمة", closeMenu: "إغلاق القائمة" },
@@ -798,7 +994,9 @@ function setLanguage(language) {
       const colorName = color.nameAr || color.nameEn || color.id || "";
       const size = form.querySelector("[data-gift-size]")?.value
         || (document.documentElement.lang === "en" ? "One size" : "مقاس موحد");
-      const image = (Array.isArray(product.images) && product.images[0]) || color.image || "";
+      const image = resolveStoreAssetUrl(
+        (Array.isArray(product.images) && product.images[0]) || color.image || ""
+      );
 
       zaaiCart.push({
         key: `gift-${Date.now()}-${Math.random().toString(36).slice(2)}`,
@@ -916,7 +1114,7 @@ function setLanguage(language) {
           ? item.colorEn || item.colorAr || "Not selected"
           : item.colorAr || item.colorEn || "غير محدد";
         row.innerHTML = `
-          <img class="zaai-cart-item-image" src="${escapeCatalogText(item.image || "")}" alt="">
+          <img class="zaai-cart-item-image" src="${escapeCatalogText(resolveStoreAssetUrl(item.image || ""))}" alt="">
           <button class="zaai-cart-remove" type="button" data-remove="${escapeCatalogText(item.key)}" aria-label="${english ? "Remove item" : "إزالة المنتج"}">
             <i class="fa-solid fa-xmark" aria-hidden="true"></i>
           </button>
@@ -1008,6 +1206,7 @@ function setLanguage(language) {
       const detail = event.detail || {};
       const product = storeCatalog.find((item) => item.id === Number(detail.productId));
       if (!product) return;
+      const english = document.documentElement.lang === "en";
       const colors = normalizeCatalogColors(product.colors, product.stock);
       const selectedColorIndex = Number(detail.colorIndex || 0);
       const selectedColor = colors[selectedColorIndex];
@@ -1021,8 +1220,15 @@ function setLanguage(language) {
       const variantStock = Number(color.stock);
       const sizeOption = normalizeCatalogSizes(product.sizes, product.stock).find((item) => item.name === size);
       const sizeStock = Number(sizeOption?.stock);
-      if (stock <= 0 || (Number.isFinite(variantStock) && variantStock <= 0) || (Number.isFinite(sizeStock) && sizeStock <= 0)) {
-        showToast("الكمية المطلوبة غير متوفرة", "Requested quantity unavailable", "هذا الاختيار غير متاح حاليًا", "This selection is currently unavailable");
+      if (stock <= 0
+        || (sizeOption?.stock != null && Number.isFinite(sizeStock) && sizeStock <= 0)
+        || (selectedColor?.stock != null && Number.isFinite(variantStock) && variantStock <= 0)) {
+        const message = english
+          ? "This selection is currently unavailable. Please choose another option."
+          : "هذا الاختيار غير متاح حاليًا، يرجى اختيار خيارات أخرى.";
+        if (!setProductExperienceMessage(message, "error")) {
+          showToast("الكمية المطلوبة غير متوفرة", "Requested quantity unavailable", "هذا الاختيار غير متاح حاليًا", "This selection is currently unavailable");
+        }
         return;
       }
       const availableStock = Number.isFinite(variantStock) && variantStock > 0
@@ -1030,15 +1236,22 @@ function setLanguage(language) {
         : Number.isFinite(sizeStock) && sizeStock > 0
           ? sizeStock
           : stock > 0 ? stock : 999;
-      const productImage = color.image
+      const productImage = resolveStoreAssetUrl(
+        color.image
         || (Array.isArray(product.images) && product.images[0])
-        || "";
+        || ""
+      );
       const key = `${product.id}-${selectedColorIndex}-${size}`;
       const existing = zaaiCart.find((item) => item.key === key);
       const currentQuantity = existing ? existing.quantity : 0;
       const nextQuantity = Math.min(availableStock, currentQuantity + quantity);
       if (nextQuantity <= currentQuantity) {
-        showToast("الكمية المطلوبة غير متوفرة", "Requested quantity unavailable", "تم الوصول إلى الحد المتاح من المخزون", "The available stock limit has been reached");
+        const message = english
+          ? "The available stock limit has been reached."
+          : "تم الوصول إلى الحد المتاح من المخزون.";
+        if (!setProductExperienceMessage(message, "error")) {
+          showToast("الكمية المطلوبة غير متوفرة", "Requested quantity unavailable", "تم الوصول إلى الحد المتاح من المخزون", "The available stock limit has been reached");
+        }
         return;
       }
       if (existing) {
@@ -1058,15 +1271,28 @@ function setLanguage(language) {
       }
       saveCart();
       renderCart();
-      showToast("تمت إضافة طلبك إلى السلة", "ADDED TO YOUR BAG", "تمت الإضافة بنجاح", "The product has been added successfully.");
-      const toastCartButton = zaaiOrderToast.querySelector("[data-open-toast-cart]");
-      if (toastCartButton) {
-        toastCartButton.textContent = document.documentElement.lang === "en" ? "View bag" : "عرض السلة";
-        zaaiOrderToast.classList.add("is-cart-toast");
-        toastCartButton.onclick = () => {
-          zaaiOrderToast.classList.remove("is-visible");
-          openCart();
-        };
+      animateProductToCart();
+      const experienceMessageShown = setProductExperienceMessage(
+        english ? "Added to your bag successfully." : "تمت إضافة المنتج إلى السلة بنجاح.",
+        "success"
+      );
+      if (!experienceMessageShown) {
+        showToast("تمت إضافة طلبك إلى السلة", "ADDED TO YOUR BAG", "تمت الإضافة بنجاح", "The product has been added successfully.");
+        const toastCartButton = zaaiOrderToast.querySelector("[data-open-toast-cart]");
+        if (toastCartButton) {
+          toastCartButton.textContent = english ? "View bag" : "عرض السلة";
+          zaaiOrderToast.classList.add("is-cart-toast");
+          toastCartButton.onclick = () => {
+            zaaiOrderToast.classList.remove("is-visible");
+            openCart();
+          };
+        }
+      }
+      const experienceAddButton = document.querySelector("#zaai-product-experience-overlay.is-open [data-experience-add]");
+      if (experienceAddButton) {
+        experienceAddButton.classList.remove("is-success");
+        void experienceAddButton.offsetWidth;
+        experienceAddButton.classList.add("is-success");
       }
       const headerCount = document.getElementById("header-cart-count");
       const mobileCount = document.getElementById("zaai-mobile-bag-count");
@@ -1079,17 +1305,6 @@ function setLanguage(language) {
     });
 
     document.addEventListener("click", (event) => {
-      const cardAdd = event.target.closest(".zaai-card-add");
-      if (cardAdd) {
-        event.preventDefault();
-        event.stopPropagation();
-        const productId = cardAdd.dataset.productId;
-        if (cardAdd.dataset.locked === "true") return;
-        cardAdd.dataset.locked = "true";
-        openProductExperience(productId, cardAdd);
-        window.setTimeout(() => { cardAdd.dataset.locked = "false"; }, 500);
-        return;
-      }
       const button = event.target.closest(".zaai-add-button[data-product-id]");
       if (!button) return;
       const card = button.closest(".zaai-product-card");
@@ -1106,7 +1321,9 @@ function setLanguage(language) {
         ? { nameAr: selectedColor, nameEn: selectedColor }
         : selectedColor || {};
       const colorName = color.nameAr || color.nameEn || color.id || "";
-      const productImage = (Array.isArray(product.images) && product.images[0]) || color.image || "";
+      const productImage = resolveStoreAssetUrl(
+        (Array.isArray(product.images) && product.images[0]) || color.image || ""
+      );
       const key = `${product.id}-${selectedColorIndex}-${size}`;
       const existing = zaaiCart.find((item) => item.key === key);
       if (existing) {
@@ -1375,12 +1592,12 @@ if ("IntersectionObserver" in window && window.matchMedia("(max-width: 760px)").
 }
 
 document.querySelectorAll('a[href="/admin/login"]').forEach((link) => {
-  const localHost = ["127.0.0.1", "localhost"].includes(window.location.hostname);
-  const adminUrl = localHost
-    ? "http://127.0.0.1:5510/admin/login"
-    : "https://zaai-production.up.railway.app/admin/login";
-
-  link.setAttribute("href", adminUrl);
+ link.addEventListener("click", (event) => {
+   if (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost") {
+     event.preventDefault();
+     window.location.assign("https://zaai-production.up.railway.app/admin/login");
+   }
+ });
 });
 
 document.querySelectorAll('a[href^="#"]').forEach((link) => {
@@ -2051,18 +2268,333 @@ if (footerYear) {
   footerYear.textContent = String(new Date().getFullYear());
 }
 
-fetch(storeApiUrl("/api/store/settings"))
+function setDataText(element, ar, en) {
+  if (!element) return;
+  if (ar) element.dataset.ar = ar;
+  if (en) element.dataset.en = en;
+  const english = document.documentElement.lang === "en";
+  element.textContent = english ? (en || ar || "") : (ar || en || "");
+}
+
+function applyHomeHeading(ar, en) {
+  const heading = document.querySelector(".home-copy h1");
+  if (!heading) return;
+
+  const splitAr = splitHomeTitle(ar || "", "ar");
+  const splitEn = splitHomeTitle(en || "", "en");
+  const english = document.documentElement.lang === "en";
+
+  heading.innerHTML =
+    `<span data-ar="${escapeCatalogText(splitAr.firstAr)}" data-en="${escapeCatalogText(splitEn.firstEn)}">${escapeCatalogText(english ? splitEn.firstEn : splitAr.firstAr)}</span>` +
+    `<span class="home-title-accent" data-ar="${escapeCatalogText(splitAr.secondAr)}" data-en="${escapeCatalogText(splitEn.secondEn)}">${escapeCatalogText(english ? splitEn.secondEn : splitAr.secondAr)}</span>`;
+  heading.dataset.ar = ar || splitAr.firstAr;
+  heading.dataset.en = en || splitEn.firstEn;
+}
+
+function splitHomeTitle(title, language) {
+  const value = String(title || "").trim();
+  if (!value) return language === "ar"
+    ? { firstAr:"", secondAr:"" }
+    : { firstEn:"", secondEn:"" };
+
+  if (language === "en") {
+    const match = /\s+with\s+/i.exec(value);
+    if (match) {
+      const splitAt = match.index;
+      return {
+        firstEn: value.slice(0, splitAt).trim(),
+        secondEn: value.slice(splitAt).trim()
+      };
+    }
+  } else {
+    const marker = value.includes("براحة") ? "براحة" : "";
+    if (marker) {
+      const splitAt = value.indexOf(marker);
+      return {
+        firstAr: value.slice(0, splitAt).trim(),
+        secondAr: value.slice(splitAt).trim()
+      };
+    }
+  }
+
+  const words = value.split(/\s+/);
+  const splitAt = Math.ceil(words.length / 2);
+  return language === "ar"
+    ? { firstAr: words.slice(0, splitAt).join(" "), secondAr: words.slice(splitAt).join(" ") }
+    : { firstEn: words.slice(0, splitAt).join(" "), secondEn: words.slice(splitAt).join(" ") };
+}
+
+function applyStoreSections(sections) {
+  const byKey = new Map((Array.isArray(sections) ? sections : []).map((section) => [section.section_key, section]));
+  sections.forEach((section) => {
+    const draft = section.draft && typeof section.draft === "object" ? section.draft : {};
+    const elementStyles = draft.elements && typeof draft.elements === "object" ? draft.elements : {};
+    Object.entries(elementStyles).forEach(([selector, responsive]) => {
+      const element = document.querySelectorAll(selector);
+      if (!element.length) return;
+      element.forEach((target) => {
+        const apply = (styles) => Object.entries(styles || {}).forEach(([property, value]) => {
+            if (value) target.style.setProperty(property, value);
+        });
+        apply(responsive.global);
+        if (window.matchMedia("(min-width:981px)").matches) apply(responsive.desktop);
+        if (window.matchMedia("(min-width:761px) and (max-width:980px)").matches) apply(responsive.tablet);
+        if (window.matchMedia("(max-width:760px)").matches) apply(responsive.mobile);
+      });
+    });
+  });
+
+  const mappings = {
+    home: { element: "home", heading: ".home-copy h1", text: ".home-description", image: ".home-image-frame img", video: null },
+    about: { element: "about", heading: "#about-title", text: ".about-lead", image: null, video: ".about-video video source" },
+    services: { element: "services", heading: "#services-title", text: ".services-intro > p", image: null, video: null },
+    products: { element: "products", heading: "#style-discovery-title", text: ".style-discovery-heading > p", image: null, video: null },
+    contact: { element: "contact", heading: "#zaai-contact-title", text: ".zaai-contact-heading > p", image: null, video: null }
+  };
+
+  Object.entries(mappings).forEach(([key, map]) => {
+    const section = byKey.get(key);
+    if (!section) return;
+    const element = document.getElementById(map.element);
+    if (!element) return;
+    element.hidden = Number(section.visible) === 0;
+
+    if (key === "home") {
+      applyHomeHeading(section.title_ar, section.title_en);
+    } else {
+      setDataText(element.querySelector(map.heading), section.title_ar, section.title_en);
+    }
+    setDataText(element.querySelector(map.text), section.content_ar, section.content_en);
+
+    if (map.image && section.image) {
+      const image = element.querySelector(map.image);
+      if (image) image.src = resolveStoreAssetUrl(section.image);
+    }
+    if (map.video && section.video) {
+      const source = element.querySelector(map.video);
+      if (source) {
+        source.src = resolveStoreAssetUrl(section.video);
+        source.parentElement?.load();
+      }
+    }
+
+    if (section.button_text_ar || section.button_text_en) {
+      const button = key === "home"
+        ? element.querySelector(".home-button-primary")
+        : key === "about"
+          ? element.querySelector(".about-copy a")
+          : key === "services"
+            ? null
+            : key === "products"
+              ? null
+              : element.querySelector(".zaai-contact-cta");
+      setDataText(button, section.button_text_ar, section.button_text_en);
+      if (button && section.button_link) button.href = section.button_link;
+    }
+  });
+
+  const sectionElements = [
+    "home","product-lab","about","order-now","services","products","contact"
+  ].map((key) => document.getElementById(key)).filter(Boolean);
+  sectionElements.sort((a, b) => {
+    const aSection = byKey.get(a.id);
+    const bSection = byKey.get(b.id);
+    return (aSection?.sort_order ?? 999) - (bSection?.sort_order ?? 999) || (aSection?.id ?? 999) - (bSection?.id ?? 999);
+  });
+  const parent = sectionElements[0]?.parentElement;
+  const footer = document.querySelector(".zaai-footer") || document.querySelector("footer");
+  sectionElements.forEach((element) => {
+    if (footer && parent === footer.parentElement) parent.insertBefore(element, footer);
+    else if (parent) parent.appendChild(element);
+  });
+
+  if (new URLSearchParams(location.search).get("preview") === "1") {
+    sectionElements.forEach((element) => {
+      element.classList.add("zaai-preview-section");
+      const names = { home:"Home", "product-lab":"Product Lab", about:"About", "order-now":"Order Now", services:"Services", products:"Products", contact:"Contact" };
+      element.dataset.adminSectionName = names[element.id] || element.id;
+      element.addEventListener("click", () => {
+        window.parent?.postMessage({ type:"zaai-preview-select", sectionKey:element.id }, "*");
+      });
+    });
+    document.querySelectorAll(".zaai-preview-section *").forEach((element) => {
+      element.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const previewElement = event.currentTarget;
+        const section = previewElement.closest(".zaai-preview-section");
+        const tag = previewElement.tagName.toLowerCase();
+        let siblingIndex = 1;
+        let sibling = previewElement.previousElementSibling;
+        while (sibling) {
+          if (sibling.tagName.toLowerCase() === tag) siblingIndex += 1;
+          sibling = sibling.previousElementSibling;
+        }
+        const selector = `#${section?.id || "zaai-preview"} ${tag}${siblingIndex > 1 ? `:nth-of-type(${siblingIndex})` : ""}`;
+        const computed = getComputedStyle(previewElement);
+        window.parent?.postMessage({
+          type:"zaai-preview-element",
+          tag:previewElement.tagName.toLowerCase(),
+          label: previewElement.tagName.toLowerCase() === "img" ? "صورة" : previewElement.tagName.toLowerCase(),
+          selector,
+          styles:{
+            width:previewElement.style.width || computed.width,
+            height:previewElement.style.height || computed.height,
+            "text-align":previewElement.style.textAlign || computed.textAlign,
+            "background-color":previewElement.style.backgroundColor || computed.backgroundColor,
+            color:previewElement.style.color || computed.color,
+            "font-size":previewElement.style.fontSize || computed.fontSize,
+            padding:previewElement.style.padding || computed.padding,
+            margin:previewElement.style.margin || computed.margin,
+            display:previewElement.style.display || computed.display
+          }
+        }, "*");
+      });
+    });
+  }
+}
+
+fetch(storeApiUrl("/api/store/settings"), { cache: "no-store" })
   .then((response) => response.ok ? response.json() : Promise.reject(new Error("Settings unavailable")))
   .then((settings) => {
-    if (settings.siteName) document.title = String(document.title).replace(/ZAAI STORE/, settings.siteName);
+    settings = {
+      siteName: "ZAAI STORE",
+      whatsapp: "+201022591767",
+      email: "",
+      address: "المنصورة، مصر",
+      currency: "EGP",
+      defaultLanguage: "ar",
+      primaryColor: "#98866a",
+      accentColor: "#171717",
+      ...(settings && typeof settings === "object" ? settings : {})
+    };
+    if (settings.siteName) {
+      document.title = String(document.title).replace(/ZAAI STORE/g, settings.siteName);
+      document.querySelectorAll(".logo h2, .zaai-footer-logo span").forEach((element) => {
+        element.textContent = settings.siteName;
+      });
+    }
+    if (settings.primaryColor) document.documentElement.style.setProperty("--header-accent", settings.primaryColor);
+    if (settings.accentColor) {
+      document.documentElement.style.setProperty("--page-text", settings.accentColor);
+      document.documentElement.style.setProperty("--header-text", settings.accentColor);
+    }
+    if (settings.defaultLanguage === "en" && document.documentElement.lang !== "en") {
+      document.getElementById("language-toggle")?.click();
+    }
     const whatsapp = String(settings.whatsapp || "").replace(/\D/g, "");
     if (whatsapp) {
-      document.querySelectorAll('a[href*="wa.me/201022591767"]').forEach((link) => {
+      document.querySelectorAll('a[href*="wa.me/"]').forEach((link) => {
         link.href = `https://wa.me/${whatsapp}`;
+      });
+    }
+    if (settings.email) {
+      document.querySelectorAll(".zaai-footer-contact a[href^='mailto:']").forEach((link) => {
+        link.href = `mailto:${settings.email}`;
+        link.textContent = settings.email;
+      });
+    }
+    if (settings.address) {
+      document.querySelectorAll(".zaai-footer-contact > span").forEach((element) => {
+        element.textContent = settings.address;
       });
     }
   })
   .catch(() => {});
 
+fetch(storeApiUrl("/api/store/sections"), { cache: "no-store" })
+  .then((response) => response.ok ? response.json() : Promise.reject(new Error("Sections unavailable")))
+  .then(applyStoreSections)
+  .catch((error) => console.error("Could not load ZAAI sections.", error));
+
+window.addEventListener("message", (event) => {
+  if (!event.data || typeof event.data !== "object") return;
+  if (event.data.type === "zaai-element-preview") {
+    const breakpoint = event.data.breakpoint || "global";
+    let style = document.getElementById("zaai-live-builder-style");
+    if (!style) {
+      style = document.createElement("style");
+      style.id = "zaai-live-builder-style";
+      document.head.appendChild(style);
+    }
+    const cssText = Object.entries(event.data.styles || {})
+      .filter(([, value]) => String(value || "").trim())
+      .map(([property, value]) => `${property}:${value} !important;`)
+      .join("");
+    const block = `${event.data.selector}{${cssText}}`;
+    const existing = style.textContent;
+    style.textContent = `${existing}\n${breakpoint === "global" ? block : `@media (${breakpoint === "desktop" ? "min-width:981px" : breakpoint === "tablet" ? "min-width:761px and max-width:980px" : "max-width:760px"}){${block}}`}`;
+  }
+  if (event.data.type === "zaai-element-preview") {
+    const selector = event.data.selector;
+    const styles = event.data.styles || {};
+    document.querySelectorAll(selector).forEach((element) => {
+      Object.entries(styles).forEach(([property, value]) => {
+        if (value) element.style.setProperty(property, value);
+        else element.style.removeProperty(property);
+      });
+    });
+    return;
+  }
+  if (event.data.type === "zaai-preview-select-local") {
+    document.querySelectorAll(".zaai-preview-section").forEach((element) => {
+      element.classList.toggle("is-admin-selected", element.id === event.data.sectionKey);
+    });
+    const target = document.getElementById(event.data.sectionKey);
+    target?.scrollIntoView({ behavior:"smooth", block:"start" });
+    return;
+  }
+  if (event.data.type === "zaai-language") {
+    setLanguage(event.data.language);
+    return;
+  }
+  if (event.data.type !== "zaai-section-preview") return;
+
+  const key = String(event.data.sectionKey || "").trim();
+  const mappings = {
+    home: { heading: ".home-copy h1", text: ".home-description", image: ".home-image-frame img", button: ".home-button-primary" },
+    about: { heading: "#about-title", text: ".about-lead", image: null, button: null },
+    services: { heading: "#services-title", text: ".services-intro > p", image: null, button: null },
+    products: { heading: "#style-discovery-title", text: ".style-discovery-heading > p", image: null, button: null },
+    contact: { heading: "#zaai-contact-title", text: ".zaai-contact-heading > p", image: null, button: ".zaai-contact-cta" }
+  };
+  const map = mappings[key];
+  if (!map) return;
+  const english = document.documentElement.lang === "en";
+  const heading = document.querySelector(map.heading);
+  const text = document.querySelector(map.text);
+  if (key === "home") {
+    applyHomeHeading(event.data.titleAr, event.data.titleEn);
+  } else {
+    setDataText(heading, event.data.titleAr, event.data.titleEn);
+  }
+  setDataText(text, event.data.contentAr, event.data.contentEn);
+  if (map.image && event.data.image) {
+    const image = document.querySelector(map.image);
+    if (image) image.src = resolveStoreAssetUrl(event.data.image);
+  }
+  if (event.data.video) {
+    const source = document.querySelector(".about-video video source");
+    if (source && key === "about") {
+      source.src = resolveStoreAssetUrl(event.data.video);
+      source.parentElement?.load();
+    }
+  }
+  if (map.button) {
+    const button = document.querySelector(map.button);
+    setDataText(button, event.data.buttonAr, event.data.buttonEn);
+    if (event.data.link) button.href = event.data.link;
+  }
+  const sectionElement = document.getElementById(key);
+  if (sectionElement) sectionElement.hidden = !event.data.visible;
+});
+
 loadStoreProducts();
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/service-worker.js?v=20261123-live-fix-4").catch((error) => {
+      console.warn("Could not register the ZAAI service worker.", error);
+    });
+  });
+}
 
