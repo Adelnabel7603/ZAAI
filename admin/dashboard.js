@@ -56,7 +56,7 @@
     try {
       const me = await api("/api/admin/me");
       csrfToken = me.csrfToken;
-      await Promise.all([loadOverview(), loadProducts(), loadOrders(), loadCustomers(), loadMedia(), loadSections(), loadSettings()]);
+      await Promise.all([loadOverview(), loadProducts(), loadOrders(), loadCustomers(), loadMedia(), loadSections(), loadSettings(), loadBackups()]);
       bindNavigation();
       bindActions();
     } catch (error) {
@@ -81,6 +81,19 @@
   }
 
   function bindActions() {
+    on("#create-admin-backup", "click", async () => {
+      const button = $("#create-admin-backup");
+      button.disabled = true;
+      try {
+        await api("/api/admin/backups", { method:"POST", body:{} });
+        await loadBackups();
+        toast("تم إنشاء نسخة احتياطية آمنة.");
+      } catch (error) {
+        toast(error.message);
+      } finally {
+        button.disabled = false;
+      }
+    });
     on("#admin-logout", "click", async () => {
       await api("/api/admin/logout", { method:"POST", body:{} }).catch(() => {});
       window.location.replace(`/?fresh=${Date.now()}`);
@@ -188,6 +201,16 @@
     setHtml("#admin-recent", data.recentAudit.length ? data.recentAudit.map((item) =>
       `<div class="admin-list-item"><span>${escapeHtml(item.action)} · ${escapeHtml(item.entity)}</span><small>${escapeHtml(item.created_at)}</small></div>`
     ).join("") : `<div class="admin-list-item"><span>لا توجد تعديلات بعد</span></div>`);
+  }
+
+  async function loadBackups() {
+    const backups = await api("/api/admin/backups");
+    setHtml("#admin-backup-list", backups.length ? backups.slice(0, 5).map((backup) =>
+      `<a class="admin-list-item" href="/api/admin/backups/${encodeURIComponent(backup.name)}" target="_blank" rel="noopener">
+        <span>${escapeHtml(backup.name)}</span>
+        <small>${escapeHtml(new Date(backup.createdAt).toLocaleString("ar-EG"))} · ${Math.max(1, Math.round(backup.size / 1024))} KB</small>
+      </a>`
+    ).join("") : `<div class="admin-list-item"><span>لا توجد نسخ احتياطية بعد</span></div>`);
   }
 
   async function loadProducts() {
@@ -355,6 +378,8 @@
     };
     try {
       await api(id ? `/api/admin/products/${id}` : "/api/admin/products", { method:id ? "PUT" : "POST", body });
+      await api("/api/admin/backups", { method:"POST", body:{} }).catch(() => {});
+      await loadBackups();
       $("#product-modal").close();
       await Promise.all([loadProducts(), loadOverview()]);
       toast(id ? "تم تحديث المنتج بنجاح." : "تمت إضافة المنتج بنجاح.");
@@ -649,6 +674,8 @@
         method:"PUT",
         body:{ ids: sections.map((item) => item.id).sort((a, b) => sections.find((x) => x.id === a).sort_order - sections.find((x) => x.id === b).sort_order) }
       });
+      await api("/api/admin/backups", { method:"POST", body:{} }).catch(() => {});
+      await loadBackups();
       markBuilderSaved();
       refreshBuilderPreview();
       toast("تم حفظ ونشر تعديلات السكشنات بنجاح.");
@@ -777,6 +804,8 @@
     };
     try {
       await api(id ? `/api/admin/sections/${id}` : "/api/admin/sections", { method:id ? "PUT" : "POST", body });
+      await api("/api/admin/backups", { method:"POST", body:{} }).catch(() => {});
+      await loadBackups();
       $("#section-modal").close();
       $("#section-key").disabled = false;
       await loadSections();
@@ -860,6 +889,8 @@
     };
     try {
       await api("/api/admin/settings", { method:"PUT", body });
+      await api("/api/admin/backups", { method:"POST", body:{} }).catch(() => {});
+      await loadBackups();
       toast("تم حفظ إعدادات الموقع.");
     } catch (error) { toast(error.message); }
   }

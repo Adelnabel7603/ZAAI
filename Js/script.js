@@ -556,9 +556,10 @@ function animateProductToCart() {
   const deltaX = cartRect.left + cartRect.width / 2 - (imageRect.left + imageRect.width / 2);
   const deltaY = cartRect.top + cartRect.height / 2 - (imageRect.top + imageRect.height / 2);
   const animation = flight.animate([
-    { transform: "translate(0, 0) scale(1)", opacity: 1 },
-    { transform: `translate(${deltaX}px, ${deltaY}px) scale(.12)`, opacity: .35 }
-  ], { duration: 650, easing: "cubic-bezier(.22,.75,.2,1)" });
+    { transform: "translate(0, 0) scale(1) rotate(0deg)", opacity: 1, borderRadius: "18px" },
+    { transform: `translate(${deltaX * .72}px, ${deltaY * .72 - 18}px) scale(.46) rotate(-8deg)`, opacity: 1, offset: .58 },
+    { transform: `translate(${deltaX}px, ${deltaY}px) scale(.08) rotate(5deg)`, opacity: .18, borderRadius: "50%" }
+  ], { duration: 780, easing: "cubic-bezier(.22,.75,.2,1)" });
 
   animation.addEventListener("finish", () => {
     flight.remove();
@@ -604,14 +605,19 @@ document.addEventListener("keydown", (event) => {
 
 const directProductMatch = window.location.pathname.match(/^\/product\/(\d+)\/?$/);
 if (directProductMatch) {
-  document.addEventListener("zaai:catalog-loaded", () => {
+  let directProductOpened = false;
+  const openDirectProduct = () => {
+    if (directProductOpened || !storeCatalogLoaded) return;
     const productId = Number(directProductMatch[1]);
-    if (storeCatalogLoaded) {
-      window.setTimeout(() => openProductExperience(productId), 0);
-    }
+    if (!storeCatalog.some((product) => product.id === productId)) return;
+    directProductOpened = true;
+    openProductExperience(productId);
+  };
+  document.addEventListener("zaai:catalog-loaded", () => {
+    openDirectProduct();
   }, { once: true });
   window.setTimeout(() => {
-    if (storeCatalogLoaded) openProductExperience(Number(directProductMatch[1]));
+    openDirectProduct();
   }, 900);
   window.addEventListener("popstate", () => {
     const overlay = document.getElementById("zaai-product-experience-overlay");
@@ -698,6 +704,8 @@ function setLanguage(language) {
     tabs.forEach((tab) => {
       tab.addEventListener("click", () => {
         const target = tab.dataset.discoveryTab;
+        const tabIndex = tabs.indexOf(tab);
+        tab.closest(".style-discovery-tabs")?.style.setProperty("--tab-index", String(tabIndex));
         tabs.forEach((item) => {
           const active = item === tab;
           item.classList.toggle("is-active", active);
@@ -707,6 +715,11 @@ function setLanguage(language) {
           const active = panel.dataset.discoveryPanel === target;
           panel.classList.toggle("is-active", active);
           panel.hidden = !active;
+          if (active) {
+            panel.classList.remove("is-active");
+            void panel.offsetWidth;
+            panel.classList.add("is-active");
+          }
         });
       });
     });
@@ -1323,7 +1336,7 @@ function setLanguage(language) {
       renderCart();
       animateProductToCart();
       const experienceMessageShown = setProductExperienceMessage(
-        english ? "Added to your bag successfully." : "تمت إضافة المنتج إلى السلة بنجاح.",
+        english ? "✓ Added to your bag" : "✓ تمت الإضافة إلى السلة",
         "success"
       );
       if (!experienceMessageShown) {
@@ -1343,6 +1356,14 @@ function setLanguage(language) {
         experienceAddButton.classList.remove("is-success");
         void experienceAddButton.offsetWidth;
         experienceAddButton.classList.add("is-success");
+        window.clearTimeout(experienceAddButton.zaaiResetSuccess);
+        experienceAddButton.zaaiResetSuccess = window.setTimeout(() => {
+          experienceAddButton.classList.remove("is-success");
+          const icon = experienceAddButton.querySelector("i");
+          if (icon) {
+            icon.className = "fa-solid fa-bag-shopping";
+          }
+        }, 1800);
       }
       const headerCount = document.getElementById("header-cart-count");
       const mobileCount = document.getElementById("zaai-mobile-bag-count");
@@ -1352,6 +1373,14 @@ function setLanguage(language) {
         void count.offsetWidth;
         count.classList.add("is-bumping");
       });
+      const bagButton = document.querySelector(
+        "#zaai-product-experience-overlay.is-open [data-open-existing-cart]"
+      );
+      if (bagButton) {
+        bagButton.classList.remove("is-receiving");
+        void bagButton.offsetWidth;
+        bagButton.classList.add("is-receiving");
+      }
     });
 
     document.addEventListener("click", (event) => {

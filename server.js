@@ -18,11 +18,16 @@ const dataDir = process.env.ZAAI_DATA_DIR
 const uploadDir = process.env.ZAAI_UPLOAD_DIR
   ? path.resolve(process.env.ZAAI_UPLOAD_DIR)
   : path.join(root, "uploads");
+const backupDir = process.env.ZAAI_BACKUP_DIR
+  ? path.resolve(process.env.ZAAI_BACKUP_DIR)
+  : path.join(dataDir, "backups");
 fs.mkdirSync(dataDir, { recursive: true });
 fs.mkdirSync(uploadDir, { recursive: true });
+fs.mkdirSync(backupDir, { recursive: true });
 
 const port = Number(process.env.PORT || 5510);
-const db = new Database(path.join(dataDir, "zaai.sqlite"));
+const dbPath = path.join(dataDir, "zaai.sqlite");
+const db = new Database(dbPath);
 db.pragma("journal_mode = WAL");
 db.pragma("foreign_keys = ON");
 
@@ -156,10 +161,6 @@ function ensureOwner() {
   let password = process.env.ZAAI_OWNER_PASSWORD;
   if (!password) password = crypto.randomBytes(12).toString("base64url");
   if (existing) {
-    if (process.env.ZAAI_OWNER_EMAIL || process.env.ZAAI_OWNER_PASSWORD) {
-      db.prepare("UPDATE owner SET email=?,password_hash=?,updated_at=CURRENT_TIMESTAMP WHERE id=?")
-        .run(email.toLowerCase(), hashPassword(password), existing.id);
-    }
     return db.prepare("SELECT * FROM owner WHERE id=?").get(existing.id);
   }
   db.prepare("INSERT INTO owner (email,password_hash,role) VALUES (?,?,?)")
@@ -173,6 +174,26 @@ function ensureOwner() {
 }
 
 ensureOwner();
+
+function createDatabaseBackup() {
+  db.pragma("wal_checkpoint(PASSIVE)");
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const filename = `zaai-${stamp}.sqlite`;
+  const backupPath = path.join(backupDir, filename);
+  fs.copyFileSync(dbPath, backupPath);
+  fs.chmodSync(backupPath, 0o600);
+
+  const backups = fs.readdirSync(backupDir)
+    .filter((name) => /^zaai-.+\.sqlite$/.test(name))
+    .map((name) => ({ name, time: fs.statSync(path.join(backupDir, name)).mtimeMs }))
+    .sort((a, b) => b.time - a.time);
+  for (const old of backups.slice(30)) {
+    fs.rmSync(path.join(backupDir, old.name), { force: true });
+  }
+  return { filename, backupPath };
+}
+
+createDatabaseBackup();
 
 const seedCount = db.prepare("SELECT COUNT(*) AS count FROM products").get().count;
 const catalogVariants = [
@@ -217,9 +238,6 @@ if (!catalogMigrated) {
     );
   });
 
-  if (legacyProduct) {
-    db.prepare("DELETE FROM products WHERE id=?").run(legacyProduct.id);
-  }
   db.prepare("INSERT INTO settings(key,value) VALUES (?,?)")
     .run("catalog_migrated", JSON.stringify(true));
 }
@@ -282,7 +300,7 @@ app.use(session({
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     maxAge: 8 * 60 * 60 * 1000
   }
 }));
@@ -387,12 +405,19 @@ app.put("/api/admin/account/password", ensureCsrf, requireOwner, (req, res) => {
 });
 
 app.get("/admin/login", (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
   if (req.session.ownerId) return res.redirect("/admin");
   res.sendFile(path.join(root, "admin", "login.html"));
 });
 
-app.get("/admin", requireOwner, (req, res) => res.sendFile(path.join(root, "admin", "dashboard.html")));
-app.get("/admin/", requireOwner, (req, res) => res.sendFile(path.join(root, "admin", "dashboard.html")));
+app.get("/admin", requireOwner, (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
+  res.sendFile(path.join(root, "admin", "dashboard.html"));
+});
+app.get("/admin/", requireOwner, (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
+  res.sendFile(path.join(root, "admin", "dashboard.html"));
+});
 
 app.get(/^\/product\/[^/]+\/?$/, (req, res) => {
   res.sendFile(path.join(root, "index.html"));
@@ -403,6 +428,32 @@ app.use("/uploads", express.static(uploadDir));
 
 app.get("/api/admin/me", requireOwner, (req, res) => {
   res.json({ owner: { id: req.owner.id, email: req.owner.email, role: req.owner.role }, csrfToken: req.session.csrfToken });
+});
+
+app.get("/api/admin/backups", requireOwner, (req, res) => {
+  const backups = fs.readdirSync(backupDir)
+    .filter((name) => /^zaai-.+\.sqlite$/.test(name))
+    .map((name) => {
+      const fullPath = path.join(backupDir, name);
+      const stat = fs.statSync(fullPath);
+      return { name, size: stat.size, createdAt: stat.mtime.toISOString() };
+    })
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  res.json(backups);
+});
+
+app.post("/api/admin/backups", ensureCsrf, requireOwner, (req, res) => {
+  const backup = createDatabaseBackup();
+  audit("backup", "database", "", { filename: backup.filename });
+  res.status(201).json({ name: path.basename(backup.backupPath) });
+});
+
+app.get("/api/admin/backups/:name", requireOwner, (req, res) => {
+  const name = path.basename(String(req.params.name || ""));
+  if (!/^zaai-.+\.sqlite$/.test(name)) return res.status(400).json({ error: "اسم النسخة الاحتياطية غير صالح." });
+  const backupPath = path.join(backupDir, name);
+  if (!fs.existsSync(backupPath)) return res.status(404).json({ error: "النسخة الاحتياطية غير موجودة." });
+  res.download(backupPath, name);
 });
 
 app.get("/api/admin/overview", requireOwner, (req, res) => {
@@ -672,6 +723,13 @@ app.delete("/api/admin/media/:id", ensureCsrf, requireOwner, (req, res) => {
   const id = Number(req.params.id);
   const media = db.prepare("SELECT * FROM media WHERE id=?").get(id);
   if (!media) return res.status(404).json({ error: "الملف غير موجود." });
+  const inProducts = db.prepare("SELECT COUNT(*) AS count FROM products WHERE images LIKE ? OR colors LIKE ?")
+    .get(`%${media.url}%`, `%${media.url}%`).count;
+  const inSections = db.prepare("SELECT COUNT(*) AS count FROM sections WHERE image=? OR video=?")
+    .get(media.url, media.url).count;
+  if (inProducts || inSections) {
+    return res.status(409).json({ error: "لا يمكن حذف هذا الملف لأنه مستخدم حاليًا في موقعك." });
+  }
   fs.rmSync(path.join(uploadDir, media.filename), { force: true });
   db.prepare("DELETE FROM media WHERE id=?").run(id);
   audit("delete", "media", id, { filename: media.filename });

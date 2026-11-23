@@ -403,7 +403,7 @@ body.light-admin .admin-search,body.light-admin .admin-field input,body.light-ad
   .section-row .section-actions { display:none; }
   .builder-status { display:none; }
   #builder-undo,#builder-redo { display:none; }
-  .visual-builder { grid-template-columns:1fr;height:auto;min-height:calc(100vh - 250px);overflow:visible; }
+  .visual-builder { position:relative;grid-template-columns:1fr;height:auto;min-height:calc(100vh - 250px);overflow:visible; }
   .builder-section-sidebar { max-height:190px;border-inline-end:0;border-bottom:1px solid var(--admin-border); }
   .builder-preview-stage { height:calc(100vh - 440px);min-height:420px;padding:6px; }
   .builder-preview-stage iframe { min-height:420px; }
@@ -413,5 +413,56 @@ body.light-admin .admin-search,body.light-admin .admin-field input,body.light-ad
   .builder-section-sidebar .section-row .section-actions .admin-icon-button { width:40px;height:40px; }
   .builder-preview-devices .admin-button { width:44px;height:44px; }
   .visual-builder { grid-template-columns:1fr; }
-  .builder-properties-panel { position:absolute;z-index:30;inset-inline:8px;bottom:8px;max-height:42vh;border:1px solid var(--admin-border);border-radius:14px 14px 8px 8px;box-shadow:0 -18px 40px rgba(0,0,0,.32); }
+  .builder-properties-panel {
+    position:absolute;
+    z-index:30;
+    inset-inline:8px;
+    bottom:8px;
+    max-height:38vh;
+    padding:14px;
+    border:1px solid rgba(255,255,255,.11);
+    border-radius:18px;
+    background:rgba(29,29,27,.96);
+    box-shadow:0 16px 40px rgba(0,0,0,.28);
+    backdrop-filter:blur(16px);
+  }
+  .builder-properties-panel::before {
+    position:absolute;
+    top:6px;
+    left:50%;
+    width:36px;
+    height:4px;
+    border-radius:999px;
+    background:rgba(255,255,255,.18);
+    content:"";
+    transform:translateX(-50%);
+  }
+  .builder-properties-head {
+    margin:4px 0 10px;
+    padding:0 0 10px;
+  }
+  .builder-properties-head strong {
+    max-width:calc(100% - 48px);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .builder-properties-body {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+  }
+  .builder-properties-body .admin-field {
+    min-width:0;
+  }
+  .builder-properties-body .admin-field span {
+    margin-bottom:5px;
+    font-size:.64rem;
+  }
+  .builder-properties-body .admin-field input,
+  .builder-properties-body .admin-field select {
+    min-height:36px;
+    height:36px;
+    width:100%;
+    min-width:0;
+  }
 }
