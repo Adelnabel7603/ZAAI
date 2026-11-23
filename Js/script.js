@@ -606,8 +606,13 @@ const directProductMatch = window.location.pathname.match(/^\/product\/(\d+)\/?$
 if (directProductMatch) {
   document.addEventListener("zaai:catalog-loaded", () => {
     const productId = Number(directProductMatch[1]);
-    if (storeCatalogLoaded) openProductExperience(productId);
+    if (storeCatalogLoaded) {
+      window.setTimeout(() => openProductExperience(productId), 0);
+    }
   }, { once: true });
+  window.setTimeout(() => {
+    if (storeCatalogLoaded) openProductExperience(Number(directProductMatch[1]));
+  }, 900);
   window.addEventListener("popstate", () => {
     const overlay = document.getElementById("zaai-product-experience-overlay");
     if (overlay && !window.location.pathname.startsWith("/product/")) closeProductExperience(true);
