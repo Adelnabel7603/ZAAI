@@ -234,26 +234,26 @@ const defaultSettings = {
   primaryColor: "#98866a",
   accentColor: "#171717"
 };
-const settingsCount = db.prepare("SELECT COUNT(*) AS count FROM settings").get().count;
-if (!settingsCount) {
-  const insertSetting = db.prepare("INSERT INTO settings (key,value) VALUES (?,?)");
-  Object.entries(defaultSettings).forEach(([key, value]) => insertSetting.run(key, JSON.stringify(value)));
-}
+const upsertSetting = db.prepare(`
+  INSERT INTO settings(key,value) VALUES (?,?)
+  ON CONFLICT(key) DO NOTHING
+`);
+Object.entries(defaultSettings).forEach(([key, value]) => upsertSetting.run(key, JSON.stringify(value)));
 
 const sectionCount = db.prepare("SELECT COUNT(*) AS count FROM sections").get().count;
-if (!sectionCount) {
-  const insertSection = db.prepare(`
-    INSERT INTO sections(section_key,title_ar,title_en,content_ar,content_en,image,video,button_text_ar,button_text_en,button_link,sort_order,visible)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
-  `);
-  [
-    ["home","الرئيسية","Home","إطلالة احترافية براحة تليق بك","A polished look with comfort made for you","image/man/product1.jpg","","استكشف المنتج","Explore","/","1",1],
-    ["about","عن ZAAI","About ZAAI","مصمم لراحتك. مصنوع بثقة.","Designed for comfort. Made with confidence.","image/about video.mp4","","اكتشف ZAAI","Discover ZAAI","#about","2",1],
-    ["services","الخدمات","Services","أكثر من مجرد أزياء طبية.","More than medical wear.","","","استكشف الخدمات","Explore services","#services","3",1],
-    ["products","اكتشف أسلوبك","Discover your style","اكتشف مجموعتنا واستمتع بتجربة مشاهدة كل التفاصيل.","Discover our collection and enjoy every detail.","","","تصفح المنتجات","Shop","#products","4",1],
-    ["contact","تواصل معنا","Get in touch","نحن هنا لمساعدتك.","We are here to help.","image/contact/contact 2.jpeg","","ابدأ المحادثة","Start a chat","https://wa.me/201022591767","5",1]
-  ].forEach((row) => insertSection.run(...row));
-}
+const insertSection = db.prepare(`
+  INSERT OR IGNORE INTO sections(section_key,title_ar,title_en,content_ar,content_en,image,video,button_text_ar,button_text_en,button_link,sort_order,visible)
+  VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+`);
+[
+  ["home","الرئيسية","Home","إطلالة احترافية براحة تليق بك","A polished look with comfort made for you","image/man/product1.jpg","","استكشف المنتج","Explore","/","1",1],
+  ["product-lab","مختبر المنتج","Product Lab","اكتشف تفاصيل منتجات ZAAI عن قرب.","Discover ZAAI product details up close.","image/man/product1.jpg","","استكشف","Explore","#product-lab","2",1],
+  ["about","عن ZAAI","About ZAAI","مصمم لراحتك. مصنوع بثقة.","Designed for comfort. Made with confidence.","image/about video.mp4","","اكتشف ZAAI","Discover ZAAI","#about","3",1],
+  ["order-now","اطلب الآن","Order Now","اكتشف أزياء طبية صُممت لراحتك وثقتك وأدائك كل يوم.","Discover medical wear designed for your comfort, confidence, and performance.","image/order-now.mp4","","اطلب الآن","Order Now","#products","4",1],
+  ["services","الخدمات","Services","أكثر من مجرد أزياء طبية.","More than medical wear.","","","استكشف الخدمات","Explore services","#services","5",1],
+  ["products","اكتشف أسلوبك","Discover your style","اكتشف مجموعتنا واستمتع بتجربة مشاهدة كل التفاصيل.","Discover our collection and enjoy every detail.","","","تصفح المنتجات","Shop","#products","6",1],
+  ["contact","تواصل معنا","Get in touch","نحن هنا لمساعدتك.","We are here to help.","image/contact/contact 2.jpeg","","ابدأ المحادثة","Start a chat","https://wa.me/201022591767","7",1]
+].forEach((row) => insertSection.run(...row));
 
 app.disable("x-powered-by");
 app.use(helmet({
@@ -268,7 +268,7 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
   res.header("Vary", "Origin");
   res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Headers", "Content-Type, x-csrf-token");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Cache-Control, x-csrf-token");
   res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
   if (req.method === "OPTIONS") return res.sendStatus(204);
   next();
@@ -580,6 +580,22 @@ app.post("/api/admin/sections", ensureCsrf, requireOwner, (req, res) => {
   res.status(201).json(db.prepare("SELECT * FROM sections WHERE id=?").get(result.lastInsertRowid));
 });
 
+app.put("/api/admin/sections/reorder", ensureCsrf, requireOwner, (req, res) => {
+  const ids = Array.isArray(req.body.ids) ? req.body.ids.map(Number).filter(Number.isInteger) : [];
+  if (!ids.length) return res.status(400).json({ error: "ترتيب السكشنات مطلوب." });
+  const existingIds = new Set(db.prepare("SELECT id FROM sections").all().map((row) => row.id));
+  if (ids.length !== existingIds.size || ids.some((id) => !existingIds.has(id)) || new Set(ids).size !== ids.length) {
+    return res.status(400).json({ error: "قائمة ترتيب السكشنات غير كاملة أو تحتوي على عناصر غير صالحة." });
+  }
+  const updateSort = db.prepare("UPDATE sections SET sort_order=?,updated_at=CURRENT_TIMESTAMP WHERE id=?");
+  const transaction = db.transaction(() => {
+    ids.forEach((id, index) => updateSort.run(index + 1, id));
+  });
+  transaction();
+  audit("reorder", "sections", "", { ids });
+  res.json({ ok: true });
+});
+
 app.put("/api/admin/sections/:id", ensureCsrf, requireOwner, (req, res) => {
   const id = Number(req.params.id);
   const existing = db.prepare("SELECT * FROM sections WHERE id=?").get(id);
@@ -610,6 +626,10 @@ app.put("/api/admin/sections/:id", ensureCsrf, requireOwner, (req, res) => {
 
 app.delete("/api/admin/sections/:id", ensureCsrf, requireOwner, (req, res) => {
   const id = Number(req.params.id);
+  const existing = db.prepare("SELECT section_key FROM sections WHERE id=?").get(id);
+  if (existing && ["home","product-lab","about","order-now","services","products","contact"].includes(existing.section_key)) {
+    return res.status(400).json({ error: "لا يمكن حذف سكشن أساسي من الموقع." });
+  }
   if (!db.prepare("DELETE FROM sections WHERE id=?").run(id).changes) return res.status(404).json({ error: "السكشن غير موجود." });
   audit("delete", "section", id);
   res.json({ ok: true });
@@ -655,6 +675,9 @@ app.delete("/api/admin/media/:id", ensureCsrf, requireOwner, (req, res) => {
 });
 
 app.get("/api/store/settings", (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
   const rows = db.prepare("SELECT key,value FROM settings").all();
   const settings = {};
   rows.forEach((row) => { settings[row.key] = parseJson(row.value, row.value); });
@@ -662,11 +685,17 @@ app.get("/api/store/settings", (req, res) => {
 });
 
 app.get("/api/store/products", (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
   res.json(db.prepare("SELECT * FROM products WHERE status='published' ORDER BY sort_order ASC,id DESC")
     .all().map(normalizeProduct));
 });
 
 app.get("/api/store/sections", (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
   res.json(db.prepare("SELECT * FROM sections WHERE visible=1 ORDER BY sort_order ASC,id ASC").all());
 });
 
