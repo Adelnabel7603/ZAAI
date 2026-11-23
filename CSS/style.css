@@ -3655,8 +3655,8 @@ html[dir="rtl"] .lab-next::before {
 @media (hover: hover) and (pointer: fine) {
     .zaai-product-card {
         border: 1px solid rgba(185,165,138,.16);
-        border-radius: 18px;
-        background: #f7f6f2;
+        border-radius: 16px;
+        background: #fff;
         box-shadow: 0 8px 24px rgba(23,23,23,.055);
         transition: transform .32s cubic-bezier(.16,1,.3,1), box-shadow .32s ease, border-color .32s ease;
     }
@@ -3751,12 +3751,12 @@ html[dir="rtl"] .lab-next::before {
 
 .zaai-card-footer {
     display: grid;
-    gap: 12px;
-    min-height: 180px;
+    gap: 8px;
+    min-height: 92px;
     margin: 0;
-    padding: 14px;
-    border-top: 1px solid rgba(185,165,138,.20);
-    background: #f7f6f2;
+    padding: 10px 10px 9px;
+    border-top: 0;
+    background: #fff;
     box-shadow: none;
 }
 
@@ -3766,9 +3766,9 @@ html[dir="rtl"] .lab-next::before {
 }
 
 .zaai-card-copy h3 {
-    min-height: 42px;
-    font-size: 1rem;
-    line-height: 1.35;
+    min-height: 0;
+    font-size: .78rem;
+    line-height: 1.25;
 }
 
 .zaai-card-favorite {
@@ -3801,8 +3801,8 @@ html[dir="rtl"] .lab-next::before {
     top: 10px;
     right: 10px;
     display: grid;
-    width: 36px;
-    height: 36px;
+    width: 31px;
+    height: 31px;
     place-items: center;
     border: 1px solid rgba(23,23,23,.08);
     border-radius: 50%;
@@ -3881,13 +3881,15 @@ html[dir="rtl"] .lab-next::before {
 
 .zaai-card-footer-add {
     display: inline-flex;
-    min-height: 42px;
+    min-height: 48px;
+    width: 48px;
+    min-width: 48px;
     align-items: center;
     justify-content: center;
     gap: 7px;
     border: 1px solid var(--header-border);
-    border-radius: 999px;
-    background: #b9a58a;
+    border-radius: 14px;
+    background: #f3a46f;
     color: #fff;
     padding: 0 12px;
     cursor: pointer;
@@ -3905,7 +3907,8 @@ html[dir="rtl"] .lab-next::before {
 }
 
 .zaai-card-price-block {
-    display: grid !important;
+    display: flex !important;
+    flex-direction: column;
     gap: 2px;
 }
 
@@ -3961,7 +3964,7 @@ html[dir="rtl"] .lab-next::before {
     .zaai-product-card {
         border: 1px solid rgba(185,165,138,.18);
         border-radius: 16px;
-        background: #f7f6f2;
+        background: #fff;
         box-shadow: 0 8px 22px rgba(23,23,23,.07);
     }
 

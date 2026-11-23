@@ -190,19 +190,12 @@ function renderStoreProducts() {
         <div class="zaai-card-footer">
           <div class="zaai-card-copy">
             <h3>${escapeCatalogText(product.name)}</h3>
-            <div class="zaai-card-badges">
-              <span>${english ? "ZAAI" : "جديد"}</span>
-              <span>${english ? "READY" : "متوفر"}</span>
-            </div>
             ${product.description ? `<p class="zaai-product-card-description">${escapeCatalogText(product.description)}</p>` : ""}
           </div>
           <div class="zaai-card-footer-row">
             <div class="zaai-card-price-block">
-              <span>${english ? "PRICE" : "السعر"}</span>
-              <div>
-                <strong class="zaai-product-card-price">${salePrice.toLocaleString(english ? "en-US" : "ar-EG")} ${english ? "EGP" : "ج.م"}</strong>
-                ${originalPrice > salePrice ? `<del class="zaai-product-card-original-price">${originalPrice.toLocaleString(english ? "en-US" : "ar-EG")} ${english ? "EGP" : "ج.م"}</del>` : ""}
-              </div>
+              <strong class="zaai-product-card-price">${salePrice.toLocaleString(english ? "en-US" : "ar-EG")} ${english ? "EGP" : "ج.م"}</strong>
+              ${originalPrice > salePrice ? `<del class="zaai-product-card-original-price">${originalPrice.toLocaleString(english ? "en-US" : "ar-EG")} ${english ? "EGP" : "ج.م"}</del>` : ""}
             </div>
             <div class="zaai-card-quantity" aria-label="${english ? "Quantity" : "الكمية"}">
               <button type="button" data-card-quantity="-1" aria-label="${english ? "Decrease quantity" : "تقليل الكمية"}">−</button>
@@ -210,8 +203,7 @@ function renderStoreProducts() {
               <button type="button" data-card-quantity="1" aria-label="${english ? "Increase quantity" : "زيادة الكمية"}">+</button>
             </div>
             <button class="zaai-card-footer-add" type="button" data-card-add="${Number(product.id)}" aria-label="${english ? `Add ${escapeCatalogText(product.name)} to bag` : `إضافة ${escapeCatalogText(product.name)} إلى السلة`}">
-              <span data-ar="أضف للسلة" data-en="Add to bag">أضف للسلة</span>
-              <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </button>
           </div>
         </div>
