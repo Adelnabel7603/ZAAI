@@ -8,6 +8,7 @@ const rateLimit = require("express-rate-limit");
 const multer = require("multer");
 const cookieParser = require("cookie-parser");
 const Database = require("better-sqlite3");
+const catalogImageGalleries = require("./Js/catalog-image-galleries");
 
 const app = express();
 const root = __dirname;
@@ -204,7 +205,6 @@ const catalogVariants = [
   { id: "slate", nameAr: "رمادي مزرق", nameEn: "Blue grey", hex: "#626d79", image: "image/man/رمادي مزرق/رمادي مزرق.webp", sprite: "image/man/رمادي مزرق/رمادي مزرق 360.webp" },
   { id: "light-royal", nameAr: "أزرق ملكي فاتح", nameEn: "Light royal", hex: "#799bd1", image: "image/man/ازرق ملكي فاتح/ازرق ملكي فاتح .webp", sprite: "image/man/ازرق ملكي فاتح/ازرق ملكي فاتح.webp" }
 ];
-
 const catalogMigrated = db.prepare("SELECT value FROM settings WHERE key=?").get("catalog_migrated");
 if (!catalogMigrated) {
   const insertProduct = db.prepare(`
@@ -240,6 +240,24 @@ if (!catalogMigrated) {
 
   db.prepare("INSERT INTO settings(key,value) VALUES (?,?)")
     .run("catalog_migrated", JSON.stringify(true));
+}
+
+if (!db.prepare("SELECT value FROM settings WHERE key=?").get("catalog_product_galleries_migrated")) {
+  const products = db.prepare("SELECT id,colors,images FROM products WHERE category='men'").all();
+  const updateImages = db.prepare("UPDATE products SET images=?,updated_at=CURRENT_TIMESTAMP WHERE id=?");
+
+  products.forEach((product) => {
+    const colors = parseJson(product.colors, []);
+    const images = parseJson(product.images, []);
+    const colorId = colors.find((color) => color && typeof color === "object")?.id;
+    const variant = catalogVariants.find((item) => item.id === colorId);
+    const gallery = catalogImageGalleries[colorId];
+    if (!variant || !gallery || images.length !== 1 || images[0] !== variant.image) return;
+    updateImages.run(JSON.stringify(gallery), product.id);
+  });
+
+  db.prepare("INSERT INTO settings(key,value) VALUES (?,?)")
+    .run("catalog_product_galleries_migrated", JSON.stringify(true));
 }
 
 const defaultSettings = {
