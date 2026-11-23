@@ -367,6 +367,7 @@ body.light-admin .admin-search,body.light-admin .admin-field input,body.light-ad
   .admin-nav button i,.admin-sidebar-bottom i { width:auto; }
   .admin-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .media-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .visual-builder { grid-template-columns:180px minmax(0,1fr) 220px; }
 }
 
 @media (max-width:760px) {
@@ -411,4 +412,6 @@ body.light-admin .admin-search,body.light-admin .admin-field input,body.light-ad
   .builder-section-sidebar .section-row .section-actions { grid-column:2;justify-content:flex-end; }
   .builder-section-sidebar .section-row .section-actions .admin-icon-button { width:40px;height:40px; }
   .builder-preview-devices .admin-button { width:44px;height:44px; }
+  .visual-builder { grid-template-columns:1fr; }
+  .builder-properties-panel { position:absolute;z-index:30;inset-inline:8px;bottom:8px;max-height:42vh;border:1px solid var(--admin-border);border-radius:14px 14px 8px 8px;box-shadow:0 -18px 40px rgba(0,0,0,.32); }
 }

@@ -460,6 +460,8 @@ function closeProductExperience(skipHistory = false) {
   }, 260);
   if (!skipHistory && window.history.state?.zaaiProduct) {
     window.history.back();
+  } else if (!skipHistory && window.location.pathname.startsWith("/product/")) {
+    window.location.assign("/");
   }
 }
 
