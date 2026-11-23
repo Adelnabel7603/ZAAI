@@ -3730,6 +3730,96 @@ html[dir="rtl"] .lab-next::before {
     border-radius: 12px;
 }
 
+.zaai-card-footer {
+    display: grid;
+    gap: 16px;
+    padding: 16px;
+    background: var(--header-bg);
+}
+
+.zaai-card-copy {
+    display: grid;
+    gap: 8px;
+}
+
+.zaai-card-options {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: var(--header-muted);
+    font-size: .72rem;
+}
+
+.zaai-card-sizes {
+    line-height: 1.5;
+}
+
+.zaai-card-colors {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.zaai-card-colors > span {
+    display: inline-flex;
+    direction: ltr;
+}
+
+.zaai-card-colors i {
+    width: 12px;
+    height: 12px;
+    margin-inline-start: -3px;
+    border: 1px solid rgba(255,255,255,.7);
+    border-radius: 50%;
+    background: var(--zaai-swatch);
+    box-shadow: 0 0 0 1px rgba(5,5,5,.12);
+}
+
+.zaai-card-colors i:first-child {
+    margin-inline-start: 0;
+}
+
+.zaai-card-colors em {
+    font-style: normal;
+}
+
+.zaai-card-footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.zaai-card-footer-row > div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 7px;
+}
+
+.zaai-product-card-original-price {
+    color: var(--header-muted);
+    font-size: .72rem;
+}
+
+.zaai-card-footer-add {
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: 1px solid var(--header-border);
+    border-radius: 999px;
+    background: var(--page-text);
+    color: var(--header-bg);
+    padding: 0 12px;
+    cursor: pointer;
+    font-size: .7rem;
+    font-weight: 800;
+}
+
 .zaai-catalog-message {
     grid-column: 1 / -1;
     padding: 40px 20px;
