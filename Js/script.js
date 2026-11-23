@@ -209,7 +209,7 @@ function renderStoreProducts() {
               <strong data-card-quantity-value>1</strong>
               <button type="button" data-card-quantity="1" aria-label="${english ? "Increase quantity" : "زيادة الكمية"}">+</button>
             </div>
-            <button class="zaai-card-footer-add" type="button" data-open-product="${Number(product.id)}" aria-label="${english ? `Choose options for ${escapeCatalogText(product.name)}` : `اختيار خيارات ${escapeCatalogText(product.name)}`}">
+            <button class="zaai-card-footer-add" type="button" data-card-add="${Number(product.id)}" aria-label="${english ? `Add ${escapeCatalogText(product.name)} to bag` : `إضافة ${escapeCatalogText(product.name)} إلى السلة`}">
               <span data-ar="أضف للسلة" data-en="Add to bag">أضف للسلة</span>
               <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
             </button>
@@ -470,6 +470,46 @@ function closeProductExperience(skipHistory = false) {
   }
 }
 
+function animateCardProductToCart(button, card) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const image = card?.querySelector(".zaai-product-card-open img");
+  const target = document.getElementById("header-cart") || document.getElementById("zaai-mobile-nav-bag");
+  if (!image || !target || typeof image.animate !== "function") return;
+  const imageRect = image.getBoundingClientRect();
+  const targetRect = target.getBoundingClientRect();
+  if (!imageRect.width || !targetRect.width) return;
+  const flight = document.createElement("img");
+  flight.className = "zaai-product-flight";
+  flight.src = image.currentSrc || image.src;
+  Object.assign(flight.style, {
+    position:"fixed",
+    zIndex:"9999",
+    top:`${imageRect.top + imageRect.height * .42}px`,
+    left:`${imageRect.left + imageRect.width * .42}px`,
+    width:`${Math.max(80, imageRect.width * .16)}px`,
+    height:`${Math.max(100, imageRect.height * .16)}px`,
+    borderRadius:"12px",
+    objectFit:"cover",
+    pointerEvents:"none"
+  });
+  document.body.appendChild(flight);
+  const deltaX = targetRect.left + targetRect.width / 2 - (imageRect.left + imageRect.width / 2);
+  const deltaY = targetRect.top + targetRect.height / 2 - (imageRect.top + imageRect.height / 2);
+  const animation = flight.animate([
+    { transform:"translate(0,0) scale(1)", opacity:1 },
+    { transform:`translate(${deltaX}px,${deltaY}px) scale(.12)`, opacity:.25 }
+  ], { duration:700, easing:"cubic-bezier(.22,.75,.2,1)" });
+  animation.addEventListener("finish", () => {
+    flight.remove();
+    button.classList.remove("is-success");
+    void button.offsetWidth;
+    button.classList.add("is-success");
+    target.classList.add("is-receiving");
+    window.setTimeout(() => target.classList.remove("is-receiving"), 650);
+  }, { once:true });
+  animation.addEventListener("cancel", () => flight.remove(), { once:true });
+}
+
 function setProductExperienceMessage(message, status) {
   const messageElement = document.querySelector("#zaai-product-experience-overlay.is-open [data-experience-validation]");
   if (!messageElement) return false;
@@ -561,6 +601,27 @@ document.addEventListener("click", (event) => {
     const value = quantityWrap?.querySelector("[data-card-quantity-value]");
     if (value) {
       value.textContent = String(Math.max(1, Math.min(99, Number(value.textContent) + Number(quantityButton.dataset.cardQuantity))));
+    }
+    return;
+  }
+  const cardAdd = event.target.closest("[data-card-add]");
+  if (cardAdd) {
+    const card = cardAdd.closest(".zaai-product-card");
+    const productId = Number(cardAdd.dataset.cardAdd);
+    const quantity = Number(card?.querySelector("[data-card-quantity-value]")?.textContent || 1);
+    const product = storeCatalog.find((item) => item.id === productId);
+    if (product) {
+      cardAdd.classList.add("is-success");
+      document.dispatchEvent(new CustomEvent("zaai:cart-add", {
+        detail: {
+          productId,
+          colorIndex: 0,
+          size: document.documentElement.lang === "en" ? "One size" : "مقاس موحد",
+          quantity
+        }
+      }));
+      animateCardProductToCart(cardAdd, card);
+      window.setTimeout(() => cardAdd.classList.remove("is-success"), 900);
     }
     return;
   }
