@@ -3672,6 +3672,17 @@ html[dir="rtl"] .lab-next::before {
         display: flex;
     }
 
+    .zaai-product-card:hover .zaai-product-card-description,
+    .zaai-product-card:focus-within .zaai-product-card-description {
+        max-height: 52px;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .zaai-card-footer-row {
+        min-height: 48px;
+    }
+
     .zaai-product-card:hover .zaai-product-card-open img,
     .zaai-product-card:focus-within .zaai-product-card-open img {
         transform: scale(1.045);
@@ -3712,11 +3723,16 @@ html[dir="rtl"] .lab-next::before {
 }
 
 .zaai-product-card-description {
-    min-height: 3em;
+    min-height: 0;
     margin: 0;
     color: var(--header-muted);
-    font-size: 0.86rem;
-    line-height: 1.7;
+    font-size: 0.72rem;
+    line-height: 1.55;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transform: translateY(6px);
+    transition: opacity .22s ease, max-height .28s ease, transform .28s ease;
 }
 
 .zaai-product-card-price {
@@ -3985,16 +4001,15 @@ html[dir="rtl"] .lab-next::before {
     }
 
     .zaai-product-card-description {
-        min-height: 0;
-        display: -webkit-box;
-        overflow: hidden;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-        font-size: .72rem;
+        display: none;
     }
 
     .zaai-card-footer-row {
         align-items: flex-end;
+    }
+
+    .zaai-card-quantity {
+        display: none !important;
     }
 
     .zaai-card-footer-add {
