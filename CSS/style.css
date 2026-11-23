@@ -4273,12 +4273,43 @@ html[dir="rtl"] .lab-next::before {
 }
 
 .zaai-product-experience-size-guide {
-    border: 0;
-    border-bottom: 1px solid currentColor;
-    background: transparent;
-    color: var(--header-muted);
-    font-size: .62rem;
+    display: inline-flex;
+    min-height: 34px;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: 1px solid rgba(185,165,138,.42);
+    border-radius: 999px;
+    background: #f7f4ee;
+    color: #171717;
+    padding: 0 11px;
+    font-size: .68rem;
+    font-weight: 800;
     cursor: pointer;
+    transition: background .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+.zaai-product-experience-size-guide i {
+    color: #b9a58a;
+    font-size: .72rem;
+}
+
+.zaai-product-experience-size-guide:active {
+    transform: scale(.96);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .zaai-product-experience-size-guide:hover {
+        border-color: #b9a58a;
+        background: #b9a58a;
+        color: #050505;
+        box-shadow: 0 8px 18px rgba(185,165,138,.22);
+        transform: translateY(-1px);
+    }
+
+    .zaai-product-experience-size-guide:hover i {
+        color: #050505;
+    }
 }
 
 .zaai-product-experience-colors,
@@ -4601,7 +4632,13 @@ html[dir="rtl"] .lab-next::before {
     }
 
     .zaai-product-experience-size-guide {
-        color: rgba(255,255,255,.72);
+        border-color: rgba(185,165,138,.38);
+        background: rgba(255,255,255,.10);
+        color: #fff;
+    }
+
+    .zaai-product-experience-size-guide i {
+        color: #b9a58a;
     }
 
     .zaai-product-experience-sizes {

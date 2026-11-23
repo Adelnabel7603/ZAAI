@@ -305,7 +305,7 @@ function openProductExperience(productId, sourceElement) {
             </div>
           </div>` : ""}
           ${sizes.length ? `<div class="zaai-product-experience-option">
-            <div class="zaai-product-experience-option-heading"><span>${english ? "SIZE" : "المقاس"}</span><button type="button" class="zaai-product-experience-size-guide">${english ? "SIZE GUIDE" : "دليل المقاسات"}</button></div>
+            <div class="zaai-product-experience-option-heading"><span>${english ? "SIZE" : "المقاس"}</span><button type="button" class="zaai-product-experience-size-guide"><i class="fa-solid fa-ruler-combined" aria-hidden="true"></i><span>${english ? "SIZE GUIDE" : "دليل المقاسات"}</span></button></div>
             <div class="zaai-product-experience-sizes" role="radiogroup" aria-label="${english ? "Choose size" : "اختر المقاس"}">
               ${sizes.map((size) => `<button type="button" class="zaai-product-experience-size" data-size="${escapeCatalogText(size.name)}" ${size.available ? "" : "disabled"} aria-checked="false" role="radio">${escapeCatalogText(size.name)}</button>`).join("")}
             </div>
@@ -393,8 +393,11 @@ function openProductExperience(productId, sourceElement) {
   overlay.querySelector("[data-quantity-plus]")?.addEventListener("click", () => updateQuantity(1));
 
   overlay.querySelector(".zaai-product-experience-size-guide")?.addEventListener("click", () => {
-    closeProductExperience();
-    document.getElementById("size-guide")?.scrollIntoView({ behavior: "smooth" });
+    closeProductExperience(true);
+    window.history.pushState({}, "", "/#size-guide");
+    window.setTimeout(() => {
+      document.getElementById("size-guide")?.scrollIntoView({ behavior:"smooth", block:"start" });
+    }, 280);
   });
   overlay.querySelector("[data-open-existing-cart]")?.addEventListener("click", () => {
     closeProductExperience();
