@@ -176,12 +176,6 @@ function renderStoreProducts() {
       );
       const salePrice = Number(product.sale_price) || 0;
       const originalPrice = Number(product.original_price) || 0;
-      const availableSizes = normalizeCatalogSizes(product.sizes, product.stock)
-        .filter((size) => size.available)
-        .map((size) => size.name)
-        .slice(0, 5)
-        .join(" · ");
-      const availableColors = colors.length;
       return `<article class="zaai-product-card" data-product-id="${Number(product.id)}" tabindex="0" aria-label="${english ? `View ${escapeCatalogText(product.name)}` : `عرض ${escapeCatalogText(product.name)}`}">
         <div class="zaai-product-card-image">
           <a class="zaai-product-card-open" href="/product/${encodeURIComponent(product.id)}" data-open-product="${Number(product.id)}" aria-label="${english ? `View ${escapeCatalogText(product.name)}` : `عرض ${escapeCatalogText(product.name)}`}">
@@ -189,15 +183,18 @@ function renderStoreProducts() {
               ? `<img src="${escapeCatalogText(image)}" alt="${escapeCatalogText(product.name)}" loading="lazy" decoding="async">`
               : `<span class="zaai-product-card-placeholder">${english ? "Image coming soon" : "الصورة غير متوفرة"}</span>`}
           </a>
+          <button class="zaai-card-favorite" type="button" aria-label="${english ? "Add to favorites" : "إضافة إلى المفضلة"}">
+            <i class="fa-regular fa-heart" aria-hidden="true"></i>
+          </button>
         </div>
         <div class="zaai-card-footer">
           <div class="zaai-card-copy">
             <h3>${escapeCatalogText(product.name)}</h3>
-            ${product.description ? `<p class="zaai-product-card-description">${escapeCatalogText(product.description)}</p>` : ""}
-            <div class="zaai-card-options">
-              ${availableSizes ? `<span class="zaai-card-sizes">${english ? "Sizes" : "المقاسات"}: ${escapeCatalogText(availableSizes)}</span>` : ""}
-              ${availableColors ? `<span class="zaai-card-colors" aria-label="${english ? `${availableColors} available colors` : `${availableColors} ألوان متاحة`}"><span aria-hidden="true">${colors.slice(0,4).map((color) => `<i style="--zaai-swatch:${escapeCatalogText(color.hex || color.value || "#050505")}"></i>`).join("")}</span><em>${english ? `${availableColors} colors` : `${availableColors} ألوان`}</em></span>` : ""}
+            <div class="zaai-card-badges">
+              <span>${english ? "ZAAI" : "جديد"}</span>
+              <span>${english ? "READY" : "متوفر"}</span>
             </div>
+            ${product.description ? `<p class="zaai-product-card-description">${escapeCatalogText(product.description)}</p>` : ""}
           </div>
           <div class="zaai-card-footer-row">
             <div>
@@ -542,6 +539,14 @@ document.addEventListener("keydown", (event) => {
 });
 
 document.addEventListener("click", (event) => {
+  const favorite = event.target.closest(".zaai-card-favorite");
+  if (favorite) {
+    favorite.classList.toggle("is-active");
+    const icon = favorite.querySelector("i");
+    icon?.classList.toggle("fa-regular");
+    icon?.classList.toggle("fa-solid");
+    return;
+  }
   const openButton = event.target.closest("[data-open-product]");
   if (openButton) {
     event.preventDefault();
