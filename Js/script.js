@@ -604,14 +604,19 @@ document.addEventListener("keydown", (event) => {
 
 const directProductMatch = window.location.pathname.match(/^\/product\/(\d+)\/?$/);
 if (directProductMatch) {
-  document.addEventListener("zaai:catalog-loaded", () => {
+  let directProductOpened = false;
+  const openDirectProduct = () => {
+    if (directProductOpened || !storeCatalogLoaded) return;
     const productId = Number(directProductMatch[1]);
-    if (storeCatalogLoaded) {
-      window.setTimeout(() => openProductExperience(productId), 0);
-    }
+    if (!storeCatalog.some((product) => product.id === productId)) return;
+    directProductOpened = true;
+    openProductExperience(productId);
+  };
+  document.addEventListener("zaai:catalog-loaded", () => {
+    openDirectProduct();
   }, { once: true });
   window.setTimeout(() => {
-    if (storeCatalogLoaded) openProductExperience(Number(directProductMatch[1]));
+    openDirectProduct();
   }, 900);
   window.addEventListener("popstate", () => {
     const overlay = document.getElementById("zaai-product-experience-overlay");
