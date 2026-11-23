@@ -176,39 +176,22 @@ function renderStoreProducts() {
       );
       const salePrice = Number(product.sale_price) || 0;
       const originalPrice = Number(product.original_price) || 0;
-      const availableSizes = normalizeCatalogSizes(product.sizes, product.stock)
-        .filter((size) => size.available)
-        .map((size) => size.name)
-        .slice(0, 5)
-        .join(" · ");
-      const availableColors = colors.length;
       return `<article class="zaai-product-card" data-product-id="${Number(product.id)}" tabindex="0" aria-label="${english ? `View ${escapeCatalogText(product.name)}` : `عرض ${escapeCatalogText(product.name)}`}">
         <div class="zaai-product-card-image">
-          <a class="zaai-product-card-open" href="/product/${encodeURIComponent(product.id)}" data-open-product="${Number(product.id)}" aria-label="${english ? `View ${escapeCatalogText(product.name)}` : `عرض ${escapeCatalogText(product.name)}`}">
+          <button class="zaai-product-card-open" type="button" data-open-product="${Number(product.id)}" aria-label="${english ? `View ${escapeCatalogText(product.name)}` : `عرض ${escapeCatalogText(product.name)}`}">
             ${image
               ? `<img src="${escapeCatalogText(image)}" alt="${escapeCatalogText(product.name)}" loading="lazy" decoding="async">`
               : `<span class="zaai-product-card-placeholder">${english ? "Image coming soon" : "الصورة غير متوفرة"}</span>`}
-          </a>
-        </div>
-        <div class="zaai-card-footer">
-          <div class="zaai-card-copy">
-            <h3>${escapeCatalogText(product.name)}</h3>
-            ${product.description ? `<p class="zaai-product-card-description">${escapeCatalogText(product.description)}</p>` : ""}
-            <div class="zaai-card-options">
-              ${availableSizes ? `<span class="zaai-card-sizes">${english ? "Sizes" : "المقاسات"}: ${escapeCatalogText(availableSizes)}</span>` : ""}
-              ${availableColors ? `<span class="zaai-card-colors" aria-label="${english ? `${availableColors} available colors` : `${availableColors} ألوان متاحة`}"><span aria-hidden="true">${colors.slice(0,4).map((color) => `<i style="--zaai-swatch:${escapeCatalogText(color.hex || color.value || "#050505")}"></i>`).join("")}</span><em>${english ? `${availableColors} colors` : `${availableColors} ألوان`}</em></span>` : ""}
-            </div>
-          </div>
-          <div class="zaai-card-footer-row">
-            <div>
-              <strong class="zaai-product-card-price">${salePrice.toLocaleString(english ? "en-US" : "ar-EG")} ${english ? "EGP" : "ج.م"}</strong>
-              ${originalPrice > salePrice ? `<del class="zaai-product-card-original-price">${originalPrice.toLocaleString(english ? "en-US" : "ar-EG")} ${english ? "EGP" : "ج.م"}</del>` : ""}
-            </div>
-            <button class="zaai-card-footer-add" type="button" data-open-product="${Number(product.id)}" aria-label="${english ? `Choose options for ${escapeCatalogText(product.name)}` : `اختيار خيارات ${escapeCatalogText(product.name)}`}">
-              <span data-ar="أضف للسلة" data-en="Add to bag">أضف للسلة</span>
-              <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
-            </button>
-          </div>
+            <span class="zaai-card-gradient" aria-hidden="true"></span>
+            <span class="zaai-card-reveal">
+              <span class="zaai-card-name">${escapeCatalogText(product.name)}</span>
+              <span class="zaai-card-price">${salePrice.toLocaleString(english ? "en-US" : "ar-EG")} ${english ? "EGP" : "ج.م"}${originalPrice > salePrice ? `<del>${originalPrice.toLocaleString(english ? "en-US" : "ar-EG")} ${english ? "EGP" : "ج.م"}</del>` : ""}</span>
+            </span>
+          </button>
+          <button class="zaai-card-add zaai-add-button" type="button" data-product-id="${Number(product.id)}" aria-label="${english ? `Add ${escapeCatalogText(product.name)} to bag` : `إضافة ${escapeCatalogText(product.name)} إلى السلة`}">
+            <i class="fa-solid fa-plus zaai-card-add-plus" aria-hidden="true"></i>
+            <i class="fa-solid fa-check zaai-card-add-check" aria-hidden="true"></i>
+          </button>
         </div>
       </article>`;
     }).join("");
