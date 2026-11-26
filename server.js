@@ -265,6 +265,36 @@ if (!db.prepare("SELECT value FROM settings WHERE key=?").get("catalog_product_g
     .run("catalog_product_galleries_migrated", JSON.stringify(true));
 }
 
+const defaultProductInformation = {
+  title: {
+    ar: "تفاصيل المنتج والعناية",
+    en: "PRODUCT DETAILS & CARE"
+  },
+  material: {
+    title: { ar: "الخامة والتركيب", en: "MATERIAL & FABRIC" },
+    items: [
+      { ar: "72% بوليستر", en: "72% Polyester" },
+      { ar: "21% رايون", en: "21% Rayon" },
+      { ar: "7% سباندكس", en: "7% Spandex" },
+      { ar: "مزيج أقمشة عالي الجودة.", en: "High-Quality Fabric Blend" }
+    ]
+  },
+  care: {
+    title: { ar: "تعليمات العناية", en: "CARE INSTRUCTIONS" },
+    items: [
+      { ar: "يُغسل في الغسالة بماء بارد، بحد أقصى 30 درجة مئوية.", en: "Machine Wash Cold (Max 30°C / 86°F)." },
+      { ar: "يُغسل من الداخل إلى الخارج مع ألوان مشابهة.", en: "Wash Inside-Out with Similar Colors." },
+      { ar: "يُمنع استخدام المبيضات.", en: "Do Not Bleach." }
+    ]
+  },
+  manufacturing: {
+    title: { ar: "التصنيع", en: "MADE IN EGYPT" },
+    items: [
+      { ar: "صُنع بحب في مصر.", en: "Made with love in Egypt." }
+    ]
+  }
+};
+
 const defaultSettings = {
   siteName: "ZAAI STORE",
   whatsapp: "+201022591767",
@@ -273,7 +303,8 @@ const defaultSettings = {
   currency: "EGP",
   defaultLanguage: "ar",
   primaryColor: "#98866a",
-  accentColor: "#171717"
+  accentColor: "#171717",
+  productInformationDefaults: defaultProductInformation
 };
 const upsertSetting = db.prepare(`
   INSERT INTO settings(key,value) VALUES (?,?)
@@ -373,15 +404,29 @@ function parseJson(value, fallback) {
   try { return JSON.parse(value); } catch { return fallback; }
 }
 
-function normalizeProduct(row) {
+function getProductInformationDefaults() {
+  const setting = db.prepare("SELECT value FROM settings WHERE key=?").get("productInformationDefaults");
+  const information = parseJson(setting?.value, defaultProductInformation);
+  return information && typeof information === "object" && !Array.isArray(information)
+    ? information
+    : defaultProductInformation;
+}
+
+function normalizeProduct(row, productInformation = getProductInformationDefaults()) {
   if (!row) return row;
   return {
     ...row,
     sizes: parseJson(row.sizes, []),
     colors: parseJson(row.colors, []),
     images: parseJson(row.images, []),
-    gallery_customized: Boolean(row.gallery_customized)
+    gallery_customized: Boolean(row.gallery_customized),
+    productInformation
   };
+}
+
+function normalizeProducts(rows) {
+  const productInformation = getProductInformationDefaults();
+  return rows.map((row) => normalizeProduct(row, productInformation));
 }
 
 app.get("/api/admin/csrf", (req, res) => {
@@ -508,7 +553,7 @@ app.get("/api/admin/products", requireOwner, (req, res) => {
   const params = [search];
   if (status) { sql += "AND status=? "; params.push(status); }
   sql += "ORDER BY sort_order ASC, id DESC";
-  res.json(db.prepare(sql).all(...params).map(normalizeProduct));
+  res.json(normalizeProducts(db.prepare(sql).all(...params)));
 });
 
 app.post("/api/admin/products", ensureCsrf, requireOwner, (req, res) => {
@@ -776,8 +821,9 @@ app.get("/api/store/products", (req, res) => {
   res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
   res.set("Pragma", "no-cache");
   res.set("Expires", "0");
-  res.json(db.prepare("SELECT * FROM products WHERE status='published' ORDER BY sort_order ASC,id DESC")
-    .all().map(normalizeProduct));
+  res.json(normalizeProducts(
+    db.prepare("SELECT * FROM products WHERE status='published' ORDER BY sort_order ASC,id DESC").all()
+  ));
 });
 
 app.get("/api/store/sections", (req, res) => {

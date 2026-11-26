@@ -6392,3 +6392,127 @@ html[dir="ltr"] .zaai-footer-column a:hover {
     color: #fff;
 }
 
+.zaai-product-details-care {
+    margin: 18px 0 0;
+    padding: 14px 16px;
+    border: 1px solid rgba(185, 165, 138, 0.4);
+    border-radius: 17px;
+    background: rgba(255, 255, 255, 0.58);
+    color: var(--page-text);
+}
+
+.zaai-product-details-care > h3 {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0 0 7px;
+    color: var(--page-text);
+    font-family: "Plus Jakarta Sans", "Cairo", sans-serif;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+}
+
+.zaai-product-details-care > h3 i,
+.zaai-product-details-care-item > summary > i:first-child {
+    color: #b9a58a;
+}
+
+.zaai-product-details-care-sections {
+    border-top: 1px solid rgba(185, 165, 138, 0.26);
+}
+
+.zaai-product-details-care-item + .zaai-product-details-care-item {
+    border-top: 1px solid rgba(185, 165, 138, 0.26);
+}
+
+.zaai-product-details-care-item > summary {
+    display: flex;
+    min-height: 42px;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    cursor: pointer;
+    font-size: 0.72rem;
+    font-weight: 800;
+    list-style: none;
+    user-select: none;
+}
+
+.zaai-product-details-care-item > summary::-webkit-details-marker {
+    display: none;
+}
+
+.zaai-product-details-care-item > summary > i:first-child {
+    width: 18px;
+    text-align: center;
+}
+
+.zaai-product-details-care-chevron {
+    margin-inline-start: auto;
+    color: #8b7c67;
+    font-size: 0.62rem;
+    transition: transform 180ms ease;
+}
+
+.zaai-product-details-care-item[open] .zaai-product-details-care-chevron {
+    transform: rotate(180deg);
+}
+
+.zaai-product-details-care-item > ul {
+    display: grid;
+    gap: 5px;
+    margin: 0;
+    padding: 0 28px 11px 0;
+    list-style: none;
+}
+
+.zaai-product-details-care[dir="ltr"] .zaai-product-details-care-item > ul {
+    padding: 0 0 11px 28px;
+}
+
+.zaai-product-details-care-item > ul li {
+    position: relative;
+    color: var(--header-muted);
+    font-size: 0.72rem;
+    line-height: 1.6;
+}
+
+.zaai-product-details-care-item > ul li::before {
+    position: absolute;
+    top: 0.66em;
+    inset-inline-start: -14px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #b9a58a;
+    content: "";
+}
+
+.zaai-product-details-care-item > summary:focus-visible {
+    outline: 2px solid #b9a58a;
+    outline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+    .zaai-product-details-care {
+        margin-top: 14px;
+        padding: 12px 13px;
+        border-radius: 15px;
+    }
+
+    .zaai-product-details-care > h3 {
+        font-size: 0.66rem;
+    }
+
+    .zaai-product-details-care-item > ul li {
+        font-size: 0.7rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .zaai-product-details-care-chevron {
+        transition: none;
+    }
+}
+

@@ -420,6 +420,44 @@ function renderStoreProducts() {
   });
 }
 
+function renderProductInformation(product, english) {
+  const information = product.productInformation;
+  if (!information || typeof information !== "object") return "";
+
+  const language = english ? "en" : "ar";
+  const heading = information.title?.[language];
+  if (typeof heading !== "string" || !heading.trim()) return "";
+
+  const sections = [
+    { key: "material", icon: "fa-shirt" },
+    { key: "care", icon: "fa-droplet" },
+    { key: "manufacturing", icon: "fa-location-dot" }
+  ].map(({ key, icon }, index) => {
+    const section = information[key];
+    const title = section?.title?.[language];
+    const items = Array.isArray(section?.items) ? section.items : [];
+    if (typeof title !== "string" || !title.trim()) return "";
+
+    const itemMarkup = items.map((item) => {
+      const text = item?.[language];
+      if (typeof text !== "string" || !text.trim()) return "";
+      return `<li><span data-ar="${escapeCatalogText(item.ar)}" data-en="${escapeCatalogText(item.en)}">${escapeCatalogText(text)}</span></li>`;
+    }).join("");
+    if (!itemMarkup) return "";
+
+    return `<details class="zaai-product-details-care-item" ${index === 0 ? "open" : ""}>
+      <summary><i class="fa-solid ${icon}" aria-hidden="true"></i><span data-ar="${escapeCatalogText(section.title?.ar)}" data-en="${escapeCatalogText(section.title?.en)}">${escapeCatalogText(title)}</span><i class="fa-solid fa-chevron-down zaai-product-details-care-chevron" aria-hidden="true"></i></summary>
+      <ul>${itemMarkup}</ul>
+    </details>`;
+  }).join("");
+
+  if (!sections) return "";
+  return `<section class="zaai-product-details-care" data-product-information dir="${english ? "ltr" : "rtl"}" aria-labelledby="zaai-product-details-care-title">
+    <h3 id="zaai-product-details-care-title"><i class="fa-solid fa-sparkles" aria-hidden="true"></i><span data-ar="${escapeCatalogText(information.title.ar)}" data-en="${escapeCatalogText(information.title.en)}">${escapeCatalogText(heading)}</span></h3>
+    <div class="zaai-product-details-care-sections">${sections}</div>
+  </section>`;
+}
+
 function loadStoreProducts(attempt = 0) {
   storeCatalogLoaded = false;
   storeCatalogError = "";
@@ -507,6 +545,7 @@ function openProductExperience(productId, sourceElement) {
             ${originalPrice > salePrice ? `<del>${originalPrice.toLocaleString(english ? "en-US" : "ar-EG")} ${english ? "EGP" : "ج.م"}</del>` : ""}
           </div>
           ${product.description ? `<p class="zaai-product-experience-description">${escapeCatalogText(product.description)}</p>` : ""}
+          ${renderProductInformation(product, english)}
           ${colors.length ? `<div class="zaai-product-experience-option">
             <div class="zaai-product-experience-option-heading"><span>${english ? "COLOR" : "اللون"}</span><strong data-selected-color>${english ? activeColor.nameEn : activeColor.nameAr}</strong></div>
             <div class="zaai-product-experience-colors" role="radiogroup" aria-label="${english ? "Choose color" : "اختر اللون"}">
@@ -933,6 +972,9 @@ function setLanguage(language) {
 
   document.documentElement.lang = selectedLanguage;
   document.documentElement.dir = selectedLanguage === "ar" ? "rtl" : "ltr";
+  document.querySelectorAll("[data-product-information]").forEach((section) => {
+    section.dir = selectedLanguage === "ar" ? "rtl" : "ltr";
+  });
   document.querySelectorAll("[data-ar][data-en]").forEach((element) => {
     element.textContent = element.dataset[selectedLanguage];
   });
