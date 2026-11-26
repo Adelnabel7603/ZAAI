@@ -2,7 +2,6 @@
 <html lang="ar" dir="rtl">
     <head>
         <meta charset="UTF-8">
-        <base href="/">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="theme-color" content="#f5f3ef">
         <meta name="description" content="اكتشف أزياء ZAAI الطبية العصرية — راحة طوال يوم العمل، أناقة تليق بك، ومقاسات متعددة تناسبك. اطلب الآن بسهولة عبر واتساب.">
@@ -25,11 +24,12 @@
         <meta name="twitter:description" content="ملابس طبية عصرية بتصميم مريح وألوان متعددة. اكتشف مجموعتنا واطلب بسهولة عبر واتساب.">
         <meta name="twitter:image" content="https://zaai-store.vercel.app/image/og-preview.jpg?v=20261121">
         <!-- ! Link CSS -->  
-        <link rel="stylesheet" href="/CSS/normalize.css">
-        <link rel="stylesheet" href="/CSS/all.min.css">
-        <link rel="stylesheet" href="/CSS/style.css?v=20261126-product-information-v2">
-        <link rel="stylesheet" href="/CSS/responsive.css">
-        <link rel="stylesheet" href="/CSS/offers-hero.css?v=20261126-offers-v2">
+        <link rel="stylesheet" href="CSS/normalize.css">
+        <link rel="stylesheet" href="CSS/all.min.css">
+        <link rel="stylesheet" href="CSS/style.css?v=20261126-product-information-v2">
+        <link rel="stylesheet" href="CSS/responsive.css">
+        <link rel="stylesheet" href="CSS/offers-hero.css?v=20261126-offers-v2">
+        <link rel="stylesheet" href="CSS/video-gallery.css">
         <!-- ! Google Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,9 +38,10 @@
         <link rel="icon" href="image/logo.jpg" type="image/png">
         <!-- ! Name of the website -->
         <title>ZAAI STORE</title>
-        <script src="/Js/product-3d-viewer.js?v=20261119-9" defer></script>
-        <script src="/Js/catalog-image-galleries.js?v=20261126-gallery-fallback" defer></script>
-        <script src="/Js/script.js?v=20261126-product-information-v1" defer></script>
+        <script src="Js/product-3d-viewer.js?v=20261119-9" defer></script>
+        <script src="Js/catalog-image-galleries.js?v=20261126-gallery-fallback" defer></script>
+        <script src="Js/script.js?v=20261126-product-information-v1" defer></script>
+        <script src="Js/video-gallery.js" defer></script>
     </head>
     <body data-theme="light">
         <!-- Site Header -->
@@ -84,6 +85,7 @@
                 </div>
             </div>
         </header>
+        <!-- Offers Hero Section -->
         <section class="offers-hero" id="offers" aria-labelledby="offers-title" dir="ltr">
             <div class="offers-hero-media">
                 <img
@@ -214,6 +216,140 @@
                     </div>
                 </div>
             </div>
+        </section>
+        <section class="zaai-video-gallery" id="zaai-video-gallery" dir="ltr" aria-labelledby="zaai-video-gallery-title">
+            <div class="zaai-video-gallery-inner">
+                <header class="zaai-video-gallery-heading">
+                    <span class="zaai-video-gallery-kicker"><span aria-hidden="true"></span> THE WORLD OF ZAAI</span>
+                    <div class="zaai-video-gallery-title-row">
+                        <div>
+                            <h2 id="zaai-video-gallery-title">BEHIND THE BRAND.<br>STYLE IN MOTION.</h2>
+                            <p>Discover ZAAI through every detail.</p>
+                        </div>
+                        <div class="zaai-video-gallery-navigation" role="group" aria-label="Video gallery navigation">
+                            <button class="zaai-video-gallery-arrow" type="button" data-gallery-direction="-1" aria-label="Scroll videos left">
+                                <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                            </button>
+                            <button class="zaai-video-gallery-arrow" type="button" data-gallery-direction="1" aria-label="Scroll videos right">
+                                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                </header>
+                <div class="zaai-video-gallery-viewport" role="region" aria-roledescription="carousel" aria-label="ZAAI campaign videos">
+                    <div class="zaai-video-gallery-track">
+                        <button class="zaai-video-card" type="button" aria-label="Watch 6 Colors. One Identity.">
+                            <span class="zaai-video-card-media">
+                                <video muted loop playsinline preload="none" poster="image/video-posters/zaai-film-01.jpg" aria-hidden="true">
+                                    <source data-src="image/6 COLORS. ONE IDENTITY.🖤💙🩵❤️🩶💙__zaaimedicalwear __awesome_humans_wear_zaai(MP4).mp4" type="video/mp4">
+                                </video>
+                                <span class="zaai-video-card-status"><i aria-hidden="true"></i> SOUND OFF</span>
+                                <span class="zaai-video-card-error" aria-hidden="true">Video unavailable</span>
+                                <span class="zaai-video-card-open" aria-hidden="true"><i class="fa-solid fa-expand"></i></span>
+                            </span>
+                            <span class="zaai-video-card-caption"><span>01</span> SIX COLORS. ONE IDENTITY.</span>
+                        </button>
+                        <button class="zaai-video-card" type="button" aria-label="Watch Navy Blue">
+                            <span class="zaai-video-card-media">
+                                <video muted loop playsinline preload="none" poster="image/video-posters/zaai-film-02.jpg" aria-hidden="true">
+                                    <source data-src="image/Navy Blue __zaaimedicalwear ___zaaimedicalwear(MP4).mp4" type="video/mp4">
+                                </video>
+                                <span class="zaai-video-card-status"><i aria-hidden="true"></i> SOUND OFF</span>
+                                <span class="zaai-video-card-error" aria-hidden="true">Video unavailable</span>
+                                <span class="zaai-video-card-open" aria-hidden="true"><i class="fa-solid fa-expand"></i></span>
+                            </span>
+                            <span class="zaai-video-card-caption"><span>02</span> NAVY, IN MOTION.</span>
+                        </button>
+                        <button class="zaai-video-card" type="button" aria-label="Watch the ZAAI campaign film">
+                            <span class="zaai-video-card-media">
+                                <video muted loop playsinline preload="none" poster="image/video-posters/zaai-film-03.jpg" aria-hidden="true">
+                                    <source data-src="image/VID-20261118-WA0055.mp4" type="video/mp4">
+                                </video>
+                                <span class="zaai-video-card-status"><i aria-hidden="true"></i> SOUND OFF</span>
+                                <span class="zaai-video-card-error" aria-hidden="true">Video unavailable</span>
+                                <span class="zaai-video-card-open" aria-hidden="true"><i class="fa-solid fa-expand"></i></span>
+                            </span>
+                            <span class="zaai-video-card-caption"><span>03</span> THE ZAAI CAMPAIGN.</span>
+                        </button>
+                        <button class="zaai-video-card" type="button" aria-label="Watch ZAAI, made to move">
+                            <span class="zaai-video-card-media">
+                                <video muted loop playsinline preload="none" poster="image/video-posters/zaai-film-04.jpg" aria-hidden="true">
+                                    <source data-src="image/VID-20261118-WA0056.mp4" type="video/mp4">
+                                </video>
+                                <span class="zaai-video-card-status"><i aria-hidden="true"></i> SOUND OFF</span>
+                                <span class="zaai-video-card-error" aria-hidden="true">Video unavailable</span>
+                                <span class="zaai-video-card-open" aria-hidden="true"><i class="fa-solid fa-expand"></i></span>
+                            </span>
+                            <span class="zaai-video-card-caption"><span>04</span> MADE TO MOVE.</span>
+                        </button>
+                        <button class="zaai-video-card" type="button" aria-label="Watch a ZAAI everyday look">
+                            <span class="zaai-video-card-media">
+                                <video muted loop playsinline preload="none" poster="image/video-posters/zaai-film-05.jpg" aria-hidden="true">
+                                    <source data-src="image/WhatsApp Video 2026-11-19 at 10.09.00 AM.mp4" type="video/mp4">
+                                </video>
+                                <span class="zaai-video-card-status"><i aria-hidden="true"></i> SOUND OFF</span>
+                                <span class="zaai-video-card-error" aria-hidden="true">Video unavailable</span>
+                                <span class="zaai-video-card-open" aria-hidden="true"><i class="fa-solid fa-expand"></i></span>
+                            </span>
+                            <span class="zaai-video-card-caption"><span>05</span> EVERYDAY, ELEVATED.</span>
+                        </button>
+                        <button class="zaai-video-card" type="button" aria-label="Watch a closer look at ZAAI">
+                            <span class="zaai-video-card-media">
+                                <video muted loop playsinline preload="none" poster="image/video-posters/zaai-film-06.jpg" aria-hidden="true">
+                                    <source data-src="image/WhatsApp Video 2026-11-19 at 10.09.01 AM.mp4" type="video/mp4">
+                                </video>
+                                <span class="zaai-video-card-status"><i aria-hidden="true"></i> SOUND OFF</span>
+                                <span class="zaai-video-card-error" aria-hidden="true">Video unavailable</span>
+                                <span class="zaai-video-card-open" aria-hidden="true"><i class="fa-solid fa-expand"></i></span>
+                            </span>
+                            <span class="zaai-video-card-caption"><span>06</span> A CLOSER LOOK.</span>
+                        </button>
+                        <button class="zaai-video-card" type="button" aria-label="Watch the details in motion">
+                            <span class="zaai-video-card-media">
+                                <video muted loop playsinline preload="none" poster="image/video-posters/zaai-film-07.jpg" aria-hidden="true">
+                                    <source data-src="image/WhatsApp Video 2026-11-19 at 10.09.06 AM.mp4" type="video/mp4">
+                                </video>
+                                <span class="zaai-video-card-status"><i aria-hidden="true"></i> SOUND OFF</span>
+                                <span class="zaai-video-card-error" aria-hidden="true">Video unavailable</span>
+                                <span class="zaai-video-card-open" aria-hidden="true"><i class="fa-solid fa-expand"></i></span>
+                            </span>
+                            <span class="zaai-video-card-caption"><span>07</span> DETAILS IN MOTION.</span>
+                        </button>
+                        <button class="zaai-video-card" type="button" aria-label="Watch ZAAI, with you every day">
+                            <span class="zaai-video-card-media">
+                                <video muted loop playsinline preload="none" poster="image/video-posters/zaai-film-08.jpg" aria-hidden="true">
+                                    <source data-src="image/تم.mp4" type="video/mp4">
+                                </video>
+                                <span class="zaai-video-card-status"><i aria-hidden="true"></i> SOUND OFF</span>
+                                <span class="zaai-video-card-error" aria-hidden="true">Video unavailable</span>
+                                <span class="zaai-video-card-open" aria-hidden="true"><i class="fa-solid fa-expand"></i></span>
+                            </span>
+                            <span class="zaai-video-card-caption"><span>08</span> YOUR DAY. YOUR ZAAI.</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="zaai-video-gallery-footer">
+                    <span>08 FILMS <i aria-hidden="true"></i> ONE ZAAI STORY</span>
+                    <span class="zaai-video-gallery-hint">DRAG TO EXPLORE <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+            </div>
+            <dialog class="zaai-video-lightbox" aria-labelledby="zaai-video-lightbox-title">
+                <div class="zaai-video-lightbox-header">
+                    <span id="zaai-video-lightbox-title">THE WORLD OF ZAAI</span>
+                    <button class="zaai-video-lightbox-close" type="button" aria-label="Close video">
+                        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <video class="zaai-video-lightbox-player" controls playsinline preload="none" aria-label="ZAAI campaign film"></video>
+                <div class="zaai-video-lightbox-controls">
+                    <button class="zaai-video-lightbox-play" type="button" aria-label="Pause video">
+                        <i class="fa-solid fa-pause" aria-hidden="true"></i><span>PAUSE</span>
+                    </button>
+                    <button class="zaai-video-lightbox-mute" type="button" aria-label="Turn sound on">
+                        <i class="fa-solid fa-volume-xmark" aria-hidden="true"></i><span>SOUND OFF</span>
+                    </button>
+                </div>
+            </dialog>
         </section>
         <!-- Home Section -->
         <section class="home" id="home">

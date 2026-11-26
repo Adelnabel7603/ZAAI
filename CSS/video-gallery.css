@@ -1,0 +1,497 @@
+.zaai-video-gallery {
+    --video-gallery-ink: #050505;
+    --video-gallery-paper: #f5f5f5;
+    --video-gallery-white: #fff;
+    --video-gallery-gold: #b9a58a;
+    overflow: hidden;
+    padding: clamp(72px, 9vw, 132px) clamp(18px, 5vw, 76px);
+    background: var(--video-gallery-ink);
+    color: var(--video-gallery-paper);
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.zaai-video-gallery-inner {
+    width: min(100%, 1540px);
+    margin: 0 auto;
+}
+
+.zaai-video-gallery-heading {
+    margin-bottom: clamp(30px, 4vw, 54px);
+}
+
+.zaai-video-gallery-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    color: var(--video-gallery-gold);
+    font-size: 0.67rem;
+    font-weight: 800;
+    letter-spacing: 0.24em;
+}
+
+.zaai-video-gallery-kicker > span,
+.zaai-video-card-status > i {
+    width: 7px;
+    height: 7px;
+    flex: 0 0 7px;
+    border-radius: 50%;
+    background: var(--video-gallery-gold);
+}
+
+.zaai-video-gallery-title-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 28px;
+    margin-top: 21px;
+}
+
+.zaai-video-gallery-title-row h2 {
+    color: var(--video-gallery-white);
+    font-size: clamp(2.2rem, 5.2vw, 5.2rem);
+    font-weight: 600;
+    letter-spacing: -0.075em;
+    line-height: 0.99;
+}
+
+.zaai-video-gallery-title-row p {
+    margin-top: 17px;
+    color: rgba(245, 245, 245, 0.63);
+    font-size: clamp(0.9rem, 1.15vw, 1.08rem);
+    letter-spacing: 0.01em;
+}
+
+.zaai-video-gallery-navigation {
+    display: flex;
+    gap: 10px;
+    padding-bottom: 4px;
+}
+
+.zaai-video-gallery-arrow {
+    display: grid;
+    width: 50px;
+    height: 50px;
+    place-items: center;
+    border: 1px solid rgba(245, 245, 245, 0.2);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--video-gallery-white);
+    font: inherit;
+    cursor: pointer;
+    transition: color 220ms ease, border-color 220ms ease, background 220ms ease, transform 220ms ease;
+}
+
+.zaai-video-gallery-arrow:hover:not(:disabled) {
+    transform: translateY(-2px);
+    border-color: var(--video-gallery-gold);
+    background: var(--video-gallery-gold);
+    color: var(--video-gallery-ink);
+}
+
+.zaai-video-gallery-arrow:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.zaai-video-gallery-arrow:focus-visible,
+.zaai-video-card:focus-visible,
+.zaai-video-lightbox button:focus-visible {
+    outline: 2px solid var(--video-gallery-gold);
+    outline-offset: 4px;
+}
+
+.zaai-video-gallery-viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.zaai-video-gallery-viewport::-webkit-scrollbar {
+    display: none;
+}
+
+.zaai-video-gallery-track {
+    display: flex;
+    width: max-content;
+    gap: clamp(13px, 1.55vw, 23px);
+    padding: 3px 2px 6px;
+}
+
+.zaai-video-card {
+    display: block;
+    width: clamp(220px, 21.6vw, 294px);
+    flex: 0 0 clamp(220px, 21.6vw, 294px);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.zaai-video-card-media {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 9 / 16;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 7px;
+    background: #171614;
+    isolation: isolate;
+}
+
+.zaai-video-card-media::after {
+    position: absolute;
+    z-index: 1;
+    inset: 45% 0 0;
+    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.34));
+    content: "";
+    pointer-events: none;
+}
+
+.zaai-video-card-media > video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.82;
+    transform: scale(1.001);
+    transition: opacity 450ms ease, transform 700ms cubic-bezier(0.2, 0.75, 0.25, 1);
+}
+
+.zaai-video-card.is-loaded .zaai-video-card-media > video {
+    opacity: 1;
+}
+
+.zaai-video-card-status {
+    position: absolute;
+    z-index: 2;
+    top: 13px;
+    left: 13px;
+    display: inline-flex;
+    min-height: 27px;
+    align-items: center;
+    gap: 7px;
+    padding: 0 9px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 99px;
+    background: rgba(5, 5, 5, 0.52);
+    color: var(--video-gallery-white);
+    font-size: 0.52rem;
+    font-weight: 800;
+    letter-spacing: 0.11em;
+    backdrop-filter: blur(8px);
+    pointer-events: none;
+}
+
+.zaai-video-card-status > i {
+    width: 5px;
+    height: 5px;
+    flex-basis: 5px;
+}
+
+.zaai-video-card-error {
+    position: absolute;
+    z-index: 3;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(5, 5, 5, 0.7);
+    color: var(--video-gallery-white);
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.zaai-video-card.is-error .zaai-video-card-error {
+    display: flex;
+}
+
+.zaai-video-card-open {
+    position: absolute;
+    z-index: 2;
+    right: 13px;
+    bottom: 13px;
+    display: grid;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    border-radius: 50%;
+    background: rgba(5, 5, 5, 0.35);
+    color: var(--video-gallery-white);
+    opacity: 0;
+    transform: translateY(5px);
+    transition: opacity 220ms ease, transform 220ms ease;
+    pointer-events: none;
+}
+
+.zaai-video-card-caption {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 15px;
+    color: rgba(245, 245, 245, 0.82);
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    white-space: nowrap;
+}
+
+.zaai-video-card-caption > span {
+    color: var(--video-gallery-gold);
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+
+.zaai-video-gallery-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 28px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.13);
+    color: rgba(245, 245, 245, 0.54);
+    font-size: 0.56rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+}
+
+.zaai-video-gallery-footer > span:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.zaai-video-gallery-footer > span:first-child i {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--video-gallery-gold);
+}
+
+.zaai-video-gallery-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.zaai-video-gallery-hint i {
+    color: var(--video-gallery-gold);
+}
+
+.zaai-video-lightbox {
+    width: min(880px, calc(100vw - 32px));
+    max-width: none;
+    max-height: min(94dvh, 1000px);
+    margin: auto;
+    padding: clamp(14px, 2.4vw, 24px);
+    overflow: auto;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 12px;
+    background: #090909;
+    color: var(--video-gallery-white);
+    box-shadow: 0 25px 100px rgba(0, 0, 0, 0.55);
+}
+
+.zaai-video-lightbox::backdrop {
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(7px);
+}
+
+.zaai-video-lightbox[open] {
+    display: grid;
+    gap: 15px;
+}
+
+.zaai-video-lightbox-header,
+.zaai-video-lightbox-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.zaai-video-lightbox-header > span {
+    color: var(--video-gallery-gold);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+}
+
+.zaai-video-lightbox-close {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--video-gallery-white);
+    font-size: 1.05rem;
+    cursor: pointer;
+}
+
+.zaai-video-lightbox-player {
+    display: block;
+    width: 100%;
+    max-height: min(72dvh, 760px);
+    aspect-ratio: 9 / 16;
+    border-radius: 5px;
+    background: #000;
+    object-fit: contain;
+}
+
+.zaai-video-lightbox-controls button {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 0 13px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 99px;
+    background: transparent;
+    color: var(--video-gallery-white);
+    font: inherit;
+    font-size: 0.59rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+}
+
+.zaai-video-gallery.is-motion-ready .zaai-video-gallery-heading,
+.zaai-video-gallery.is-motion-ready .zaai-video-card {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 650ms ease, transform 650ms cubic-bezier(0.2, 0.75, 0.25, 1);
+}
+
+.zaai-video-gallery.is-visible .zaai-video-gallery-heading,
+.zaai-video-gallery.is-visible .zaai-video-card {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.zaai-video-gallery.is-visible .zaai-video-card:nth-child(2) { transition-delay: 55ms; }
+.zaai-video-gallery.is-visible .zaai-video-card:nth-child(3) { transition-delay: 100ms; }
+.zaai-video-gallery.is-visible .zaai-video-card:nth-child(4) { transition-delay: 145ms; }
+.zaai-video-gallery.is-visible .zaai-video-card:nth-child(5) { transition-delay: 190ms; }
+.zaai-video-gallery.is-visible .zaai-video-card:nth-child(6) { transition-delay: 235ms; }
+.zaai-video-gallery.is-visible .zaai-video-card:nth-child(7) { transition-delay: 280ms; }
+.zaai-video-gallery.is-visible .zaai-video-card:nth-child(8) { transition-delay: 325ms; }
+
+@media (hover: hover) and (pointer: fine) {
+    .zaai-video-card:hover .zaai-video-card-media > video {
+        transform: scale(1.035);
+    }
+
+    .zaai-video-card:hover .zaai-video-card-open {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 760px) {
+    .zaai-video-gallery {
+        padding: 72px 18px 58px;
+    }
+
+    .zaai-video-gallery-title-row {
+        align-items: flex-end;
+        gap: 16px;
+        margin-top: 18px;
+    }
+
+    .zaai-video-gallery-title-row h2 {
+        font-size: clamp(2.1rem, 9vw, 3.4rem);
+    }
+
+    .zaai-video-gallery-title-row p {
+        margin-top: 13px;
+        font-size: 0.83rem;
+    }
+
+    .zaai-video-gallery-navigation {
+        gap: 7px;
+        padding-bottom: 0;
+    }
+
+    .zaai-video-gallery-arrow {
+        width: 42px;
+        height: 42px;
+    }
+
+    .zaai-video-gallery-track {
+        gap: 13px;
+    }
+
+    .zaai-video-card {
+        width: clamp(224px, 76vw, 320px);
+        flex-basis: clamp(224px, 76vw, 320px);
+    }
+
+    .zaai-video-card-open {
+        width: 42px;
+        height: 42px;
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (max-width: 420px) {
+    .zaai-video-gallery-title-row {
+        align-items: flex-start;
+    }
+
+    .zaai-video-gallery-navigation {
+        flex-direction: column;
+    }
+
+    .zaai-video-gallery-arrow {
+        width: 40px;
+        height: 40px;
+    }
+
+    .zaai-video-gallery-footer {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+        font-size: 0.52rem;
+    }
+
+    .zaai-video-lightbox {
+        width: calc(100vw - 20px);
+        max-height: 96dvh;
+        padding: 10px;
+    }
+
+    .zaai-video-lightbox-player {
+        max-height: 76dvh;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .zaai-video-gallery *,
+    .zaai-video-gallery *::before,
+    .zaai-video-gallery *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .zaai-video-gallery.is-motion-ready .zaai-video-gallery-heading,
+    .zaai-video-gallery.is-motion-ready .zaai-video-card {
+        opacity: 1;
+        transform: none;
+    }
+}

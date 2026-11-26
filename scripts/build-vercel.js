@@ -21,3 +21,13 @@ function copyDirectory(source, destination) {
 }
 
 copyDirectory(root, output);
+
+const indexPath = path.join(output, "index.html");
+const indexHtml = fs.readFileSync(indexPath, "utf8");
+if (!indexHtml.includes('<base href="/">')) {
+  const headIndex = indexHtml.indexOf("<head>");
+  if (headIndex === -1) throw new Error("Could not find <head> in index.html.");
+  const insertionPoint = headIndex + "<head>".length;
+  const deploymentHtml = `${indexHtml.slice(0, insertionPoint)}\n        <base href="/">${indexHtml.slice(insertionPoint)}`;
+  fs.writeFileSync(indexPath, deploymentHtml);
+}
