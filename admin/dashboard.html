@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/CSS/all.min.css">
-  <link rel="stylesheet" href="/admin/admin.css?v=20261121-product-image">
+  <link rel="stylesheet" href="/admin/admin.css?v=20261126-product-gallery-mobile">
   <link rel="icon" href="/image/logo.jpg" type="image/png">
 </head>
 <body class="admin-app">
@@ -44,7 +44,7 @@
           <div class="builder-status" id="builder-status"><span class="builder-status-dot"></span><span>جاهز</span></div>
           <button class="admin-button" id="builder-undo" type="button" title="تراجع"><i class="fa-solid fa-arrow-rotate-left"></i></button>
           <button class="admin-button" id="builder-redo" type="button" title="إعادة"><i class="fa-solid fa-arrow-rotate-right"></i></button>
-          <button class="admin-button primary" id="builder-save" type="button"><i class="fa-solid fa-check"></i><span>حفظ ونشر</span></button>
+          <button class="admin-button primary" id="builder-save" type="button" aria-label="حفظ ونشر" title="حفظ ونشر"><i class="fa-solid fa-check"></i><span>حفظ ونشر</span></button>
           <button class="admin-button admin-logout-button" id="admin-logout" type="button" aria-label="تسجيل الخروج" title="تسجيل الخروج"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><span>خروج</span></button>
           <button class="admin-icon-button" id="top-theme" type="button" aria-label="تبديل المظهر"><i class="fa-solid fa-moon"></i></button>
           <button class="admin-icon-button" id="admin-language" type="button" aria-label="تبديل لغة الإدارة"><i class="fa-solid fa-globe"></i><span id="admin-language-label" style="display:none">EN</span></button>
@@ -190,20 +190,18 @@
           <label class="admin-field"><span>المخزون</span><input id="product-stock" type="number" min="0"></label>
           <label class="admin-field"><span>ترتيب الظهور</span><input id="product-sort" type="number" min="0"></label>
           <label class="admin-field"><span>المقاسات (مفصولة بفواصل)</span><input id="product-sizes" placeholder="XS, S, M, L, XL"></label>
-          <label class="admin-field full"><span>صور المنتج (روابط مفصولة بفواصل)</span><input id="product-images" placeholder="/uploads/file.jpg"></label>
           <div class="admin-field full">
-            <span>الصورة العادية للمنتج</span>
-            <div class="product-360-upload">
-              <input id="product-image-upload" type="file" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
+            <span>معرض صور المنتج</span>
+            <input id="product-images" type="hidden">
+            <div class="product-gallery-editor">
+              <input id="product-image-upload" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple hidden>
               <button class="admin-button product-360-button" id="product-image-upload-button" type="button">
-                <i class="fa-regular fa-image" aria-hidden="true"></i>
-                <span>رفع صورة عادية</span>
-              </button>
-              <div class="product-360-preview product-image-preview" id="product-image-preview">
                 <i class="fa-regular fa-images" aria-hidden="true"></i>
-                <span>اختياري — ارفع صورة المنتج الرئيسية</span>
-              </div>
-              <small>الصورة العادية تظهر على بطاقة المنتج في المتجر؛ ويمكن إضافة روابط صور أخرى في الحقل أعلاه.</small>
+                <span>إضافة صور للمعرض</span>
+              </button>
+              <div class="product-gallery-grid" id="product-gallery-grid"></div>
+              <p class="product-gallery-empty" id="product-gallery-empty">لا توجد صور بعد. أضف صورًا حقيقية لهذا المنتج؛ أول صورة هي الصورة الرئيسية.</p>
+              <small>رتّب الصور بالأسهم؛ الصورة الأولى هي الرئيسية. إزالة الصورة من المعرض لا تحذف الملف من مكتبة الوسائط.</small>
             </div>
           </div>
           <div class="admin-field full">
@@ -275,6 +273,6 @@
   </dialog>
 
   <div class="admin-toast" id="admin-toast" role="status"></div>
-  <script src="/admin/dashboard.js?v=20261123-section-editor-safe2"></script>
+  <script src="/admin/dashboard.js?v=20261126-product-gallery"></script>
 </body>
 </html>

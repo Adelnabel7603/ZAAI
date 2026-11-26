@@ -51,6 +51,7 @@ db.exec(`
     sizes TEXT NOT NULL DEFAULT '[]',
     colors TEXT NOT NULL DEFAULT '[]',
     images TEXT NOT NULL DEFAULT '[]',
+    gallery_customized INTEGER NOT NULL DEFAULT 0,
     stock INTEGER NOT NULL DEFAULT 0,
     status TEXT NOT NULL DEFAULT 'draft',
     featured INTEGER NOT NULL DEFAULT 0,
@@ -132,6 +133,10 @@ db.exec(`
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   );
 `);
+
+if (!db.pragma("table_info(products)").some((column) => column.name === "gallery_customized")) {
+  db.exec("ALTER TABLE products ADD COLUMN gallery_customized INTEGER NOT NULL DEFAULT 0");
+}
 
 function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString("hex");
@@ -244,7 +249,7 @@ if (!catalogMigrated) {
 
 if (!db.prepare("SELECT value FROM settings WHERE key=?").get("catalog_product_galleries_migrated")) {
   const products = db.prepare("SELECT id,colors,images FROM products WHERE category='men'").all();
-  const updateImages = db.prepare("UPDATE products SET images=?,updated_at=CURRENT_TIMESTAMP WHERE id=?");
+  const updateImages = db.prepare("UPDATE products SET images=?,gallery_customized=1,updated_at=CURRENT_TIMESTAMP WHERE id=?");
 
   products.forEach((product) => {
     const colors = parseJson(product.colors, []);
@@ -374,7 +379,8 @@ function normalizeProduct(row) {
     ...row,
     sizes: parseJson(row.sizes, []),
     colors: parseJson(row.colors, []),
-    images: parseJson(row.images, [])
+    images: parseJson(row.images, []),
+    gallery_customized: Boolean(row.gallery_customized)
   };
 }
 
@@ -509,8 +515,8 @@ app.post("/api/admin/products", ensureCsrf, requireOwner, (req, res) => {
   const body = req.body;
   if (!String(body.name || "").trim()) return res.status(400).json({ error: "اسم المنتج مطلوب." });
   const result = db.prepare(`
-    INSERT INTO products(name,description,category,original_price,sale_price,sizes,colors,images,stock,status,featured,sort_order)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+    INSERT INTO products(name,description,category,original_price,sale_price,sizes,colors,images,gallery_customized,stock,status,featured,sort_order)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
   `).run(
     body.name.trim(),
     String(body.description || "").trim(),
@@ -520,6 +526,7 @@ app.post("/api/admin/products", ensureCsrf, requireOwner, (req, res) => {
     JSON.stringify(body.sizes || []),
     JSON.stringify(body.colors || []),
     JSON.stringify(body.images || []),
+    1,
     Number(body.stock || 0),
     body.status || "draft",
     body.featured ? 1 : 0,
@@ -535,7 +542,7 @@ app.put("/api/admin/products/:id", ensureCsrf, requireOwner, (req, res) => {
   if (!existing) return res.status(404).json({ error: "المنتج غير موجود." });
   const body = req.body;
   db.prepare(`
-    UPDATE products SET name=?,description=?,category=?,original_price=?,sale_price=?,sizes=?,colors=?,images=?,stock=?,status=?,featured=?,sort_order=?,updated_at=CURRENT_TIMESTAMP
+    UPDATE products SET name=?,description=?,category=?,original_price=?,sale_price=?,sizes=?,colors=?,images=?,gallery_customized=?,stock=?,status=?,featured=?,sort_order=?,updated_at=CURRENT_TIMESTAMP
     WHERE id=?
   `).run(
     String(body.name || existing.name).trim(),
@@ -546,6 +553,7 @@ app.put("/api/admin/products/:id", ensureCsrf, requireOwner, (req, res) => {
     JSON.stringify(body.sizes ?? parseJson(existing.sizes, [])),
     JSON.stringify(body.colors ?? parseJson(existing.colors, [])),
     JSON.stringify(body.images ?? parseJson(existing.images, [])),
+    body.images === undefined ? Number(existing.gallery_customized) : 1,
     Number(body.stock ?? existing.stock),
     body.status || existing.status,
     body.featured === undefined ? existing.featured : (body.featured ? 1 : 0),

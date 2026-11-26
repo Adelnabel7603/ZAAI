@@ -2,6 +2,7 @@
   let csrfToken = "";
   let sections = [];
   let products = [];
+  let productGalleryImages = [];
   let orders = [];
   let selectedPreviewElement = null;
   let selectedPreviewSelector = "";
@@ -126,10 +127,7 @@
     on("#product-form", "submit", saveProduct);
     on("#product-image-upload-button", "click", () => $("#product-image-upload")?.click());
     on("#product-image-upload", "change", uploadProductImage);
-    on("#product-images", "input", () => {
-      const firstImage = $("#product-images").value.split(",").map((item) => item.trim()).find(Boolean) || "";
-      renderProductImagePreview(firstImage);
-    });
+    on("#product-gallery-grid", "click", handleProductGalleryAction);
     on("#product-360-upload-button", "click", () => $("#product-360-upload")?.click());
     on("#product-360-upload", "change", uploadProduct360);
     on("#product-search", "input", debounce(loadProducts, 250));
@@ -243,9 +241,8 @@
     $("#product-stock").value = product?.stock || 0;
     $("#product-sort").value = product?.sort_order || 0;
     $("#product-sizes").value = (product?.sizes || ["XS","S","M","L","XL"]).join(", ");
-    $("#product-images").value = (product?.images || []).join(", ");
-    const firstImage = (product?.images || [])[0] || "";
-    renderProductImagePreview(firstImage);
+    productGalleryImages = Array.from(new Set((product?.images || []).filter((image) => typeof image === "string" && image.trim())));
+    renderProductGallery();
     $("#product-image-upload").value = "";
     const color = product?.colors?.[0] || {};
     $("#product-360-url").value = color.sprite || "";
@@ -260,42 +257,84 @@
     $("#product-modal").showModal();
   }
 
-  function renderProductImagePreview(url) {
-    const preview = $("#product-image-preview");
-    if (url) {
-      preview.innerHTML = `<img src="${escapeAttr(url)}" alt="معاينة صورة المنتج"><span>${escapeHtml(url.split("/").pop())}</span>`;
-      preview.classList.add("has-image");
+  function renderProductGallery() {
+    const grid = $("#product-gallery-grid");
+    const empty = $("#product-gallery-empty");
+    $("#product-images").value = productGalleryImages.join(", ");
+    empty.hidden = productGalleryImages.length > 0;
+    grid.innerHTML = productGalleryImages.map((url, index) => `
+      <article class="product-gallery-item">
+        <img src="${escapeAttr(url)}" alt="صورة المنتج ${index + 1}" loading="lazy">
+        <div class="product-gallery-item-meta">
+          <strong>${index === 0 ? "الصورة الرئيسية" : `صورة ${index + 1}`}</strong>
+          <div class="product-gallery-item-actions">
+            <button type="button" data-gallery-move="${index}" data-gallery-direction="-1" aria-label="تحريك الصورة للأمام" ${index === 0 ? "disabled" : ""}>↑</button>
+            <button type="button" data-gallery-move="${index}" data-gallery-direction="1" aria-label="تحريك الصورة للخلف" ${index === productGalleryImages.length - 1 ? "disabled" : ""}>↓</button>
+            <button type="button" data-gallery-remove="${index}" aria-label="إزالة الصورة">×</button>
+          </div>
+        </div>
+      </article>`).join("");
+  }
+
+  function handleProductGalleryAction(event) {
+    const removeButton = event.target.closest("[data-gallery-remove]");
+    if (removeButton) {
+      productGalleryImages.splice(Number(removeButton.dataset.galleryRemove), 1);
+      renderProductGallery();
       return;
     }
-    preview.innerHTML = `<i class="fa-regular fa-images" aria-hidden="true"></i><span>اختياري — ارفع صورة المنتج الرئيسية</span>`;
-    preview.classList.remove("has-image");
+
+    const moveButton = event.target.closest("[data-gallery-move]");
+    if (!moveButton) return;
+    const index = Number(moveButton.dataset.galleryMove);
+    const nextIndex = index + Number(moveButton.dataset.galleryDirection);
+    if (nextIndex < 0 || nextIndex >= productGalleryImages.length) return;
+    [productGalleryImages[index], productGalleryImages[nextIndex]] = [productGalleryImages[nextIndex], productGalleryImages[index]];
+    renderProductGallery();
   }
 
   async function uploadProductImage(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+    const files = Array.from(event.target.files || []);
+    if (!files.length) return;
     const button = $("#product-image-upload-button");
     const saveButton = $("#product-form button[type='submit']");
     const label = button.querySelector("span");
     button.disabled = true;
     saveButton.disabled = true;
-    label.textContent = "جارٍ رفع الصورة...";
-    const form = new FormData();
-    form.append("file", file);
+    label.textContent = `جارٍ رفع ${files.length} صورة...`;
+    const errors = [];
+    let uploadedCount = 0;
     try {
-      const media = await api("/api/admin/media", { method:"POST", body:form });
-      const currentImages = $("#product-images").value.split(",").map((item) => item.trim()).filter(Boolean);
-      const images = [media.url, ...currentImages.filter((image) => image !== media.url)];
-      $("#product-images").value = images.join(", ");
-      renderProductImagePreview(media.url);
-      await Promise.all([loadMedia(), loadOverview()]);
-      toast("تم رفع صورة المنتج؛ احفظ المنتج لتطبيقها.");
-    } catch (error) {
-      toast(error.message);
+      for (const file of files) {
+        const form = new FormData();
+        form.append("file", file);
+        try {
+          const media = await api("/api/admin/media", { method:"POST", body:form });
+          if (!media.url) throw new Error(`لم يُرجع الخادم رابطًا للصورة ${file.name}.`);
+          if (!productGalleryImages.includes(media.url)) productGalleryImages.push(media.url);
+          uploadedCount += 1;
+          renderProductGallery();
+        } catch (error) {
+          errors.push(`${file.name}: ${error.message}`);
+        }
+      }
+
+      if (uploadedCount) {
+        try {
+          await Promise.all([loadMedia(), loadOverview()]);
+        } catch (error) {
+          errors.push(`تعذر تحديث مكتبة الوسائط: ${error.message}`);
+        }
+      }
+      if (errors.length) {
+        toast(`${uploadedCount} صورة مرفوعة. ${errors.join(" · ")}`);
+      } else {
+        toast(`تم رفع ${uploadedCount} صورة؛ احفظ المنتج لتطبيق المعرض.`);
+      }
     } finally {
       button.disabled = false;
       saveButton.disabled = false;
-      label.textContent = "رفع صورة عادية";
+      label.textContent = "إضافة صور للمعرض";
       event.target.value = "";
     }
   }
@@ -371,7 +410,7 @@
       stock: Number($("#product-stock").value),
       sort_order: Number($("#product-sort").value),
       sizes: $("#product-sizes").value.split(",").map((item) => item.trim()).filter(Boolean),
-      images: $("#product-images").value.split(",").map((item) => item.trim()).filter(Boolean),
+      images: [...productGalleryImages],
       colors,
       status: $("#product-status-form").value,
       featured: $("#product-featured").value === "1"

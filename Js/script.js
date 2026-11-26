@@ -142,7 +142,7 @@ function uniqueResolvedImages(images) {
 
 function getCardProductImages(product, colors = normalizeCatalogColors(product?.colors, product?.stock)) {
   const productImages = uniqueResolvedImages(product?.images);
-  if (productImages.length > 1) return productImages;
+  if (productImages.length > 1 || product?.gallery_customized) return productImages;
 
   const color = colors?.[0]
     || (Array.isArray(product?.colors) ? product.colors.find((item) => item && typeof item === "object") : null);
