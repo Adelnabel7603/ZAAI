@@ -1,0 +1,10 @@
+.env
+.env.*
+**/.env
+**/.env.*
+.data/
+node_modules/
+.git/
+.vercel/
+dist/
+uploads/

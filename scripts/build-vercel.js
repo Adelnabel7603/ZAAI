@@ -13,6 +13,7 @@ function copyDirectory(source, destination) {
   fs.mkdirSync(destination, { recursive: true });
   for (const entry of fs.readdirSync(source, { withFileTypes: true })) {
     if (excluded.has(entry.name)) continue;
+    if (entry.name.startsWith(".env")) continue;
     const sourcePath = path.join(source, entry.name);
     const destinationPath = path.join(destination, entry.name);
     if (entry.isDirectory()) copyDirectory(sourcePath, destinationPath);

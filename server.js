@@ -873,24 +873,18 @@ app.post("/api/store/orders", (req, res) => {
   if (!name || !phone || !address || !governorate || !items.length) {
     return res.status(400).json({ error: "يرجى إدخال بيانات الطلب كاملة." });
   }
-  const giftQuantity = items.reduce((sum, item) => sum + (item.promotionGift ? Math.max(0, Math.floor(Number(item.quantity) || 0)) : 0), 0);
-  const paidQuantity = items.reduce((sum, item) => sum + (item.promotionGift ? 0 : Math.max(0, Math.floor(Number(item.quantity) || 0))), 0);
-  const allowedGifts = Math.floor(paidQuantity / 5);
-  if (giftQuantity > allowedGifts) {
-    return res.status(400).json({ error: "عدد الهدايا يتجاوز عدد الهدايا المستحق من العرض." });
+  if (items.some((item) => item.promotionGift)) {
+    return res.status(400).json({ error: "الهدايا المجانية لم تعد متاحة." });
   }
   const paidUnits = [];
   items.forEach((item) => {
-    if (item.promotionGift) return;
     const quantity = Math.max(0, Math.floor(Number(item.quantity) || 0));
     const price = Math.max(0, Number(item.price) || 800);
     for (let index = 0; index < quantity; index += 1) paidUnits.push({ price, charge: price });
   });
-  const giftSlots = Math.floor(paidUnits.length / 5);
-  const bundleCandidates = paidUnits.slice(giftSlots * 5);
-  for (let index = 0; index + 1 < bundleCandidates.length; index += 2) {
-    const first = bundleCandidates[index];
-    const second = bundleCandidates[index + 1];
+  for (let index = 0; index + 1 < paidUnits.length; index += 2) {
+    const first = paidUnits[index];
+    const second = paidUnits[index + 1];
     const regularTotal = first.price + second.price;
     first.charge = Math.round((1500 * first.price / regularTotal) * 100) / 100;
     second.charge = 1500 - first.charge;
