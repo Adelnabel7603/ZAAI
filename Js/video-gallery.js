@@ -11,9 +11,11 @@
   const playButton = gallery.querySelector(".zaai-video-lightbox-play");
   const muteButton = gallery.querySelector(".zaai-video-lightbox-mute");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const hoverAudio = window.matchMedia("(hover: hover) and (pointer: fine)");
   const visibility = new Map(cards.map((card) => [card, 0]));
   const pendingPlayback = new WeakSet();
   let activeCard = null;
+  let audioCard = null;
   let sectionVisible = false;
 
   function getVideo(card) {
@@ -22,6 +24,15 @@
 
   function getSource(card) {
     return card.querySelector("source");
+  }
+
+  function updateCardSoundStatus(card, muted, label) {
+    const status = card.querySelector(".zaai-video-card-status");
+    const text = status && Array.from(status.childNodes).find((node) => node.nodeType === Node.TEXT_NODE);
+    if (!status || !text) return;
+
+    text.textContent = ` ${label || (muted ? "SOUND OFF" : "SOUND ON")}`;
+    status.classList.toggle("is-sound-on", !muted);
   }
 
   function loadVideo(card) {
@@ -47,11 +58,49 @@
     return rect.width && rect.height ? (visibleWidth * visibleHeight) / (rect.width * rect.height) : 0;
   }
 
+  function playHoveredCardWithSound(card) {
+    if (!hoverAudio.matches || document.hidden || dialog.open || !sectionVisible) return;
+
+    const video = loadVideo(card);
+    if (!video) return;
+
+    audioCard = card;
+    activeCard = card;
+    cards.forEach((otherCard) => {
+      if (otherCard === card) return;
+      const otherVideo = getVideo(otherCard);
+      otherVideo.pause();
+      otherVideo.muted = true;
+      updateCardSoundStatus(otherCard, true);
+    });
+
+    video.muted = false;
+    updateCardSoundStatus(card, false);
+    video.play()
+      .then(() => {
+        if (audioCard !== card || document.hidden || dialog.open || !sectionVisible) {
+          video.muted = true;
+          updateCardSoundStatus(card, true);
+        }
+      })
+      .catch((error) => {
+        if (error.name === "NotAllowedError") {
+          audioCard = null;
+          video.muted = true;
+          card.dataset.soundRequiresGesture = "true";
+          updateCardSoundStatus(card, true, "CLICK FOR SOUND");
+          requestPlayback(card);
+        } else if (error.name !== "AbortError") {
+          console.warn("Could not play a ZAAI gallery video with sound.", error);
+        }
+      });
+  }
+
   function requestPlayback(card) {
     const video = loadVideo(card);
     if (!video || !video.paused || pendingPlayback.has(video)) return;
 
-    video.muted = true;
+    video.muted = audioCard !== card;
     pendingPlayback.add(video);
     video.play()
       .then(() => {
@@ -71,8 +120,15 @@
 
   function syncPlayback() {
     const shouldPlay = sectionVisible && !document.hidden && !dialog.open;
+    if (!shouldPlay && audioCard) {
+      const previousAudioCard = audioCard;
+      audioCard = null;
+      getVideo(previousAudioCard).muted = true;
+      updateCardSoundStatus(previousAudioCard, true);
+    }
+
     const mostVisibleCard = shouldPlay
-      ? cards.reduce((best, card) => {
+      ? audioCard || cards.reduce((best, card) => {
           const ratio = getCardVisibility(card);
           if (ratio < 0.15) return best;
           if (!best || ratio > best.ratio) return { card, ratio };
@@ -119,12 +175,20 @@
     const video = loadVideo(card);
     if (!source || !video || !source.src) return;
 
-    cards.forEach((item) => getVideo(item).pause());
+    const startWithSound = !video.muted || card.dataset.soundRequiresGesture === "true";
+    audioCard = null;
+    cards.forEach((item) => {
+      const cardVideo = getVideo(item);
+      cardVideo.pause();
+      cardVideo.muted = true;
+      updateCardSoundStatus(item, true);
+    });
     lightboxVideo.pause();
     lightboxVideo.removeAttribute("src");
     lightboxVideo.src = source.src;
     lightboxVideo.poster = video.poster;
-    lightboxVideo.muted = true;
+    lightboxVideo.muted = !startWithSound;
+    delete card.dataset.soundRequiresGesture;
     lightboxVideo.load();
     dialog.showModal();
     syncPlayback();
@@ -138,6 +202,7 @@
 
   function stopLightbox() {
     lightboxVideo.pause();
+    lightboxVideo.muted = true;
     lightboxVideo.removeAttribute("src");
     lightboxVideo.removeAttribute("poster");
     lightboxVideo.load();
@@ -162,6 +227,21 @@
 
   cards.forEach((card) => {
     const video = getVideo(card);
+    card.addEventListener("pointerenter", (event) => {
+      if (event.pointerType === "mouse") playHoveredCardWithSound(card);
+    });
+    card.addEventListener("pointerleave", () => {
+      if (audioCard === card) {
+        audioCard = null;
+        video.muted = true;
+        updateCardSoundStatus(card, true);
+        syncPlayback();
+      }
+      if (card.dataset.soundRequiresGesture) {
+        delete card.dataset.soundRequiresGesture;
+        updateCardSoundStatus(card, true);
+      }
+    });
     card.addEventListener("click", () => openLightbox(card));
     video.addEventListener("loadeddata", () => card.classList.add("is-loaded"));
     video.addEventListener("error", () => card.classList.add("is-error"));
