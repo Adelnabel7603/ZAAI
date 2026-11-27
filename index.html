@@ -226,18 +226,19 @@
                             <h2 id="zaai-video-gallery-title">BEHIND THE BRAND.<br>STYLE IN MOTION.</h2>
                             <p>Discover ZAAI through every detail.</p>
                         </div>
-                        <div class="zaai-video-gallery-navigation" role="group" aria-label="Video gallery navigation">
-                            <button class="zaai-video-gallery-arrow" type="button" data-gallery-direction="-1" aria-label="Scroll videos left">
-                                <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-                            </button>
-                            <button class="zaai-video-gallery-arrow" type="button" data-gallery-direction="1" aria-label="Scroll videos right">
-                                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
-                            </button>
-                        </div>
                     </div>
                 </header>
-                <div class="zaai-video-gallery-viewport" role="region" aria-roledescription="carousel" aria-label="ZAAI campaign videos">
-                    <div class="zaai-video-gallery-track">
+                <div class="zaai-video-gallery-carousel">
+                    <div class="zaai-video-gallery-navigation" role="group" aria-label="Video gallery navigation">
+                        <button class="zaai-video-gallery-arrow" type="button" data-gallery-direction="-1" aria-label="Scroll videos left" aria-controls="zaai-video-gallery-viewport">
+                            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                        </button>
+                        <button class="zaai-video-gallery-arrow" type="button" data-gallery-direction="1" aria-label="Scroll videos right" aria-controls="zaai-video-gallery-viewport">
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div class="zaai-video-gallery-viewport" id="zaai-video-gallery-viewport" role="region" aria-roledescription="carousel" aria-label="ZAAI campaign videos">
+                        <div class="zaai-video-gallery-track">
                         <button class="zaai-video-card" type="button" aria-label="Watch 6 Colors. One Identity.">
                             <span class="zaai-video-card-media">
                                 <video muted loop playsinline preload="none" poster="image/video-posters/zaai-film-01.jpg" aria-hidden="true">
@@ -328,6 +329,7 @@
                         </button>
                     </div>
                 </div>
+                </div>
                 <div class="zaai-video-gallery-footer">
                     <span>08 FILMS <i aria-hidden="true"></i> ONE ZAAI STORY</span>
                     <span class="zaai-video-gallery-hint">DRAG TO EXPLORE <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
@@ -340,7 +342,7 @@
                         <i class="fa-solid fa-xmark" aria-hidden="true"></i>
                     </button>
                 </div>
-                <video class="zaai-video-lightbox-player" controls playsinline preload="none" aria-label="ZAAI campaign film"></video>
+                <video class="zaai-video-lightbox-player" controls muted loop autoplay playsinline preload="none" aria-label="ZAAI campaign film"></video>
                 <div class="zaai-video-lightbox-controls">
                     <button class="zaai-video-lightbox-play" type="button" aria-label="Pause video">
                         <i class="fa-solid fa-pause" aria-hidden="true"></i><span>PAUSE</span>
