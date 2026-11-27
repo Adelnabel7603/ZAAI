@@ -209,6 +209,16 @@
     flex-basis: 5px;
 }
 
+.zaai-video-card-status.is-sound-on {
+    border-color: rgba(185, 165, 138, 0.88);
+    background: rgba(185, 165, 138, 0.92);
+    color: var(--video-gallery-ink);
+}
+
+.zaai-video-card-status.is-sound-on > i {
+    background: var(--video-gallery-ink);
+}
+
 .zaai-video-card-error {
     position: absolute;
     z-index: 3;
