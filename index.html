@@ -2,7 +2,6 @@
 <html lang="ar" dir="rtl">
     <head>
         <meta charset="UTF-8">
-        <base href="/">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="theme-color" content="#f5f3ef">
         <meta name="description" content="اكتشف أزياء ZAAI الطبية العصرية — راحة طوال يوم العمل، أناقة تليق بك، ومقاسات متعددة تناسبك. اطلب الآن بسهولة عبر واتساب.">
@@ -25,10 +24,12 @@
         <meta name="twitter:description" content="ملابس طبية عصرية بتصميم مريح وألوان متعددة. اكتشف مجموعتنا واطلب بسهولة عبر واتساب.">
         <meta name="twitter:image" content="https://zaai-store.vercel.app/image/og-preview.jpg?v=20261121">
         <!-- ! Link CSS -->  
-        <link rel="stylesheet" href="/CSS/normalize.css">
-        <link rel="stylesheet" href="/CSS/all.min.css">
-        <link rel="stylesheet" href="/CSS/style.css?v=20261126-product-information-v2">
-        <link rel="stylesheet" href="/CSS/responsive.css">
+        <link rel="stylesheet" href="CSS/normalize.css">
+        <link rel="stylesheet" href="CSS/all.min.css">
+        <link rel="stylesheet" href="CSS/style.css?v=20261126-product-information-v2">
+        <link rel="stylesheet" href="CSS/responsive.css">
+        <link rel="stylesheet" href="CSS/offers-hero.css?v=20261126-offers-v2">
+        <link rel="stylesheet" href="CSS/video-gallery.css">
         <!-- ! Google Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,9 +38,10 @@
         <link rel="icon" href="image/logo.jpg" type="image/png">
         <!-- ! Name of the website -->
         <title>ZAAI STORE</title>
-        <script src="/Js/product-3d-viewer.js?v=20261119-9" defer></script>
-        <script src="/Js/catalog-image-galleries.js?v=20261126-gallery-fallback" defer></script>
-        <script src="/Js/script.js?v=20261126-product-information-v1" defer></script>
+        <script src="Js/product-3d-viewer.js?v=20261119-9" defer></script>
+        <script src="Js/catalog-image-galleries.js?v=20261126-gallery-fallback" defer></script>
+        <script src="Js/script.js?v=20261126-product-information-v1" defer></script>
+        <script src="Js/video-gallery.js" defer></script>
     </head>
     <body data-theme="light">
         <!-- Site Header -->
@@ -83,6 +85,252 @@
                 </div>
             </div>
         </header>
+        <!-- Offers Hero Section -->
+        <section class="offers-hero" id="offers" aria-labelledby="offers-title" dir="ltr">
+            <div class="offers-hero-media">
+                <img
+                    src="image/man/product1.jpg"
+                    alt="موديل يرتدي زي ZAAI الطبي"
+                    data-alt-ar="موديل يرتدي زي ZAAI الطبي"
+                    data-alt-en="Model wearing ZAAI medical scrubs"
+                    width="936"
+                    height="1599"
+                    fetchpriority="high"
+                    decoding="async">
+                <span class="offers-hero-image-caption" aria-hidden="true">ZAAI / MEDICAL WEAR</span>
+            </div>
+            <div class="offers-hero-copy" dir="auto">
+                <span class="offers-hero-eyebrow" data-ar="مجموعة مختارة. قيمة استثنائية." data-en="A considered collection. Exceptional value.">مجموعة مختارة. قيمة استثنائية.</span>
+                <h1 id="offers-title">
+                    <span data-ar="عروض ZAAI الحصرية" data-en="EXCLUSIVE ZAAI OFFERS">عروض ZAAI الحصرية</span>
+                    <span class="offers-hero-title-accent" data-ar="راحة أكثر. قيمة أكبر." data-en="MORE COMFORT. MORE VALUE.">راحة أكثر. قيمة أكبر.</span>
+                </h1>
+                <p class="offers-hero-description" data-ar="ارتقِ بملابسك الطبية مع عروض ZAAI الحصرية." data-en="Upgrade Your Medical Wear with Exclusive ZAAI Deals.">ارتقِ بملابسك الطبية مع عروض ZAAI الحصرية.</p>
+                <div class="offers-hero-deals">
+                    <article class="offers-deal offers-deal-featured">
+                        <span class="offers-deal-number">01 <i></i> <span data-ar="عرض مميز" data-en="SPECIAL BUNDLE">عرض مميز</span></span>
+                        <strong class="offers-deal-price" dir="ltr" data-ar="قطعتان مقابل 1,500 جنيه مصري" data-en="2 PIECES FOR EGP 1,500">قطعتان مقابل 1,500 جنيه مصري</strong>
+                    </article>
+                    <article class="offers-deal">
+                        <span class="offers-deal-number">02 <i></i> <span data-ar="اشترِ أكثر، احصل على المزيد" data-en="BUY MORE, GET MORE">اشترِ أكثر، احصل على المزيد</span></span>
+                        <strong class="offers-deal-secondary" data-ar="اشترِ 5، واحصل على 1 مجانًا" data-en="BUY 5, GET 1 FREE">اشترِ 5، واحصل على 1 مجانًا</strong>
+                    </article>
+                    <article class="offers-deal offers-deal-discount">
+                        <span class="offers-deal-number">03 <i></i> <span data-ar="خصم حصري" data-en="EXCLUSIVE DISCOUNT">خصم حصري</span></span>
+                        <strong class="offers-deal-discount-value" dir="ltr" data-ar="خصم 20%" data-en="20% OFF">خصم 20%</strong>
+                    </article>
+                </div>
+                <div class="offers-hero-actions">
+                    <a class="offers-button offers-button-primary" href="#products">
+                        <span data-ar="تسوق الآن" data-en="SHOP NOW">تسوق الآن</span>
+                        <span class="offers-button-arrow" aria-hidden="true">↗</span>
+                    </a>
+                    <a class="offers-button offers-button-secondary" href="#about" data-ar="اكتشف ZAAI" data-en="DISCOVER ZAAI">اكتشف ZAAI</a>
+                </div>
+                <span class="offers-hero-footnote" data-ar="ثلاثة عروض مستقلة. اختَر ما يناسبك." data-en="Three independent offers. Choose what suits you.">ثلاثة عروض مستقلة. اختَر ما يناسبك.</span>
+            </div>
+            <span class="offers-hero-index" aria-hidden="true">01 / ZAAI</span>
+        </section>
+        <!-- ! Products section -->
+        <section class="style-discovery" id="products" aria-labelledby="style-discovery-title">
+            <div class="style-discovery-shell">
+                <div class="style-discovery-heading">
+                    <span class="style-discovery-overline">ZAAI COLLECTION</span>
+                    <h2 id="style-discovery-title">
+                        <span data-ar="اكتشف أسلوبك" data-en="DISCOVER YOUR STYLE">اكتشف أسلوبك</span>
+                        <b aria-hidden="true">|</b>
+                        <em>DISCOVER YOUR STYLE</em>
+                    </h2>
+                    <p data-ar="اكتشف مجموعتنا واستمتع بتجربة مشاهدة كل التفاصيل." data-en="Discover our collection and enjoy a closer look at every detail.">اكتشف مجموعتنا واستمتع بتجربة مشاهدة كل التفاصيل.</p>
+                </div>
+                <div class="style-discovery-tabs" role="tablist" aria-label="فئات المجموعة">
+                    <button class="style-discovery-tab is-active" id="men-tab" type="button" role="tab" aria-selected="true" aria-controls="men-panel" data-discovery-tab="men">
+                        <span data-ar="رجالي" data-en="MEN">رجالي</span>
+                        <small>MEN</small>
+                    </button>
+                    <button class="style-discovery-tab" id="women-tab" type="button" role="tab" aria-selected="false" aria-controls="women-panel" data-discovery-tab="women">
+                        <span data-ar="نسائي" data-en="WOMEN">نسائي</span>
+                        <small>WOMEN</small>
+                    </button>
+                </div>
+                <div class="style-discovery-panel is-active" id="men-panel" role="tabpanel" aria-labelledby="men-tab" data-discovery-panel="men">
+                    <div class="zaai-products-grid" id="men-products" aria-live="polite"></div>
+                    <article class="zaai-product-experience" aria-live="polite" hidden>
+                        <div class="zaai-viewer-column">
+                            <div class="zaai-viewer" id="zaai-viewer">
+                                <div class="zaai-viewer-topline">
+                                    <span class="zaai-rotation-badge"><i aria-hidden="true"></i><span data-ar="دوران 360 درجة" data-en="360° VIEW">دوران 360 درجة</span></span>
+                                    <span class="zaai-viewer-index">360° / ZAAI</span>
+                                </div>
+                                <div class="zaai-viewer-stage" id="zaai-viewer-stage" aria-label="اسحب لتدوير المنتج بزاوية 360 درجة">
+                                    <div class="zaai-loading" id="zaai-loading" role="status">
+                                        <span></span>
+                                        <small data-ar="جارٍ تحميل العرض" data-en="Loading view">جارٍ تحميل العرض</small>
+                                    </div>
+                                    <canvas class="zaai-product-model" id="zaai-360-image" width="720" height="900" tabindex="0" role="img" aria-label="مجسم ثلاثي الأبعاد لزي ZAAI الطبي"></canvas>
+                                    <span class="zaai-drag-hint" data-ar="اسحب لتدوير المنتج 360°" data-en="Drag to spin 360°" aria-hidden="true">اسحب لتدوير المنتج 360°</span>
+                                    <span class="zaai-surface-glow" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                            <div class="zaai-color-picker" id="zaai-color-picker" aria-label="اختر لون المنتج"></div>
+                        </div>
+                        <div class="zaai-product-details">
+                            <span class="zaai-product-kicker" data-ar="مجموعة ZAAI للرجال" data-en="ZAAI MEN'S COLLECTION">مجموعة ZAAI للرجال</span>
+                            <h3 id="zaai-product-name">ZAAI Scrub Set</h3>
+                            <p id="zaai-product-description" data-ar="طقم طبي بتصميم معاصر، مقطّع لراحة الحركة وأناقة الحضور طوال اليوم." data-en="A contemporary medical set designed for ease of movement and an elegant presence throughout the day.">طقم طبي بتصميم معاصر، مقطّع لراحة الحركة وأناقة الحضور طوال اليوم.</p>
+                            <div class="zaai-price-row">
+                                <strong id="zaai-product-price">800 ج.م</strong>
+                                <del>1,000 ج.م</del>
+                                <span data-ar="خصم 20%" data-en="20% OFF">خصم 20%</span>
+                            </div>
+                            <div class="zaai-option-block">
+                                <div class="zaai-option-heading">
+                                    <span data-ar="اللون" data-en="COLOR">اللون</span>
+                                    <strong id="zaai-selected-color">أزرق ملكي</strong>
+                                </div>
+                            </div>
+                            <div class="zaai-option-block">
+                                <div class="zaai-option-heading">
+                                    <span data-ar="المقاس" data-en="SIZE">المقاس</span>
+                                    <button type="button" class="zaai-size-guide-link" data-ar="دليل المقاسات" data-en="SIZE GUIDE">دليل المقاسات</button>
+                                </div>
+                                <div class="zaai-size-list" id="zaai-size-list" role="radiogroup" aria-label="اختر المقاس"></div>
+                            </div>
+                            <div class="zaai-product-actions">
+                                <button class="zaai-add-button" type="button">
+                                    <span data-ar="أضف إلى السلة" data-en="ADD TO BAG">أضف إلى السلة</span>
+                                    <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+                                </button>
+                                <button class="zaai-details-button" type="button" data-ar="عرض التفاصيل" data-en="VIEW DETAILS">عرض التفاصيل</button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                <div class="style-discovery-panel" id="women-panel" role="tabpanel" aria-labelledby="women-tab" data-discovery-panel="women" hidden>
+                    <div class="zaai-products-grid" id="women-products" aria-live="polite"></div>
+                    <div hidden>
+                    <div class="women-coming-mark" aria-hidden="true">Z</div>
+                    <span class="style-discovery-overline">ZAAI WOMEN</span>
+                    <h3 data-ar="شيء جميل قادم قريبًا." data-en="Something beautiful is coming soon.">شيء جميل قادم قريبًا.</h3>
+                    <p data-ar="ترقبي مجموعة ZAAI النسائية القادمة." data-en="Stay tuned for the upcoming ZAAI women's collection.">ترقبي مجموعة ZAAI النسائية القادمة.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="zaai-video-gallery" id="zaai-video-gallery" dir="ltr" aria-labelledby="zaai-video-gallery-title">
+            <div class="zaai-video-gallery-inner">
+                <header class="zaai-video-gallery-heading">
+                    <span class="zaai-video-gallery-kicker"><span aria-hidden="true"></span> THE WORLD OF ZAAI</span>
+                    <div class="zaai-video-gallery-title-row">
+                        <div>
+                            <h2 id="zaai-video-gallery-title">BEHIND THE BRAND.<br>STYLE IN MOTION.</h2>
+                            <p>Discover ZAAI through every detail.</p>
+                        </div>
+                    </div>
+                </header>
+                <div class="zaai-video-gallery-carousel">
+                    <div class="zaai-video-gallery-navigation" role="group" aria-label="Video gallery navigation">
+                        <button class="zaai-video-gallery-arrow" type="button" data-gallery-direction="-1" aria-label="Scroll videos left" aria-controls="zaai-video-gallery-viewport">
+                            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                        </button>
+                        <button class="zaai-video-gallery-arrow" type="button" data-gallery-direction="1" aria-label="Scroll videos right" aria-controls="zaai-video-gallery-viewport">
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div class="zaai-video-gallery-viewport" id="zaai-video-gallery-viewport" role="region" aria-roledescription="carousel" aria-label="ZAAI campaign videos">
+                        <div class="zaai-video-gallery-track">
+                        <button class="zaai-video-card" type="button" aria-label="Watch About ZAAI">
+                            <span class="zaai-video-card-media">
+                                <video muted loop playsinline preload="none" poster="image/video-posters/zaai-film-01.jpg" aria-hidden="true">
+                                    <source data-src="image/about video.mp4" type="video/mp4">
+                                </video>
+                                <span class="zaai-video-card-status"><i aria-hidden="true"></i> SOUND OFF</span>
+                                <span class="zaai-video-card-error" aria-hidden="true">Video unavailable</span>
+                                <span class="zaai-video-card-open" aria-hidden="true"><i class="fa-solid fa-expand"></i></span>
+                            </span>
+                            <span class="zaai-video-card-caption"><span>ABOUT</span> THE ZAAI STORY.</span>
+                        </button>
+                        <button class="zaai-video-card" type="button" aria-label="Watch Navy Blue">
+                            <span class="zaai-video-card-media">
+                                <video muted loop playsinline preload="none" poster="image/video-posters/zaai-film-02.jpg" aria-hidden="true">
+                                    <source data-src="image/2.mp4" type="video/mp4">
+                                </video>
+                                <span class="zaai-video-card-status"><i aria-hidden="true"></i> SOUND OFF</span>
+                                <span class="zaai-video-card-error" aria-hidden="true">Video unavailable</span>
+                                <span class="zaai-video-card-open" aria-hidden="true"><i class="fa-solid fa-expand"></i></span>
+                            </span>
+                            <span class="zaai-video-card-caption"><span>02</span> NAVY, IN MOTION.</span>
+                        </button>
+                        <button class="zaai-video-card" type="button" aria-label="Watch the ZAAI campaign film">
+                            <span class="zaai-video-card-media">
+                                <video muted loop playsinline preload="none" poster="image/video-posters/zaai-film-03.jpg" aria-hidden="true">
+                                    <source data-src="image/3.mp4" type="video/mp4">
+                                </video>
+                                <span class="zaai-video-card-status"><i aria-hidden="true"></i> SOUND OFF</span>
+                                <span class="zaai-video-card-error" aria-hidden="true">Video unavailable</span>
+                                <span class="zaai-video-card-open" aria-hidden="true"><i class="fa-solid fa-expand"></i></span>
+                            </span>
+                            <span class="zaai-video-card-caption"><span>03</span> THE ZAAI CAMPAIGN.</span>
+                        </button>
+                        <button class="zaai-video-card" type="button" aria-label="Watch ZAAI, made to move">
+                            <span class="zaai-video-card-media">
+                                <video muted loop playsinline preload="none" poster="image/video-posters/zaai-film-04.jpg" aria-hidden="true">
+                                    <source data-src="image/4.mp4" type="video/mp4">
+                                </video>
+                                <span class="zaai-video-card-status"><i aria-hidden="true"></i> SOUND OFF</span>
+                                <span class="zaai-video-card-error" aria-hidden="true">Video unavailable</span>
+                                <span class="zaai-video-card-open" aria-hidden="true"><i class="fa-solid fa-expand"></i></span>
+                            </span>
+                            <span class="zaai-video-card-caption"><span>04</span> MADE TO MOVE.</span>
+                        </button>
+                        <button class="zaai-video-card" type="button" aria-label="Watch a ZAAI everyday look">
+                            <span class="zaai-video-card-media">
+                                <video muted loop playsinline preload="none" poster="image/video-posters/zaai-film-05.jpg" aria-hidden="true">
+                                    <source data-src="image/5.mp4" type="video/mp4">
+                                </video>
+                                <span class="zaai-video-card-status"><i aria-hidden="true"></i> SOUND OFF</span>
+                                <span class="zaai-video-card-error" aria-hidden="true">Video unavailable</span>
+                                <span class="zaai-video-card-open" aria-hidden="true"><i class="fa-solid fa-expand"></i></span>
+                            </span>
+                            <span class="zaai-video-card-caption"><span>05</span> EVERYDAY, ELEVATED.</span>
+                        </button>
+                        <button class="zaai-video-card" type="button" aria-label="Watch a closer look at ZAAI">
+                            <span class="zaai-video-card-media">
+                                <video muted loop playsinline preload="none" poster="image/video-posters/zaai-film-06.jpg" aria-hidden="true">
+                                    <source data-src="image/6.mp4" type="video/mp4">
+                                </video>
+                                <span class="zaai-video-card-status"><i aria-hidden="true"></i> SOUND OFF</span>
+                                <span class="zaai-video-card-error" aria-hidden="true">Video unavailable</span>
+                                <span class="zaai-video-card-open" aria-hidden="true"><i class="fa-solid fa-expand"></i></span>
+                            </span>
+                            <span class="zaai-video-card-caption"><span>06</span> A CLOSER LOOK.</span>
+                        </button>
+                    </div>
+                </div>
+                </div>
+                <div class="zaai-video-gallery-footer">
+                    <span>06 FILMS <i aria-hidden="true"></i> ONE ZAAI STORY</span>
+                    <span class="zaai-video-gallery-hint">DRAG TO EXPLORE <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+            </div>
+            <dialog class="zaai-video-lightbox" aria-labelledby="zaai-video-lightbox-title">
+                <div class="zaai-video-lightbox-header">
+                    <span id="zaai-video-lightbox-title">THE WORLD OF ZAAI</span>
+                    <button class="zaai-video-lightbox-close" type="button" aria-label="Close video">
+                        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <video class="zaai-video-lightbox-player" controls muted loop autoplay playsinline preload="none" aria-label="ZAAI campaign film"></video>
+                <div class="zaai-video-lightbox-controls">
+                    <button class="zaai-video-lightbox-play" type="button" aria-label="Pause video">
+                        <i class="fa-solid fa-pause" aria-hidden="true"></i><span>PAUSE</span>
+                    </button>
+                    <button class="zaai-video-lightbox-mute" type="button" aria-label="Turn sound on">
+                        <i class="fa-solid fa-volume-xmark" aria-hidden="true"></i><span>SOUND OFF</span>
+                    </button>
+                </div>
+            </dialog>
+        </section>
         <!-- Home Section -->
         <section class="home" id="home">
             <div class="mobile-home-topbar" aria-label="إعدادات الصفحة">
@@ -395,92 +643,6 @@
             </div>
             <p class="size-guide-lightbox-hint" data-ar="استخدم إصبعين للتكبير والتصغير." data-en="Pinch with two fingers to zoom in or out.">Pinch with two fingers to zoom in or out.</p>
         </dialog>
-        <!-- ! Products section -->
-        <section class="style-discovery" id="products" aria-labelledby="style-discovery-title">
-            <div class="style-discovery-shell">
-                <div class="style-discovery-heading">
-                    <span class="style-discovery-overline">ZAAI COLLECTION</span>
-                    <h2 id="style-discovery-title">
-                        <span data-ar="اكتشف أسلوبك" data-en="DISCOVER YOUR STYLE">اكتشف أسلوبك</span>
-                        <b aria-hidden="true">|</b>
-                        <em>DISCOVER YOUR STYLE</em>
-                    </h2>
-                    <p data-ar="اكتشف مجموعتنا واستمتع بتجربة مشاهدة كل التفاصيل." data-en="Discover our collection and enjoy a closer look at every detail.">اكتشف مجموعتنا واستمتع بتجربة مشاهدة كل التفاصيل.</p>
-                </div>
-                <div class="style-discovery-tabs" role="tablist" aria-label="فئات المجموعة">
-                    <button class="style-discovery-tab is-active" id="men-tab" type="button" role="tab" aria-selected="true" aria-controls="men-panel" data-discovery-tab="men">
-                        <span data-ar="رجالي" data-en="MEN">رجالي</span>
-                        <small>MEN</small>
-                    </button>
-                    <button class="style-discovery-tab" id="women-tab" type="button" role="tab" aria-selected="false" aria-controls="women-panel" data-discovery-tab="women">
-                        <span data-ar="نسائي" data-en="WOMEN">نسائي</span>
-                        <small>WOMEN</small>
-                    </button>
-                </div>
-                <div class="style-discovery-panel is-active" id="men-panel" role="tabpanel" aria-labelledby="men-tab" data-discovery-panel="men">
-                    <div class="zaai-products-grid" id="men-products" aria-live="polite"></div>
-                    <article class="zaai-product-experience" aria-live="polite" hidden>
-                        <div class="zaai-viewer-column">
-                            <div class="zaai-viewer" id="zaai-viewer">
-                                <div class="zaai-viewer-topline">
-                                    <span class="zaai-rotation-badge"><i aria-hidden="true"></i><span data-ar="دوران 360 درجة" data-en="360° VIEW">دوران 360 درجة</span></span>
-                                    <span class="zaai-viewer-index">360° / ZAAI</span>
-                                </div>
-                                <div class="zaai-viewer-stage" id="zaai-viewer-stage" aria-label="اسحب لتدوير المنتج بزاوية 360 درجة">
-                                    <div class="zaai-loading" id="zaai-loading" role="status">
-                                        <span></span>
-                                        <small data-ar="جارٍ تحميل العرض" data-en="Loading view">جارٍ تحميل العرض</small>
-                                    </div>
-                                    <canvas class="zaai-product-model" id="zaai-360-image" width="720" height="900" tabindex="0" role="img" aria-label="مجسم ثلاثي الأبعاد لزي ZAAI الطبي"></canvas>
-                                    <span class="zaai-drag-hint" data-ar="اسحب لتدوير المنتج 360°" data-en="Drag to spin 360°" aria-hidden="true">اسحب لتدوير المنتج 360°</span>
-                                    <span class="zaai-surface-glow" aria-hidden="true"></span>
-                                </div>
-                            </div>
-                            <div class="zaai-color-picker" id="zaai-color-picker" aria-label="اختر لون المنتج"></div>
-                        </div>
-                        <div class="zaai-product-details">
-                            <span class="zaai-product-kicker" data-ar="مجموعة ZAAI للرجال" data-en="ZAAI MEN'S COLLECTION">مجموعة ZAAI للرجال</span>
-                            <h3 id="zaai-product-name">ZAAI Scrub Set</h3>
-                            <p id="zaai-product-description" data-ar="طقم طبي بتصميم معاصر، مقطّع لراحة الحركة وأناقة الحضور طوال اليوم." data-en="A contemporary medical set designed for ease of movement and an elegant presence throughout the day.">طقم طبي بتصميم معاصر، مقطّع لراحة الحركة وأناقة الحضور طوال اليوم.</p>
-                            <div class="zaai-price-row">
-                                <strong id="zaai-product-price">800 ج.م</strong>
-                                <del>1,000 ج.م</del>
-                                <span data-ar="خصم 20%" data-en="20% OFF">خصم 20%</span>
-                            </div>
-                            <div class="zaai-option-block">
-                                <div class="zaai-option-heading">
-                                    <span data-ar="اللون" data-en="COLOR">اللون</span>
-                                    <strong id="zaai-selected-color">أزرق ملكي</strong>
-                                </div>
-                            </div>
-                            <div class="zaai-option-block">
-                                <div class="zaai-option-heading">
-                                    <span data-ar="المقاس" data-en="SIZE">المقاس</span>
-                                    <button type="button" class="zaai-size-guide-link" data-ar="دليل المقاسات" data-en="SIZE GUIDE">دليل المقاسات</button>
-                                </div>
-                                <div class="zaai-size-list" id="zaai-size-list" role="radiogroup" aria-label="اختر المقاس"></div>
-                            </div>
-                            <div class="zaai-product-actions">
-                                <button class="zaai-add-button" type="button">
-                                    <span data-ar="أضف إلى السلة" data-en="ADD TO BAG">أضف إلى السلة</span>
-                                    <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
-                                </button>
-                                <button class="zaai-details-button" type="button" data-ar="عرض التفاصيل" data-en="VIEW DETAILS">عرض التفاصيل</button>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-                <div class="style-discovery-panel" id="women-panel" role="tabpanel" aria-labelledby="women-tab" data-discovery-panel="women" hidden>
-                    <div class="zaai-products-grid" id="women-products" aria-live="polite"></div>
-                    <div hidden>
-                    <div class="women-coming-mark" aria-hidden="true">Z</div>
-                    <span class="style-discovery-overline">ZAAI WOMEN</span>
-                    <h3 data-ar="شيء جميل قادم قريبًا." data-en="Something beautiful is coming soon.">شيء جميل قادم قريبًا.</h3>
-                    <p data-ar="ترقبي مجموعة ZAAI النسائية القادمة." data-en="Stay tuned for the upcoming ZAAI women's collection.">ترقبي مجموعة ZAAI النسائية القادمة.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
         <nav class="zaai-mobile-bottom-nav" aria-label="التنقل السريع">
             <a class="zaai-mobile-nav-item is-active" href="#home" aria-label="الرئيسية">
                 <i class="fa-solid fa-house" aria-hidden="true"></i>

@@ -124,6 +124,10 @@ db.exec(`
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL
   );
+  CREATE TABLE IF NOT EXISTS schema_migrations (
+    name TEXT PRIMARY KEY,
+    applied_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  );
   CREATE TABLE IF NOT EXISTS audit_log (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     action TEXT NOT NULL,
@@ -327,6 +331,23 @@ const insertSection = db.prepare(`
   ["contact","تواصل معنا","Get in touch","نحن هنا لمساعدتك.","We are here to help.","image/contact/contact 2.jpeg","","ابدأ المحادثة","Start a chat","https://wa.me/201022591767","7",1]
 ].forEach((row) => insertSection.run(...row));
 
+const offersSectionOrderMigration = "homepage-products-after-offers-v1";
+const offersSectionOrderApplied = db.prepare("SELECT name FROM schema_migrations WHERE name=?").get(offersSectionOrderMigration);
+if (!offersSectionOrderApplied) {
+  const sections = db.prepare("SELECT id,section_key FROM sections ORDER BY sort_order ASC,id ASC").all();
+  const productsIndex = sections.findIndex((section) => section.section_key === "products");
+  if (productsIndex < 0) throw new Error("Cannot apply homepage section order: products section is missing.");
+  if (productsIndex > 0) sections.unshift(sections.splice(productsIndex, 1)[0]);
+
+  const updateSectionOrder = db.prepare("UPDATE sections SET sort_order=?,updated_at=CURRENT_TIMESTAMP WHERE id=?");
+  const markMigrationApplied = db.prepare("INSERT INTO schema_migrations(name) VALUES (?)");
+  const applyOffersSectionOrderMigration = db.transaction(() => {
+    sections.forEach((section, index) => updateSectionOrder.run(index + 1, section.id));
+    markMigrationApplied.run(offersSectionOrderMigration);
+  });
+  applyOffersSectionOrderMigration();
+}
+
 app.disable("x-powered-by");
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
@@ -488,8 +509,17 @@ app.get("/admin/", requireOwner, (req, res) => {
   res.sendFile(path.join(root, "admin", "dashboard.html"));
 });
 
-app.get(/^\/product\/[^/]+\/?$/, (req, res) => {
-  res.sendFile(path.join(root, "index.html"));
+app.get(/^\/product\/[^/]+\/?$/, (req, res, next) => {
+  fs.readFile(path.join(root, "index.html"), "utf8", (error, html) => {
+    if (error) return next(error);
+    const headIndex = html.indexOf("<head>");
+    if (headIndex === -1) return next(new Error("Could not find <head> in index.html."));
+    const insertionPoint = headIndex + "<head>".length;
+    const page = html.includes('<base href="/">')
+      ? html
+      : `${html.slice(0, insertionPoint)}\n        <base href="/">${html.slice(insertionPoint)}`;
+    res.type("html").send(page);
+  });
 });
 
 app.use("/admin", express.static(path.join(root, "admin"), { extensions: ["html"] }));
