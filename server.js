@@ -509,8 +509,17 @@ app.get("/admin/", requireOwner, (req, res) => {
   res.sendFile(path.join(root, "admin", "dashboard.html"));
 });
 
-app.get(/^\/product\/[^/]+\/?$/, (req, res) => {
-  res.sendFile(path.join(root, "index.html"));
+app.get(/^\/product\/[^/]+\/?$/, (req, res, next) => {
+  fs.readFile(path.join(root, "index.html"), "utf8", (error, html) => {
+    if (error) return next(error);
+    const headIndex = html.indexOf("<head>");
+    if (headIndex === -1) return next(new Error("Could not find <head> in index.html."));
+    const insertionPoint = headIndex + "<head>".length;
+    const page = html.includes('<base href="/">')
+      ? html
+      : `${html.slice(0, insertionPoint)}\n        <base href="/">${html.slice(insertionPoint)}`;
+    res.type("html").send(page);
+  });
 });
 
 app.use("/admin", express.static(path.join(root, "admin"), { extensions: ["html"] }));
