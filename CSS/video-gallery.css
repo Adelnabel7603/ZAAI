@@ -62,27 +62,41 @@
 }
 
 .zaai-video-gallery-navigation {
+    position: absolute;
+    z-index: 2;
+    inset: 50% 12px auto;
     display: flex;
-    gap: 10px;
-    padding-bottom: 4px;
+    align-items: center;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.zaai-video-gallery-carousel {
+    position: relative;
 }
 
 .zaai-video-gallery-arrow {
     display: grid;
-    width: 50px;
-    height: 50px;
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
     place-items: center;
-    border: 1px solid rgba(245, 245, 245, 0.2);
+    border: 1px solid rgba(185, 165, 138, 0.72);
     border-radius: 50%;
-    background: transparent;
+    background: rgba(5, 5, 5, 0.86);
     color: var(--video-gallery-white);
     font: inherit;
     cursor: pointer;
-    transition: color 220ms ease, border-color 220ms ease, background 220ms ease, transform 220ms ease;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.38);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    pointer-events: auto;
+    transition: color 220ms ease, border-color 220ms ease, background 220ms ease, transform 220ms ease, opacity 220ms ease;
 }
 
 .zaai-video-gallery-arrow:hover:not(:disabled) {
-    transform: translateY(-2px);
+    transform: scale(1.06);
     border-color: var(--video-gallery-gold);
     background: var(--video-gallery-gold);
     color: var(--video-gallery-ink);
@@ -420,14 +434,14 @@
         font-size: 0.83rem;
     }
 
-    .zaai-video-gallery-navigation {
-        gap: 7px;
-        padding-bottom: 0;
+    .zaai-video-gallery-arrow {
+        width: 48px;
+        height: 48px;
+        flex-basis: 48px;
     }
 
-    .zaai-video-gallery-arrow {
-        width: 42px;
-        height: 42px;
+    .zaai-video-gallery-navigation {
+        inset-inline: 8px;
     }
 
     .zaai-video-gallery-track {
@@ -450,15 +464,6 @@
 @media (max-width: 420px) {
     .zaai-video-gallery-title-row {
         align-items: flex-start;
-    }
-
-    .zaai-video-gallery-navigation {
-        flex-direction: column;
-    }
-
-    .zaai-video-gallery-arrow {
-        width: 40px;
-        height: 40px;
     }
 
     .zaai-video-gallery-footer {
